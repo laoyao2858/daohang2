@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老幺导航</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; transition: background-image 1s ease-in-out; background-size: cover; background-position: center; background-attachment: fixed; background-color: #111827; color: white; }
+        .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        
+        /* 音乐播放器 */
+        .music-player { position: fixed; bottom: 20px; left: 20px; z-index: 40; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 99px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; width: 42px; overflow: hidden; cursor: pointer; }
+        .music-player:hover, .music-player.playing { width: auto; padding-right: 15px; }
+        .music-cover { width: 30px; height: 30px; border-radius: 50%; animation: spin 8s linear infinite; animation-play-state: paused; object-fit: cover;}
+        .music-player.playing .music-cover { animation-play-state: running; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .music-info { white-space: nowrap; font-size: 12px; max-width: 0; opacity: 0; overflow: hidden; transition: all 0.3s; }
+        .music-player:hover .music-info, .music-player.playing .music-info { max-width: 200px; opacity: 1; margin-left: 5px; }
+
+        :root { --icon-size: 64px; }
+        
+        /* 锁图标动画 */
+        .lock-badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); padding: 4px; border-radius: 50%; color: #FBBF24; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+    <div id="music-player-ui" class="music-player hidden" title="点击播放/暂停">
+        <img id="music-cover-img" src="" class="music-cover bg-gray-700">
+        <div class="music-info">
+            <div id="music-title-text" class="font-bold">Loading...</div>
+            <div id="music-artist-text" class="text-gray-300 text-xs"></div>
+        </div>
+        <audio id="bg-audio" preload="auto"></audio>
+    </div>
+
+    <div id="app-container" class="flex h-screen">
+        <aside id="sidebar" class="bg-black bg-opacity-30 backdrop-blur-md w-64 p-6 hidden md:flex flex-col flex-shrink-0 border-r border-white/10">
+            <div id="sidebar-header" class="mb-8 flex flex-col items-center">
+                <img id="global-site-logo" src="" class="w-20 h-20 rounded-full mb-4 hidden object-cover shadow-xl border-2 border-white/20">
+                <h1 class="text-xl font-bold text-center tracking-wider">导航菜单</h1>
+            </div>
+            <nav id="sidebar-nav" class="flex-grow space-y-2 overflow-y-auto pr-2"></nav>
+        </aside>
+
+        <main class="flex-1 flex flex-col overflow-hidden relative">
+            <header class="bg-black bg-opacity-30 backdrop-blur-md p-4 flex items-center justify-between z-10 border-b border-white/10">
+                <div class="flex items-center">
+                    <button id="mobile-menu-toggle" class="md:hidden mr-4 p-2 rounded hover:bg-white/10"><i data-lucide="menu"></i></button>
+                    <nav id="topbar-nav" class="hidden lg:flex items-center space-x-6 ml-4 text-sm font-medium text-gray-300"></nav>
+                </div>
+                <button onclick="showLogin()" class="p-2 rounded hover:bg-white/10 text-gray-400 hover:text-white transition"><i data-lucide="settings"></i></button>
+            </header>
+
+            <div id="content-area" class="flex-1 overflow-y-auto p-4 md:p-8">
+                <div class="max-w-7xl mx-auto" id="content-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <div id="login-modal" class="modal fixed inset-0 bg-black bg-opacity-80 items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm shadow-2xl border border-gray-700">
+            <h2 class="text-xl font-bold mb-6 text-center">后台管理登录</h2>
+            <input type="password" id="admin-password" placeholder="请输入后台密码" class="w-full bg-gray-900 border border-gray-700 p-3 rounded-lg mb-4 text-white outline-none focus:border-blue-500">
+            <div class="flex gap-3">
+                <button onclick="document.getElementById('login-modal').classList.remove('active')" class="flex-1 py-2 rounded-lg hover:bg-gray-700 text-gray-400">取消</button>
+                <button id="do-login-btn" class="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 font-bold">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-panel" class="modal fixed inset-0 bg-black/95 items-center justify-center p-4 z-50 overflow-hidden backdrop-blur-md">
+        <div class="bg-gray-900 rounded-2xl w-full max-w-6xl h-[90vh] flex flex-col shadow-2xl border border-gray-700">
+            <div class="flex justify-between items-center p-6 border-b border-gray-800 bg-gray-800/50">
+                <h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="shield-check" class="text-blue-500"></i> 后台管理</h2>
+                <button onclick="document.getElementById('admin-panel').classList.remove('active')" class="p-2 text-gray-400 hover:text-white hover:bg-red-500/20 rounded"><i data-lucide="x"></i></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <section class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+                        <h3 class="text-lg font-bold mb-4 text-blue-400">界面样式</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm text-gray-400 mb-1 block">图标大小 (<span id="icon-size-val">64</span>px)</label>
+                                <input type="range" id="icon-size-input" min="32" max="128" step="4" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-400 mb-1 block">Logo URL</label>
+                                <input type="text" id="site-logo-input" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                            </div>
+                            <button onclick="saveGlobalSettings()" class="w-full bg-blue-600 py-2 rounded font-bold hover:bg-blue-500">保存样式</button>
+                        </div>
+                    </section>
+
+                    <section class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+                        <h3 class="text-lg font-bold mb-4 text-purple-400">背景图片</h3>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="bg-url-input" placeholder="输入图片 URL" class="flex-1 bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                            <button onclick="addBackground()" class="bg-purple-600 px-4 rounded hover:bg-purple-500 font-bold">添加</button>
+                        </div>
+                        <ul id="bg-list" class="space-y-2 max-h-32 overflow-y-auto"></ul>
+                        <button onclick="saveBackgrounds()" class="w-full mt-3 bg-gray-700 py-2 rounded hover:bg-gray-600">保存背景</button>
+                    </section>
+                </div>
+
+                <section class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+                    <h3 class="text-lg font-bold mb-4 text-pink-400">背景音乐</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 mb-3">
+                        <input type="text" id="music-title" placeholder="歌名" class="md:col-span-3 bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                        <input type="text" id="music-artist" placeholder="歌手" class="md:col-span-2 bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                        <input type="text" id="music-url" placeholder="MP3 URL" class="md:col-span-4 bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                        <input type="text" id="music-cover" placeholder="封面 URL" class="md:col-span-2 bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                        <button onclick="addMusic()" class="md:col-span-1 bg-pink-600 rounded hover:bg-pink-500"><i data-lucide="plus"></i></button>
+                    </div>
+                    <div id="admin-music-list" class="space-y-1 max-h-40 overflow-y-auto"></div>
+                </section>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <section class="bg-gray-800 p-5 rounded-xl border border-gray-700 lg:col-span-1">
+                        <h3 class="text-lg font-bold mb-4 text-yellow-400">分类管理</h3>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="cat-name" placeholder="名称" class="flex-1 bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                            <select id="cat-type" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                                <option value="sidebar">侧边</option>
+                                <option value="topbar">顶部</option>
+                            </select>
+                            <button onclick="addCategory()" class="bg-yellow-600 px-3 rounded hover:bg-yellow-500"><i data-lucide="plus"></i></button>
+                        </div>
+                        <div id="admin-cat-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                    </section>
+
+                    <section class="bg-gray-800 p-5 rounded-xl border border-gray-700 lg:col-span-2">
+                        <h3 class="text-lg font-bold mb-4 text-green-400">添加网站</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                            <input type="text" id="site-url" placeholder="链接 URL" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                            <input type="text" id="site-name" placeholder="网站名称" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                            <input type="text" id="site-icon" placeholder="图标 URL" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                            <select id="site-cat" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm"></select>
+                            <input type="text" id="site-desc" placeholder="简介" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm">
+                            <input type="text" id="site-pwd" placeholder="访问密码 (留空则公开)" class="bg-gray-900 border border-red-900 p-2 rounded text-sm text-red-200 placeholder-red-800/50">
+                            
+                            <div class="sm:col-span-2 flex justify-end">
+                                <button onclick="addSite()" class="bg-green-600 px-6 py-2 rounded font-bold hover:bg-green-500 w-full sm:w-auto">保存网站</button>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-700 pt-3">
+                            <h4 class="text-sm font-bold text-gray-400 mb-2">最近添加</h4>
+                            <div id="admin-site-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto"></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let state = { categories: [], sites: [], musicList: [], settings: { iconSize: 64, siteLogoUrl: '', backgrounds: [] }, token: localStorage.getItem('nav_token') || '', bgIndex: 0 };
+
+        const api = {
+            headers: () => ({ 'Content-Type': 'application/json', 'Authorization': state.token }),
+            get: async (ep) => (await fetch(`/api/${ep}`)).json(),
+            post: async (ep, body) => {
+                const res = await fetch(`/api/${ep}`, { method: 'POST', body: JSON.stringify(body), headers: api.headers() });
+                if(res.status === 401) { alert('后台登录失效'); showLogin(); return null; }
+                return res.json();
+            },
+            delete: async (ep) => {
+                const res = await fetch(`/api/${ep}`, { method: 'DELETE', headers: api.headers() });
+                if(res.status === 401) return null;
+                return res.json();
+            }
+        };
+
+        async function init() {
+            const [sets, cats, sites, music] = await Promise.all([
+                api.get('settings'), api.get('categories'), api.get('sites'), api.get('music')
+            ]);
+            
+            if(sets.iconSize) state.settings.iconSize = parseInt(sets.iconSize);
+            if(sets.siteLogoUrl) state.settings.siteLogoUrl = sets.siteLogoUrl;
+            if(sets.backgrounds) state.settings.backgrounds = JSON.parse(sets.backgrounds);
+            state.categories = cats || [];
+            state.sites = sites || [];
+            state.musicList = music || [];
+
+            applyStyles();
+            renderNav();
+            renderContent();
+            initMusic();
+            lucide.createIcons();
+        }
+
+        function applyStyles() {
+            if(state.settings.siteLogoUrl) {
+                document.getElementById('global-site-logo').src = state.settings.siteLogoUrl;
+                document.getElementById('global-site-logo').classList.remove('hidden');
+            }
+            document.documentElement.style.setProperty('--icon-size', state.settings.iconSize + 'px');
+            const bgs = state.settings.backgrounds;
+            if(bgs && bgs.length) {
+                const setBg = () => { document.body.style.backgroundImage = `url('${bgs[state.bgIndex]}')`; state.bgIndex = (state.bgIndex+1)%bgs.length; };
+                setBg();
+                if(bgs.length > 1) setInterval(setBg, 10000);
+            }
+        }
+
+        function renderNav() {
+            const side = document.getElementById('sidebar-nav');
+            const top = document.getElementById('topbar-nav');
+            side.innerHTML = ''; top.innerHTML = '';
+            state.categories.forEach(c => {
+                const link = `<a href="#cat-${c.id}" class="block px-4 py-2 rounded hover:bg-white/10 text-gray-300 hover:text-white">${c.name}</a>`;
+                if(c.type === 'sidebar') side.innerHTML += link; else top.innerHTML += link;
+            });
+        }
+
+        function renderContent() {
+            const grid = document.getElementById('content-grid');
+            grid.innerHTML = '';
+            state.categories.sort((a,b)=>a.displayOrder-b.displayOrder).forEach(c => {
+                const sites = state.sites.filter(s => s.categoryId == c.id).sort((a,b)=>a.display_order-b.display_order);
+                if(!sites.length) return;
+                
+                const section = document.createElement('div');
+                section.id = `cat-${c.id}`;
+                section.className = "mb-10";
+                section.innerHTML = `<h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-white border-b border-white/10 pb-2"><span class="w-1 h-6 bg-blue-500 rounded-full"></span>${c.name}</h2>`;
+                
+                const list = document.createElement('div');
+                list.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4";
+                
+                sites.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = "group relative bg-white/5 hover:bg-white/10 p-4 rounded-xl flex flex-col items-center gap-3 transition hover:-translate-y-1 hover:shadow-xl border border-white/5 cursor-pointer";
+                    // 核心逻辑：如果有锁，点击触发解锁；无锁直接打开
+                    card.onclick = () => {
+                        if(s.is_locked) unlockSite(s.id);
+                        else window.open(s.url, '_blank');
+                    };
+                    
+                    card.innerHTML = `
+                        <img src="${s.icon || 'https://placehold.co/64'}" class="site-icon-img rounded-lg shadow-lg object-cover" style="width:${state.settings.iconSize}px; height:${state.settings.iconSize}px">
+                        <span class="text-sm font-medium text-gray-200 text-center truncate w-full">${s.name}</span>
+                        ${s.is_locked ? '<div class="lock-badge"><i data-lucide="lock" class="w-3 h-3"></i></div>' : ''}
+                    `;
+                    list.appendChild(card);
+                });
+                section.appendChild(list);
+                grid.appendChild(section);
+            });
+            lucide.createIcons();
+        }
+
+        function initMusic() {
+            const ui = document.getElementById('music-player-ui');
+            if(!state.musicList.length) { ui.classList.add('hidden'); return; }
+            ui.classList.remove('hidden');
+            const audio = document.getElementById('bg-audio');
+            let idx = 0;
+            const play = (i) => {
+                if(i>=state.musicList.length) i=0; idx=i;
+                const m = state.musicList[i];
+                audio.src = m.url;
+                document.getElementById('music-title-text').textContent = m.title;
+                document.getElementById('music-artist-text').textContent = m.artist;
+                document.getElementById('music-cover-img').src = m.cover || 'https://i.gifer.com/VAyR.gif';
+                audio.play().catch(()=>{});
+            };
+            audio.onended = () => play(idx+1);
+            ui.onclick = () => { audio.paused ? (audio.play(), ui.classList.add('playing')) : (audio.pause(), ui.classList.remove('playing')); };
+            play(0);
+        }
+
+        // --- 后台逻辑 ---
+        window.showLogin = () => document.getElementById('login-modal').classList.add('active');
+        
+        document.getElementById('do-login-btn').onclick = async () => {
+            const pwd = document.getElementById('admin-password').value;
+            const res = await fetch('/api/login', { method: 'POST', body: JSON.stringify({password: pwd}) });
+            if(res.ok) {
+                state.token = pwd;
+                localStorage.setItem('nav_token', pwd);
+                document.getElementById('login-modal').classList.remove('active');
+                document.getElementById('admin-password').value = '';
+                openAdmin();
+            } else alert('密码错误');
+        };
+
+        function openAdmin() {
+            document.getElementById('admin-panel').classList.add('active');
+            renderAdminSettings();
+            renderAdminMusic();
+            renderAdminCats();
+            renderAdminSites();
+        }
+
+        // 设置部分
+        function renderAdminSettings() {
+            document.getElementById('icon-size-input').value = state.settings.iconSize;
+            document.getElementById('site-logo-input').value = state.settings.siteLogoUrl || '';
+            const list = document.getElementById('bg-list');
+            list.innerHTML = (state.settings.backgrounds||[]).map((u,i) => `
+                <li class="flex justify-between items-center bg-gray-900 p-2 rounded text-xs"><span class="truncate flex-1 mr-2 text-gray-400">${u}</span><button onclick="rmBg(${i})" class="text-red-400">×</button></li>
+            `).join('');
+        }
+        document.getElementById('icon-size-input').oninput = (e) => {
+            state.settings.iconSize = e.target.value;
+            document.getElementById('icon-size-val').textContent = e.target.value;
+            document.documentElement.style.setProperty('--icon-size', e.target.value + 'px');
+        };
+        window.saveGlobalSettings = async () => {
+            state.settings.siteLogoUrl = document.getElementById('site-logo-input').value;
+            await api.post('settings', { iconSize: state.settings.iconSize, siteLogoUrl: state.settings.siteLogoUrl });
+            alert('已保存');
+        };
+        window.addBackground = () => {
+            const url = document.getElementById('bg-url-input').value;
+            if(url) { state.settings.backgrounds.push(url); renderAdminSettings(); document.getElementById('bg-url-input').value=''; }
+        };
+        window.rmBg = (i) => { state.settings.backgrounds.splice(i,1); renderAdminSettings(); };
+        window.saveBackgrounds = async () => { await api.post('settings', { backgrounds: state.settings.backgrounds }); alert('已保存'); };
+
+        // 音乐部分
+        async function renderAdminMusic() {
+            const list = await api.get('music');
+            document.getElementById('admin-music-list').innerHTML = list.map(m => `
+                <div class="flex justify-between items-center bg-gray-900 p-2 rounded mb-1 text-xs"><span class="truncate">${m.title}</span><button onclick="delMusic(${m.id})" class="text-red-400">×</button></div>
+            `).join('');
+        }
+        window.addMusic = async () => {
+            await api.post('music', {
+                title: document.getElementById('music-title').value,
+                artist: document.getElementById('music-artist').value,
+                url: document.getElementById('music-url').value,
+                cover: document.getElementById('music-cover').value
+            });
+            renderAdminMusic();
+        };
+        window.delMusic = async (id) => { if(confirm('删?')) { await api.delete(`music/${id}`); renderAdminMusic(); }};
+
+        // 网站与分类
+        function renderAdminCats() {
+            const sel = document.getElementById('site-cat');
+            sel.innerHTML = state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            document.getElementById('admin-cat-list').innerHTML = state.categories.map(c => `
+                <div class="flex justify-between items-center bg-gray-900 p-2 rounded mb-1 text-xs"><span>${c.name}</span><button onclick="delCat(${c.id})" class="text-red-400">×</button></div>
+            `).join('');
+        }
+        window.addCategory = async () => {
+            await api.post('categories', { name: document.getElementById('cat-name').value, type: document.getElementById('cat-type').value });
+            state.categories = await api.get('categories'); renderAdminCats(); renderNav();
+        };
+        window.delCat = async (id) => { if(confirm('删分类?')) { await api.delete(`categories/${id}`); location.reload(); } };
+
+        function renderAdminSites() {
+            document.getElementById('admin-site-list').innerHTML = state.sites.slice(-10).map(s => `
+                <div class="flex justify-between items-center bg-gray-900 p-2 rounded text-xs">
+                    <div class="flex items-center gap-2 truncate"><img src="${s.icon}" class="w-4 h-4 rounded"><span>${s.name} ${s.is_locked?'🔒':''}</span></div>
+                    <button onclick="delSite(${s.id})" class="text-red-400">Del</button>
+                </div>
+            `).join('');
+        }
+        window.addSite = async () => {
+            const res = await api.post('sites', {
+                categoryId: document.getElementById('site-cat').value,
+                name: document.getElementById('site-name').value,
+                url: document.getElementById('site-url').value,
+                icon: document.getElementById('site-icon').value,
+                description: document.getElementById('site-desc').value,
+                password: document.getElementById('site-pwd').value // 发送密码
+            });
+            if(res) { 
+                alert('添加成功'); 
+                state.sites = await api.get('sites'); 
+                renderAdminSites(); renderContent(); 
+                document.getElementById('site-name').value = '';
+                document.getElementById('site-url').value = '';
+                document.getElementById('site-pwd').value = '';
+            }
+        };
+        window.delSite = async (id) => { if(confirm('删?')) { await api.delete(`sites/${id}`); state.sites = await api.get('sites'); renderAdminSites(); renderContent(); } };
+        
+        // 核心解锁逻辑
+        window.unlockSite = async (id) => {
+            const pwd = prompt("此网站已加密，请输入访问密码:");
+            if(!pwd) return;
+            const res = await fetch('/api/unlock-site', { 
+                method: 'POST', 
+                body: JSON.stringify({ id, password: pwd }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            if(data.success) {
+                window.open(data.url, '_blank');
+            } else {
+                alert(data.error);
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>
