@@ -113,7 +113,7 @@ async function handleApiRequest(request, env) {
         break;
 
       case 'sites':
-        if (request.method === 'GET' && !pathParts[2]) {
+        if (request.method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM sites ORDER BY categoryId, display_order, id').all();
           return jsonResponse(results || []);
         }
