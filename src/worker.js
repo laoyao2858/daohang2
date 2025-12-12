@@ -21,12 +21,14 @@ async function handleApiRequest(request, env) {
   try {
     switch (resource) {
       case 'settings':
+        // 获取设置
         if (request.method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM settings').all();
           const settings = {};
           results.forEach(row => { settings[row.key] = row.value; });
           return jsonResponse(settings);
         }
+        // 更新设置
         if (request.method === 'POST') {
           const updates = await request.json();
           const statements = [];
@@ -39,20 +41,25 @@ async function handleApiRequest(request, env) {
         break;
 
       case 'music':
+        // 获取歌单
         if (request.method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM music_playlist ORDER BY display_order ASC, id ASC').all();
           return jsonResponse(results || []);
         }
+        // 添加歌单
         if (request.method === 'POST') {
           const { server, media_id, type } = await request.json();
           if (!server || !media_id) return jsonResponse({ error: 'Missing fields' }, 400);
+          
           const { results } = await env.DB.prepare('SELECT MAX(display_order) as maxOrder FROM music_playlist').all();
           const newOrder = (results[0].maxOrder || 0) + 1;
+          
           const stmt = env.DB.prepare('INSERT INTO music_playlist (server, media_id, type, display_order) VALUES (?, ?, ?, ?)')
             .bind(server, media_id, type || 'playlist', newOrder);
           const { meta } = await stmt.run();
           return jsonResponse({ success: true, id: meta.last_row_id });
         }
+        // 删除歌单
         if (request.method === 'DELETE' && id) {
           await env.DB.prepare('DELETE FROM music_playlist WHERE id = ?').bind(id).run();
           return jsonResponse({ success: true });
