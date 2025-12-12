@@ -181,30 +181,33 @@ async function handleApiRequest(request, env) {
 
       case 'import':
         if (request.method === 'POST') {
-            const data = await request.json();
-            const statements = [];
-            // Simplified import logic for brevity, ensure full logic is kept if needed
-            if(data.categories) {
-                 statements.push(env.DB.prepare('DELETE FROM categories'));
-                 data.categories.forEach(c => statements.push(env.DB.prepare('INSERT INTO categories (id, name, type, displayOrder) VALUES (?,?,?,?)').bind(c.id, c.name, c.type, c.displayOrder)));
+          const data = await request.json();
+          const statements = [];
+          if (data.categories) {
+            statements.push(env.DB.prepare('DELETE FROM categories'));
+            data.categories.forEach((cat) => {
+              statements.push(env.DB.prepare('INSERT INTO categories (id, name, type, displayOrder) VALUES (?, ?, ?, ?)').bind(cat.id, cat.name, cat.type, cat.displayOrder || 0));
+            });
+          }
+          if (data.sites) {
+            statements.push(env.DB.prepare('DELETE FROM sites'));
+            data.sites.forEach((site) => {
+              statements.push(env.DB.prepare('INSERT INTO sites (id, categoryId, name, url, icon, description, tags, group_id, visit_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(site.id, site.categoryId, site.name, site.url, site.icon || '', site.description || '', site.tags || '', site.group_id || null, site.visit_count || 0));
+            });
+          }
+          if (data.siteGroups) {
+            statements.push(env.DB.prepare('DELETE FROM site_groups'));
+            data.siteGroups.forEach((group) => {
+              statements.push(env.DB.prepare('INSERT INTO site_groups (id, name, color, icon, display_order) VALUES (?, ?, ?, ?, ?)').bind(group.id, group.name, group.color || '', group.icon || '', group.display_order || 0));
+            });
+          }
+          if (data.userPreferences) {
+            for (const [key, value] of Object.entries(data.userPreferences)) {
+              statements.push(env.DB.prepare('INSERT OR REPLACE INTO user_preferences (key, value) VALUES (?, ?)').bind(key, value));
             }
-            if(data.sites) {
-                 statements.push(env.DB.prepare('DELETE FROM sites'));
-                 data.sites.forEach(s => statements.push(env.DB.prepare('INSERT INTO sites (id, categoryId, name, url, icon, description, tags, group_id, visit_count) VALUES (?,?,?,?,?,?,?,?,?)').bind(s.id, s.categoryId, s.name, s.url, s.icon, s.description, s.tags, s.group_id, s.visit_count)));
-            }
-             if (data.siteGroups) {
-                statements.push(env.DB.prepare('DELETE FROM site_groups'));
-                data.siteGroups.forEach((group) => {
-                  statements.push(env.DB.prepare('INSERT INTO site_groups (id, name, color, icon, display_order) VALUES (?, ?, ?, ?, ?)').bind(group.id, group.name, group.color || '', group.icon || '', group.display_order || 0));
-                });
-             }
-             if (data.userPreferences) {
-                for (const [key, value] of Object.entries(data.userPreferences)) {
-                  statements.push(env.DB.prepare('INSERT OR REPLACE INTO user_preferences (key, value) VALUES (?, ?)').bind(key, value));
-                }
-             }
-            await env.DB.batch(statements);
-            return jsonResponse({ success: true });
+          }
+          await env.DB.batch(statements);
+          return jsonResponse({ success: true });
         }
         break;
 
