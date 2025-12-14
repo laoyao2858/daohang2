@@ -2847,6 +2847,25 @@
 
         // --- Event Listeners (防崩溃修复版) ---
         function setupEventListeners() {
+            // --- 新增：自动获取图标功能 ---
+            if (DOMElements.siteUrlInput) {
+                DOMElements.siteUrlInput.addEventListener('blur', function() {
+                    const url = this.value.trim();
+                    // 只有当有URL且图标框为空时才自动获取
+                    if (url && !DOMElements.siteIconInput.value) {
+                        try {
+                            const domain = new URL(url).hostname;
+                            // 使用 Google Favicon 服务
+                            const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+                            DOMElements.siteIconInput.value = iconUrl;
+                            if(DOMElements.iconPreview) DOMElements.iconPreview.src = iconUrl;
+                        } catch(e) {
+                            // URL格式不对，忽略
+                        }
+                    }
+                });
+            }
+            // ---------------------------
             // 辅助函数：安全绑定事件，防止元素不存在导致报错
             const safeBind = (element, eventType, handler) => {
                 if (element) {
