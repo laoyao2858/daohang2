@@ -63,7 +63,7 @@
         }
         .cat-content.collapsed { max-height: 0; padding: 0; opacity: 0; }
 
-        /* 圆形玻璃图标 (核心设计) */
+        /* 圆形玻璃图标 */
         .site-item {
             display: flex; flex-direction: column; align-items: center; gap: 12px;
             text-decoration: none; color: white; group;
@@ -124,7 +124,7 @@
 
     <div class="top-bar">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-sm shadow-lg">P</div>
+            <img id="site-logo" src="" class="w-8 h-8 rounded-full border border-white/20 hidden">
             <span class="font-bold tracking-widest hidden md:block text-sm opacity-80">PORTAL</span>
         </div>
 
@@ -174,12 +174,18 @@
                             <div id="stat-today" class="text-2xl font-bold text-green-400">0</div>
                         </div>
                     </div>
+                    
+                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+                        <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">最近访客 (IP)</h3>
+                        <div id="visitor-list" class="text-xs text-gray-400 space-y-1 max-h-32 overflow-y-auto"></div>
+                    </div>
 
                     <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
                         <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">站点设置</h3>
                         <div class="space-y-3">
+                            <input id="set-icon" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="网站头像 URL">
                             <input id="set-welcome" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="顶部滚动说明语">
-                            <textarea id="set-bg" rows="3" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="背景图片URL (支持多张，每行一个)"></textarea>
+                            <textarea id="set-bg" rows="3" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="背景图片URL (支持多张，每行一个，幻灯片播放)"></textarea>
                             <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm font-bold w-full transition">保存设置</button>
                         </div>
                     </div>
@@ -250,7 +256,16 @@
                 renderMain();
                 
                 if(state.settings.welcomeMessage) $('welcome-text').innerText = state.settings.welcomeMessage;
-                if(v) { $('stat-total').innerText = v.total; $('stat-today').innerText = v.today; }
+                if(state.settings.siteIconUrl) {
+                    $('site-logo').src = state.settings.siteIconUrl;
+                    $('site-logo').classList.remove('hidden');
+                }
+
+                if(v) { 
+                    $('stat-total').innerText = v.total; 
+                    $('stat-today').innerText = v.today; 
+                    if(v.recent) renderVisitorList(v.recent);
+                }
                 
                 initMusic();
                 api.post('visitor', {}); // 统计访问
@@ -317,6 +332,12 @@
             }
         }
 
+        function renderVisitorList(list) {
+            $('visitor-list').innerHTML = list.map(v => 
+                `<div class="flex justify-between border-b border-white/5 pb-1"><span>${v.ip_address}</span><span>${new Date(v.visit_time).toLocaleTimeString()}</span></div>`
+            ).join('');
+        }
+
         // --- 强力音乐播放 ---
         function initMusic() {
             if(!state.music.length) return;
@@ -368,6 +389,7 @@
 
         async function loadAdminPanel() {
             // 设置
+            $('set-icon').value = state.settings.siteIconUrl || '';
             $('set-welcome').value = state.settings.welcomeMessage || '';
             try { 
                 $('set-bg').value = JSON.parse(state.settings.backgroundUrls).join('\n');
@@ -400,6 +422,7 @@
         window.saveSettings = async () => {
             const bgs = $('set-bg').value.split('\n').filter(t=>t.trim());
             const data = {
+                siteIconUrl: $('set-icon').value,
                 welcomeMessage: $('set-welcome').value,
                 backgroundUrls: JSON.stringify(bgs)
             };
