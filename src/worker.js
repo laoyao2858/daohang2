@@ -15,18 +15,26 @@ export default {
       });
     }
 
-    // 1. 拦截 API 请求
-    if (url.pathname.startsWith('/api/')) {
-      try {
-        return await handleApiRequest(request, env);
-      } catch (err) {
-        return new Response(JSON.stringify({ error: err.message }), { 
-          status: 500, 
-          headers: { 'Content-Type': 'application/json' } 
-        });
+    // --- settings (站点设置接口) ---
+    if (res === 'settings') {
+      // 获取设置
+      if (method === 'GET') {
+        const { results } = await env.DB.prepare('SELECT * FROM settings').all();
+        const s = {}; 
+        results.forEach(r => s[r.key] = r.value);
+        return json(s);
+      }
+      // 保存设置
+      if (method === 'POST') {
+        const d = await req.json();
+        // 批量保存所有设置项
+        const stmts = Object.entries(d).map(([k, v]) => 
+            env.DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').bind(k, String(v))
+        );
+        await env.DB.batch(stmts);
+        return json({ ok: true });
       }
     }
-
     // 2. 处理静态资源 (HTML, CSS, JS)
     if (env.ASSETS) {
       return env.ASSETS.fetch(request);
