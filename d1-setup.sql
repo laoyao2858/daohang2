@@ -85,13 +85,15 @@ CREATE TABLE IF NOT EXISTS visitor_stats (
 
 -- 9. 插入默认设置
 INSERT OR IGNORE INTO settings (key, value) VALUES 
-  ('backgroundUrl', 'https://iili.io/FSa7FDB.gif'),
-  ('avatarUrl', 'https://iili.io/FSa7FDB.gif'),
-  ('welcomeMessage', '欢迎使用导航站！'),
+  ('backgroundUrl', 'https://images.unsplash.com/photo-1534796636918-6a8c0be14515?w=1920&q=80'),
+  ('avatarUrl', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop&crop=faces'),
+  ('welcomeMessage', '欢迎使用导航站！\n您可以在这里快速访问常用网站和工具'),
   ('autoPlayMusic', 'true'),
   ('showVisitorStats', 'true'),
   ('siteTitle', '我的导航站'),
-  ('siteDescription', '一个简洁高效的导航网站');
+  ('siteDescription', '一个简洁高效的导航网站'),
+  ('welcomeTitle', '欢迎访问导航站'),
+  ('welcomeText', '发现更多精彩内容');
 
 -- 10. 插入默认用户偏好
 INSERT OR IGNORE INTO user_preferences (key, value) VALUES 
@@ -102,8 +104,17 @@ INSERT OR IGNORE INTO user_preferences (key, value) VALUES
 
 -- 11. 插入示例音乐（可选）
 INSERT OR IGNORE INTO custom_music (title, artist, url, cover) VALUES 
-  ('示例音乐1', '未知艺术家', 'https://example.com/music1.mp3', 'https://iili.io/FSa7FDB.gif'),
-  ('示例音乐2', '未知艺术家', 'https://example.com/music2.mp3', 'https://iili.io/FSa7FDB.gif');
+  ('Example Music 1', 'Artist 1', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop'),
+  ('Example Music 2', 'Artist 2', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=400&fit=crop'),
+  ('Example Music 3', 'Artist 3', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&h=400&fit=crop');
 
 -- 12. 更新现有数据
 UPDATE sites SET display_order = id WHERE display_order = 0 OR display_order IS NULL;
+
+-- 创建索引以提高查询性能
+CREATE INDEX IF NOT EXISTS idx_sites_category ON sites(categoryId);
+CREATE INDEX IF NOT EXISTS idx_sites_display_order ON sites(display_order);
+CREATE INDEX IF NOT EXISTS idx_visitor_stats_time ON visitor_stats(visit_time);
+CREATE INDEX IF NOT EXISTS idx_visitor_stats_ip ON visitor_stats(ip_address);
+CREATE INDEX IF NOT EXISTS idx_visitor_stats_session ON visitor_stats(session_id);
+CREATE INDEX IF NOT EXISTS idx_visitor_stats_active ON visitor_stats(last_active);
