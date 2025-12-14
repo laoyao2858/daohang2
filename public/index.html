@@ -1,1 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal - Modern Navigation Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #3730a3;
+            --surface-dark: #0f172a;
+            --surface-light: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            --gradient-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card-gradient: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
+            --glass-effect: rgba(255, 255, 255, 0.05);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* 新头部样式 */
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--glass-effect);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        /* 新搜索栏样式 */
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .search-box {
+            background: var(--card-gradient);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-icon {
+            color: var(--text-secondary);
+            padding: 0 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            padding: 1rem 0;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-engine-selector {
+            position: relative;
+            min-width: 140px;
+        }
+
+        .engine-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(79, 70, 229, 0.2);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .engine-btn:hover {
+            background: rgba(79, 70, 229, 0.3);
+        }
+
+        .engine-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+
+        /* 新网站卡片样式 */
+        .sites-grid {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .category-header {
+            margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .site-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        .site-card {
+            background: var(--card-gradient);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .site-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .site-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .site-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(79, 70, 229, 0.5);
+            box-shadow: 0 12px 40px rgba(79, 70, 229, 0.2);
+        }
+
+        .site-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            object-fit: cover;
+            background: var(--surface-light);
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .site-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .site-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+            justify-content: center;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(79, 70, 229, 0.2);
+            color: var(--primary-light);
+            border-radius: 20px;
+        }
+
+        /* 新侧边栏样式 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 1rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            display: none;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-item:hover {
+            background: var(--glass-effect);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 新浮动操作按钮 */
+        .fab-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+
+        .fab {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(79, 70, 229, 0.6);
+        }
+
+        /* 新模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--card-gradient);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--glass-effect);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        /* 新表单样式 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.875rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .form-select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.875rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-effect);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 新常用网站样式 */
+        .frequent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .frequent-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--glass-effect);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .frequent-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .frequent-count {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--accent-green);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .site-cards {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+            
+            .search-container {
+                margin: 1rem auto;
+            }
+            
+            .fab-container {
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .site-cards {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 0.75rem;
+            }
+            
+            .site-card {
+                padding: 1rem;
+            }
+            
+            .site-icon {
+                width: 48px;
+                height: 48px;
+                padding: 10px;
+            }
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header" style="margin-bottom: 2rem;">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <span>Portal</span>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-title">Navigation</div>
+            <nav id="sidebar-nav">
+                <!-- 分类将通过JavaScript动态生成 -->
+            </nav>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-title">Tools</div>
+            <a href="#" class="nav-item" id="toggle-theme">
+                <i class="fas fa-moon nav-icon"></i>
+                <span>Theme</span>
+            </a>
+            <a href="#" class="nav-item" id="toggle-language">
+                <i class="fas fa-globe nav-icon"></i>
+                <span>Language</span>
+            </a>
+            <a href="#" class="nav-item" id="admin-login-btn">
+                <i class="fas fa-cog nav-icon"></i>
+                <span>Admin</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 头部 -->
+        <header class="header">
+            <button class="control-btn" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <span>Portal</span>
+            </div>
+            
+            <div class="nav-controls">
+                <button class="control-btn" id="searchToggle">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="control-btn" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="control-btn" id="musicToggle">
+                    <i class="fas fa-music"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 搜索栏 -->
+        <div class="search-container" id="searchContainer">
+            <div class="search-box">
+                <div class="search-engine-selector">
+                    <button class="engine-btn" id="engineBtn">
+                        <img src="https://www.google.com/favicon.ico" alt="Google" class="engine-icon">
+                        <span>Google</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                
+                <i class="fas fa-search search-icon"></i>
+                
+                <input type="text" 
+                       class="search-input" 
+                       id="searchInput"
+                       placeholder="Search websites or the web...">
+                
+                <button class="control-btn" id="voiceSearch" style="margin-left: auto;">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 常用网站 -->
+        <div class="sites-grid">
+            <div id="frequentSites" style="margin-bottom: 3rem;">
+                <div class="category-header fade-in">
+                    <div class="category-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h2 class="category-title">Frequently Visited</h2>
+                </div>
+                <div id="frequentGrid" class="frequent-grid"></div>
+            </div>
+
+            <!-- 主要网站内容 -->
+            <div id="contentGrid"></div>
+        </div>
+
+        <!-- 浮动操作按钮 -->
+        <div class="fab-container">
+            <div class="fab" id="mainFab">
+                <i class="fas fa-plus"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理面板模态框 -->
+    <div class="modal-overlay" id="adminModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Admin Panel</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 这里将插入原有的管理面板内容 -->
+                <div id="adminContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 音乐播放器 -->
+    <div class="music-player" id="musicPlayer" style="display: none;">
+        <!-- 这里将插入原有的音乐播放器内容 -->
+    </div>
+
+    <!-- JavaScript 部分 -->
+    <script>
+        // 保持原有的所有JavaScript功能和逻辑不变
+        // 这里将插入您原有的所有JavaScript代码，但需要调整选择器以匹配新的HTML结构
+        
+        // 简化示例：只处理UI交互，保持原有功能不变
+        document.addEventListener('DOMContentLoaded', function() {
+            // 侧边栏切换
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.add('open');
+                sidebarOverlay.classList.add('show');
+            });
+            
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('show');
+            });
+            
+            // 主题切换
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                const icon = themeToggle.querySelector('i');
+                if (document.body.classList.contains('light-mode')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            });
+            
+            // 管理面板
+            const adminBtn = document.getElementById('admin-login-btn');
+            const adminModal = document.getElementById('adminModal');
+            const closeModal = document.getElementById('closeModal');
+            
+            adminBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                adminModal.style.display = 'flex';
+                // 这里将加载原有的管理面板内容
+                loadAdminPanel();
+            });
+            
+            closeModal.addEventListener('click', () => {
+                adminModal.style.display = 'none';
+            });
+            
+            // 示例网站数据（实际应从API获取）
+            const sampleSites = [
+                { name: "Google", url: "https://google.com", icon: "https://www.google.com/favicon.ico", category: "Search" },
+                { name: "GitHub", url: "https://github.com", icon: "https://github.com/favicon.ico", category: "Development" },
+                { name: "YouTube", url: "https://youtube.com", icon: "https://www.youtube.com/favicon.ico", category: "Entertainment" },
+                { name: "Twitter", url: "https://twitter.com", icon: "https://abs.twimg.com/favicons/twitter.ico", category: "Social" },
+                { name: "Reddit", url: "https://reddit.com", icon: "https://www.redditstatic.com/favicon.ico", category: "Social" },
+                { name: "Stack Overflow", url: "https://stackoverflow.com", icon: "https://stackoverflow.com/favicon.ico", category: "Development" }
+            ];
+            
+            // 渲染网站卡片
+            function renderSites(sites) {
+                const contentGrid = document.getElementById('contentGrid');
+                contentGrid.innerHTML = '';
+                
+                // 按分类分组
+                const categories = {};
+                sites.forEach(site => {
+                    if (!categories[site.category]) {
+                        categories[site.category] = [];
+                    }
+                    categories[site.category].push(site);
+                });
+                
+                // 为每个分类创建网格
+                Object.keys(categories).forEach(category => {
+                    const section = document.createElement('div');
+                    section.className = 'category-section fade-in';
+                    
+                    const header = document.createElement('div');
+                    header.className = 'category-header';
+                    header.innerHTML = `
+                        <div class="category-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <h2 class="category-title">${category}</h2>
+                    `;
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'site-cards';
+                    
+                    categories[category].forEach((site, index) => {
+                        const card = document.createElement('div');
+                        card.className = `site-card delay-${(index % 3) + 1}`;
+                        card.innerHTML = `
+                            <img src="${site.icon}" alt="${site.name}" class="site-icon" 
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/56/1e293b/f8fafc?text=${site.name.charAt(0)}'">
+                            <span class="site-name">${site.name}</span>
+                        `;
+                        card.addEventListener('click', () => {
+                            window.open(site.url, '_blank');
+                        });
+                        grid.appendChild(card);
+                    });
+                    
+                    section.appendChild(header);
+                    section.appendChild(grid);
+                    contentGrid.appendChild(section);
+                });
+                
+                // 触发动画
+                setTimeout(() => {
+                    document.querySelectorAll('.fade-in, .delay-1, .delay-2, .delay-3').forEach(el => {
+                        el.style.animationPlayState = 'running';
+                    });
+                }, 100);
+            }
+            
+            // 初始化渲染
+            renderSites(sampleSites);
+            
+            // 加载管理面板（简化版）
+            function loadAdminPanel() {
+                const adminContent = document.getElementById('adminContent');
+                adminContent.innerHTML = `
+                    <div class="form-group">
+                        <label class="form-label">Admin Password</label>
+                        <input type="password" class="form-input" placeholder="Enter password">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;">Login</button>
+                    <p style="text-align: center; color: var(--text-secondary); margin-top: 1rem;">
+                        Full admin panel with all features will be loaded here
+                    </p>
+                `;
+            }
+        });
+    </script>
+    
+    <!-- 原有的JavaScript功能将在这里集成 -->
+    <script type="module">
+        // 这里将插入您原有的完整JavaScript代码
+        // 包括所有API调用、功能逻辑、音乐播放器等
+        // 只需要调整DOM选择器以匹配新的HTML结构
+        
+        // 示例：原有状态管理
+        const state = {
+            categories: [],
+            sites: [],
+            selectedCategory: 'all',
+            isLoggedIn: false,
+            currentLanguage: 'en',
+            currentTheme: 'dark'
+        };
+        
+        // 原有API客户端
+        const api = {
+            get: async (endpoint) => {
+                const response = await fetch(`/api/${endpoint}`);
+                return response.json();
+            },
+            post: async (endpoint, data) => {
+                const response = await fetch(`/api/${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                return response.json();
+            }
+        };
+        
+        // 原有初始化函数
+        async function init() {
+            console.log('Initializing application with new UI...');
+            // 这里将调用原有的初始化逻辑
+        }
+        
+        // 启动应用
+        init();
+    </script>
+</body>
+</html>
