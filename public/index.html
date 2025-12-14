@@ -1503,1776 +1503,527 @@
     </div>
 
     <script type="module">
-        // --- i18n Translations ---
-        const translations = {
-            en: {
-                navMenu: "Navigation Menu",
-                searchPlaceholder: "Search sites...",
-                adminLogin: "Admin Login",
-                passwordPlaceholder: "Enter admin password",
-                login: "Login",
-                adminPanel: "Admin Panel",
-                globalSettings: "Global Settings",
-                backgroundPlaceholder: "Enter background image URL",
-                saveBackground: "Save Background",
-                categoryManagement: "Category Management",
-                newCategoryPlaceholder: "New category name",
-                sidebar: "Sidebar",
-                topbar: "Topbar",
-                siteManagement: "Site Management",
-                selectCategory: "Select a category",
-                siteNamePlaceholder: "Site Name",
-                siteUrlPlaceholder: "Site URL",
-                iconUrlPlaceholder: "Icon URL (optional)",
-                siteDescPlaceholder: "Site Description",
-                addSite: "Add Site",
-                allSites: "All Sites",
-                noSitesFound: "No sites found.",
-                passwordIncorrect: "Incorrect password, please try again.",
-                backgroundSaved: "Background saved successfully!",
-                backgroundSaveFailed: "Failed to save background.",
-                fillRequiredFields: "Please fill in all required fields.",
-                confirmCategoryDeletion: "Are you sure you want to delete this category? All associated sites will also be deleted.",
-                confirmSiteDeletion: "Are you sure you want to delete this site?",
-                dataLoadFailed: "Failed to load data. Please check the browser console (F12) for more details and ensure the backend API is running correctly.",
-                modalOk: "OK",
-                modalCancel: "Cancel",
-                modalConfirm: "Confirm",
-                saveOrder: "Save Order",
-                orderSaved: "Order saved successfully!",
-                editSite: "Edit Site",
-                saveChanges: "Save Changes",
-                siteUpdated: "Site updated successfully!",
-                frequentSites: "Frequent Sites",
-                tagsPlaceholder: "Tags (comma separated)",
-                selectGroup: "Select Group (optional)",
-                importExport: "Import/Export",
-                exportData: "Export Data",
-                importData: "Import Data",
-                importSuccess: "Data imported successfully!",
-                importFailed: "Import failed. Please check the file format.",
-                visitCount: "visits",
-                saveSitesOrder: "Save Sites Order",
-                sitesOrderSaved: "Sites order saved successfully!",
-                categoryTip: "Drag to reorder, change type with dropdown",
-                frequentSitesCount: "Frequent Sites Count:",
-                hideFrequentSites: "Hide Frequent Sites",
-                saveSettings: "Save Settings",
-                webSearchPlaceholder: "Search the web...",
-                // 新增翻译
-                siteCustomization: "Site Customization",
-                musicManagement: "Music Management",
-                visitorStats: "Visitor Statistics",
-                totalVisits: "Total Visits",
-                todayVisits: "Today's Visits",
-                onlineUsers: "Online Users",
-                recentVisitors: "Recent Visitors",
-                manageMusic: "Manage Music",
-                addMusic: "Add Music",
-                musicTitle: "Music Title",
-                musicArtist: "Artist",
-                musicUrl: "Music URL",
-                musicCover: "Cover Image"
-            },
-            zh: {
-                navMenu: "导航菜单",
-                searchPlaceholder: "搜索网站...",
-                adminLogin: "管理员登录",
-                passwordPlaceholder: "请输入管理密码",
-                login: "登录",
-                adminPanel: "管理面板",
-                globalSettings: "全局设置",
-                backgroundPlaceholder: "输入背景图片 URL",
-                saveBackground: "保存背景",
-                categoryManagement: "分类管理",
-                newCategoryPlaceholder: "新分类名称",
-                sidebar: "侧边栏",
-                topbar: "顶部栏",
-                siteManagement: "网站管理",
-                selectCategory: "选择一个分类",
-                siteNamePlaceholder: "网站名称",
-                siteUrlPlaceholder: "网站 URL",
-                iconUrlPlaceholder: "图标 URL (可选)",
-                siteDescPlaceholder: "网站简介",
-                addSite: "添加网站",
-                allSites: "所有网站",
-                noSitesFound: "没有找到网站。",
-                passwordIncorrect: "密码错误，请重试。",
-                backgroundSaved: "背景已保存！",
-                backgroundSaveFailed: "背景保存失败。",
-                fillRequiredFields: "请填写所有必填字段。",
-                confirmCategoryDeletion: "确定要删除这个分类吗？其下的所有网站也会被一并删除。",
-                confirmSiteDeletion: "确定要删除这个网站吗？",
-                dataLoadFailed: "数据加载失败。请按 F12 查看浏览器控制台获取更多信息，并确保后端 API 运行正常。",
-                modalOk: "好的",
-                modalCancel: "取消",
-                modalConfirm: "确定",
-                saveOrder: "保存顺序",
-                orderSaved: "顺序已保存！",
-                editSite: "编辑网站",
-                saveChanges: "保存更改",
-                siteUpdated: "网站已成功更新！",
-                frequentSites: "常用网站",
-                tagsPlaceholder: "标签 (用逗号分隔)",
-                selectGroup: "选择分组 (可选)",
-                importExport: "导入导出",
-                exportData: "导出数据",
-                importData: "导入数据",
-                importSuccess: "数据导入成功！",
-                importFailed: "导入失败，请检查文件格式。",
-                visitCount: "次访问",
-                saveSitesOrder: "保存网站顺序",
-                sitesOrderSaved: "网站顺序已保存！",
-                categoryTip: "拖拽调整顺序，下拉框切换栏位",
-                frequentSitesCount: "常用网站显示数量：",
-                hideFrequentSites: "隐藏常用网站",
-                saveSettings: "保存设置",
-                webSearchPlaceholder: "搜索互联网...",
-                // 新增翻译
-                siteCustomization: "站点个性化设置",
-                musicManagement: "自定义音乐管理",
-                visitorStats: "访问统计",
-                totalVisits: "总访问量",
-                todayVisits: "今日访问",
-                onlineUsers: "在线用户",
-                recentVisitors: "最近访客",
-                manageMusic: "管理音乐",
-                addMusic: "添加音乐",
-                musicTitle: "音乐标题",
-                musicArtist: "艺术家",
-                musicUrl: "音乐链接",
-                musicCover: "封面图片"
-            }
-        };
+    // --- 1. 配置与状态 ---
+    const ADMIN_PASSWORD = "Qq110110."; 
+    const translations = {
+        en: { siteManagement: "Site Management", saveSettings: "Save Settings", dataLoadFailed: "Data Load Failed" },
+        zh: { siteManagement: "网站管理", saveSettings: "保存设置", dataLoadFailed: "数据加载失败" }
+    };
+    
+    const state = {
+        categories: [],
+        sites: [],
+        selectedCategory: 'all',
+        isLoggedIn: false,
+        currentLanguage: 'zh',
+        currentTheme: 'dark',
+        editingSiteId: null,
+        frequentSites: [],
+        customMusic: [],
+        settings: {},
+        backgroundAudio: null,
+        isMusicPlaying: false,
+        currentMusicIndex: 0
+    };
 
-        // --- Global State and Configuration ---
-        const ADMIN_PASSWORD = "Qq110110.";
-        const PLAYLISTS = [
-            { server: 'netease', id: '2250011882' },
-            { server: 'netease', id: '12607978369' },
-            { server: 'netease', id: '24381616' },
-        ];
+    // --- 2. 安全 DOM 获取 (防止页面瘫痪的核心) ---
+    // 这个函数确保即使找不到元素，也不会报错卡死
+    const getEl = (id) => document.getElementById(id) || document.createElement('div');
 
-        let state = {
-            categories: [],
-            sites: [],
-            selectedCategory: 'all',
-            isLoggedIn: false,
-            currentLanguage: 'zh',
-            currentTheme: 'dark',
-            editingSiteId: null,
-            frequentSites: [],
-            showFrequentSites: true,
-            siteGroups: [],
-            userPreferences: {},
-            currentSearchEngine: 'google',
-            // 新增状态
-            customMusic: [],
-            visitorStats: null,
-            settings: {},
-            backgroundAudio: null,
-            isMusicPlaying: false,
-            currentMusicIndex: 0,
-            visitorSessionId: localStorage.getItem('visitorSessionId') || crypto.randomUUID()
-        };
+    const DOMElements = {
+        // 基础结构
+        sidebar: getEl('sidebar'), sidebarNav: getEl('sidebar-nav'), sidebarOverlay: getEl('sidebarOverlay'),
+        menuToggle: getEl('menuToggle'), 
         
-        // Search engine configurations
-        const searchEngines = {
-            google: {
-                name: 'Google',
-                url: 'https://www.google.com/search?q=',
-                icon: 'https://www.google.com/favicon.ico'
-            },
-            baidu: {
-                name: '百度',
-                url: 'https://www.baidu.com/s?wd=',
-                icon: 'https://www.baidu.com/favicon.ico'
-            },
-            bing: {
-                name: 'Bing',
-                url: 'https://www.bing.com/search?q=',
-                icon: 'https://www.bing.com/favicon.ico'
-            },
-            duckduckgo: {
-                name: 'DuckDuckGo',
-                url: 'https://duckduckgo.com/?q=',
-                icon: 'https://duckduckgo.com/favicon.ico'
-            },
-            yandex: {
-                name: 'Yandex',
-                url: 'https://yandex.com/search/?text=',
-                icon: 'https://yandex.com/favicon.ico'
-            }
-        };
+        // 头部按钮
+        themeToggle: getEl('themeToggle'), musicToggle: getEl('musicToggle'), 
+        searchToggle: getEl('searchToggle'), statsToggle: getEl('statsToggle'),
 
-        // --- DOM Elements Cache (防崩溃修复版) ---
-        // 辅助函数：如果找不到元素，就返回一个假的空元素，防止报错
-        const getEl = (id) => document.getElementById(id) || document.createElement('div');
+        // 搜索与内容
+        searchContainer: getEl('searchContainer'), searchInput: getEl('searchInput'), 
+        contentGrid: getEl('contentGrid'), frequentSitesSection: getEl('frequentSites'), frequentGrid: getEl('frequentGrid'),
 
-        const DOMElements = {
-            html: document.documentElement,
-            body: document.body,
-            
-            // 侧边栏与导航
-            sidebarNav: getEl('sidebar-nav'),
-            contentGrid: getEl('contentGrid'), // 注意这里ID可能需要根据你的HTML调整，原版是 content-grid
-            searchInput: getEl('searchInput'), // 你新改的ID
-            
-            // 按钮与开关 (使用 getEl 防止因删除HTML导致报错)
-            adminLoginBtn: getEl('admin-login-btn'),
-            toggleLanguageBtn: getEl('toggle-language-btn'), 
-            themeSwitcher: getEl('themeToggle'), // 映射到新ID
-            themeToggle: getEl('themeToggle'),
-            
-            // 模态框与视图
-            adminModal: getEl('adminModal'),
-            adminLoginView: getEl('adminLoginView'),
-            adminPanelView: getEl('adminPanelView'),
-            loginForm: getEl('loginForm'),
-            adminPasswordInput: getEl('adminPasswordInput'),
-            loginError: getEl('loginError'),
-            adminLogoutBtn: getEl('admin-logout-btn'),
-            
-            // 管理表单
-            addCategoryForm: getEl('addCategoryForm'),
-            categoryNameInput: getEl('categoryNameInput'),
-            categoryTypeSelect: getEl('categoryTypeSelect'),
-            categoriesList: getEl('categoriesList'),
-            saveOrderBtn: getEl('save-order-btn'),
-            
-            // 网站管理表单 (匹配你刚才改的新ID)
-            siteForm: getEl('site-form'),
-            siteFormTitle: getEl('site-form-title'),
-            siteCategorySelect: getEl('site-category-select'),
-            siteNameInput: getEl('site-name-input'),
-            siteUrlInput: getEl('site-url-input'),
-            siteIconInput: getEl('site-icon-input'),
-            siteDescInput: getEl('site-desc-input'),
-            siteTagsInput: getEl('site-tags-input'),
-            siteGroupSelect: getEl('site-group-select'),
-            siteSubmitBtn: getEl('site-submit-btn'),
-            cancelEditBtn: getEl('cancel-edit-btn'),
-            sitesListAdmin: getEl('sitesListAdmin'),
-            iconPreview: getEl('icon-preview'),
-            
-            // 导入导出
-            exportDataBtn: getEl('export-data-btn'),
-            importDataBtn: getEl('import-data-btn'),
-            importFileInput: getEl('import-file-input'),
-            
-            // 常用网站
-            frequentSitesSection: getEl('frequentSites'),
-            frequentGrid: getEl('frequentGrid'),
-            frequentSitesCountSelect: getEl('frequent-sites-count-select'),
-            savePreferencesBtn: getEl('save-preferences-btn'),
-            
-            // 移动端菜单
-            mobileMenuToggle: getEl('menuToggle'),
-            mobileSidebar: getEl('sidebar'),
-            mobileSidebarContainer: getEl('sidebarOverlay'),
-            
-            // ⚠️ 关键：下面这些是你删掉的搜索按钮，getEl会给它们创建替身，防止脚本报错
-            voiceSearch: getEl('voiceSearch'), 
-            engineBtn: getEl('engineBtn'),
-            webSearchForm: getEl('web-search-form'),
-            webSearchInput: getEl('web-search-input'),
-            searchEngineToggle: getEl('search-engine-toggle'),
-            searchEngineMenu: getEl('search-engine-menu'),
-            currentEngineIcon: getEl('current-engine-icon'),
-            currentEngineName: getEl('current-engine-name'),
-            
-            // 新版UI元素
-            sidebar: getEl('sidebar'),
-            sidebarOverlay: getEl('sidebarOverlay'),
-            menuToggle: getEl('menuToggle'),
-            searchContainer: getEl('searchContainer'),
-            searchToggle: getEl('searchToggle'),
-            musicToggle: getEl('musicToggle'),
-            statsToggle: getEl('statsToggle'),
-            
-            // 访客统计
-            visitorStatsBtn: getEl('visitor-stats-btn'),
-            visitorStatsPanel: getEl('visitorStatsPanel'),
-            totalVisits: getEl('totalVisits'),
-            todayVisits: getEl('todayVisits'),
-            onlineUsers: getEl('onlineUsers'),
-            uniqueVisitors: getEl('uniqueVisitors'),
-            visitorLocations: getEl('visitorLocations'),
-            statsUpdateTime: getEl('statsUpdateTime'),
-            
-            // 音乐播放器
-            musicPlayer: getEl('musicPlayer'),
-            musicAlbumCover: getEl('musicAlbumCover'),
-            musicTitleMini: getEl('musicTitleMini'),
-            musicArtistMini: getEl('musicArtistMini'),
-            playPauseMusicBtn: getEl('playPauseMusicBtn'),
-            prevMusicBtn: getEl('prevMusicBtn'),
-            nextMusicBtn: getEl('nextMusicBtn'),
-            musicProgress: getEl('musicProgress'),
-            
-            // 其他表单
-            closeAdminModal: getEl('closeAdminModal'),
-            siteTitleInput: getEl('siteTitleInput'),
-            siteDescriptionInput: getEl('siteDescriptionInput'),
-            avatarUrlInput: getEl('avatarUrlInput'),
-            backgroundUrlInput: getEl('backgroundUrlInput'),
-            welcomeTitleInput: getEl('welcomeTitleInput'),
-            welcomeTextInput: getEl('welcomeTextInput'),
-            autoPlayMusicCheckbox: getEl('autoPlayMusicCheckbox'),
-            showVisitorStatsCheckbox: getEl('showVisitorStatsCheckbox'),
-            addMusicForm: getEl('addMusicForm'),
-            musicTitleInput: getEl('musicTitleInput'),
-            musicArtistInput: getEl('musicArtistInput'),
-            musicUrlInput: getEl('musicUrlInput'),
-            musicCoverInput: getEl('musicCoverInput'),
-            customMusicList: getEl('customMusicList'),
-            
-            // 管理员统计
-            adminTotalVisits: getEl('adminTotalVisits'),
-            adminTodayVisits: getEl('adminTodayVisits'),
-            adminOnlineUsers: getEl('adminOnlineUsers'),
-            adminUniqueVisitors: getEl('adminUniqueVisitors'),
-            recentVisitsTable: getEl('recentVisitsTable'),
-            
-            // 消息模态框
-            messageModal: getEl('messageModal'),
-            messageTitle: getEl('messageTitle'),
-            messageText: getEl('messageText'),
-            
-            // 页面显示元素
-            siteAvatar: getEl('siteAvatar'),
-            siteTitle: getEl('siteTitle'),
-            siteDescription: getEl('siteDescription'),
-            welcomeTitle: getEl('welcomeTitle'),
-            welcomeText: getEl('welcomeText'),
-            sidebarSiteTitle: getEl('sidebarSiteTitle'),
-            headerSiteTitle: getEl('headerSiteTitle')
-        };
+        // 音乐播放器
+        musicPlayer: getEl('musicPlayer'), musicCover: getEl('musicAlbumCover'), 
+        musicTitle: getEl('musicTitleMini'), musicArtist: getEl('musicArtistMini'),
+        playPauseBtn: getEl('playPauseMusicBtn'), prevBtn: getEl('prevMusicBtn'), nextBtn: getEl('nextMusicBtn'),
+        musicProgress: getEl('musicProgress'),
 
-        // --- API Client ---
-        const api = {
-            get: (endpoint) => fetch(`${window.location.origin}/api/${endpoint}`).then(async res => {
-                if (res.ok) return res.json();
-                const errorDetails = await res.text().catch(() => 'Could not read error body.');
-                return Promise.reject({ status: res.status, statusText: res.statusText, body: errorDetails });
-            }),
-            post: (endpoint, body) => fetch(`${window.location.origin}/api/${endpoint}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            }).then(async res => {
-                if (res.ok) return res.json();
-                const errorDetails = await res.text().catch(() => 'Could not read error body.');
-                return Promise.reject({ status: res.status, statusText: res.statusText, body: errorDetails });
-            }),
-            put: (endpoint, body) => fetch(`${window.location.origin}/api/${endpoint}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            }).then(async res => {
-                if (res.ok) return res.json();
-                const errorDetails = await res.text().catch(() => 'Could not read error body.');
-                return Promise.reject({ status: res.status, statusText: res.statusText, body: errorDetails });
-            }),
-            delete: (endpoint) => fetch(`${window.location.origin}/api/${endpoint}`, { method: 'DELETE' }).then(async res => {
-                if (res.ok) return res.json();
-                const errorDetails = await res.text().catch(() => 'Could not read error body.');
-                return Promise.reject({ status: res.status, statusText: res.statusText, body: errorDetails });
-            }),
-        };
+        // 管理员相关
+        adminLoginBtn: getEl('admin-login-btn'), adminLogoutBtn: getEl('admin-logout-btn'),
+        adminModal: getEl('adminModal'), closeAdminModal: getEl('closeAdminModal'),
+        loginForm: getEl('loginForm'), passwordInput: getEl('adminPasswordInput'),
+        adminLoginView: getEl('adminLoginView'), adminPanelView: getEl('adminPanelView'),
+        
+        // 设置表单
+        saveSettingsBtn: getEl('save-settings-btn'), // 修复的保存按钮
+        siteTitleInput: getEl('siteTitleInput'), siteDescInput: getEl('siteDescriptionInput'),
+        avatarInput: getEl('avatarUrlInput'), bgInput: getEl('backgroundUrlInput'),
+        welcomeTitleInput: getEl('welcomeTitleInput'), welcomeTextInput: getEl('welcomeTextInput'),
+        autoPlayCheck: getEl('autoPlayMusicCheckbox'), showStatsCheck: getEl('showVisitorStatsCheckbox'),
 
-        // --- 新增功能函数 ---
+        // 网站管理表单
+        siteForm: getEl('site-form'), siteCategorySelect: getEl('site-category-select'),
+        siteNameInput: getEl('site-name-input'), siteUrlInput: getEl('site-url-input'),
+        siteIconInput: getEl('site-icon-input'), iconPreview: getEl('icon-preview'),
+        siteDescInput: getEl('site-desc-input'), siteTagsInput: getEl('site-tags-input'),
+        siteSubmitBtn: getEl('site-submit-btn'), cancelEditBtn: getEl('cancel-edit-btn'),
+        sitesListAdmin: getEl('sitesListAdmin'),
 
-        // 显示消息模态框
-        function showMessage(title, message) {
-            DOMElements.messageTitle.textContent = title;
-            DOMElements.messageText.textContent = message;
-            DOMElements.messageModal.style.display = 'flex';
-        }
+        // 分类与音乐表单
+        addCategoryForm: getEl('addCategoryForm'), categoryNameInput: getEl('categoryNameInput'), 
+        categoryTypeSelect: getEl('categoryTypeSelect'), categoriesList: getEl('categoriesList'),
+        addMusicForm: getEl('addMusicForm'), musicTitleInput: getEl('musicTitleInput'), 
+        musicUrlInput: getEl('musicUrlInput'), customMusicList: getEl('customMusicList'),
 
-        function closeMessageModal() {
-            DOMElements.messageModal.style.display = 'none';
-        }
+        // 其他
+        themeBtnSide: getEl('toggle-theme-btn'), langBtnSide: getEl('toggle-language-btn'),
+        visitorStatsPanel: getEl('visitorStatsPanel'), closeStatsBtn: getEl('close-stats-btn'),
+        exportBtn: getEl('export-data-btn'), importBtn: getEl('import-data-btn'), importInput: getEl('import-file-input')
+    };
 
-        // 初始化访客统计
-        async function initVisitorStats() {
+    // --- 3. API 客户端 ---
+    const api = {
+        req: async (method, ep, data) => {
             try {
-                const response = await fetch(`/api/visitor?sessionId=${state.visitorSessionId}`, {
-                    method: 'POST'
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    localStorage.setItem('visitorSessionId', data.stats.sessionId);
-                    state.visitorSessionId = data.stats.sessionId;
-                    
-                    // 更新统计显示
-                    updateVisitorStats(data.stats);
-                    
-                    // 定期更新在线状态
-                    setInterval(updateVisitorStatsDisplay, 30000); // 30秒更新一次
-                }
-            } catch (error) {
-                console.error('Failed to init visitor stats:', error);
-            }
-        }
+                const opts = { method, headers: {'Content-Type': 'application/json'} };
+                if(data) opts.body = JSON.stringify(data);
+                const res = await fetch(`/api/${ep}`, opts);
+                if(!res.ok) throw new Error(`API Error: ${res.status}`);
+                return await res.json();
+            } catch (e) { console.error(e); return null; }
+        },
+        get: (ep) => api.req('GET', ep),
+        post: (ep, d) => api.req('POST', ep, d),
+        put: (ep, d) => api.req('PUT', ep, d),
+        delete: (ep) => api.req('DELETE', ep)
+    };
 
-        // 更新访客统计显示
-        async function updateVisitorStatsDisplay() {
-            try {
-                const response = await fetch('/api/visitor');
-                if (response.ok) {
-                    const stats = await response.json();
-                    updateVisitorStats(stats);
-                    updateStatsTime();
-                }
-            } catch (error) {
-                console.error('Failed to update visitor stats:', error);
-            }
-        }
+    // --- 4. 核心功能函数 ---
 
-        // 更新访客统计UI
-        function updateVisitorStats(stats) {
-            DOMElements.totalVisits.textContent = stats.total;
-            DOMElements.todayVisits.textContent = stats.today;
-            DOMElements.onlineUsers.textContent = stats.online;
-            DOMElements.uniqueVisitors.textContent = stats.unique;
-            
-            // 更新位置信息
-            const locationsContainer = DOMElements.visitorLocations;
-            if (locationsContainer && stats.locations) {
-                locationsContainer.innerHTML = '';
-                stats.locations.forEach(loc => {
-                    const locationEl = document.createElement('div');
-                    locationEl.className = 'visitor-location';
-                    locationEl.innerHTML = `
-                        <span>📍 ${loc.country}${loc.city ? ' - ' + loc.city : ''}</span>
-                        <span style="margin-left: auto; color: var(--primary-light);">${loc.count}</span>
-                    `;
-                    locationsContainer.appendChild(locationEl);
-                });
-            }
-        }
+    function setTheme(theme) {
+        state.currentTheme = theme;
+        localStorage.setItem('theme', theme);
+        
+        // 切换 body 类
+        if (theme === 'light') document.body.classList.add('light-mode');
+        else document.body.classList.remove('light-mode');
+        
+        // 更新图标
+        const iconClass = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+        if(DOMElements.themeToggle.querySelector('i')) DOMElements.themeToggle.querySelector('i').className = iconClass;
+        if(DOMElements.themeBtnSide.querySelector('i')) DOMElements.themeBtnSide.querySelector('i').className = iconClass + ' nav-icon';
+    }
 
-        // 更新统计时间
-        function updateStatsTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString();
-            DOMElements.statsUpdateTime.textContent = timeString;
-        }
+    // --- 5. 事件监听 (修复点击无效) ---
+    function setupEventListeners() {
+        const bind = (el, evt, fn) => { if(el && el.tagName !== 'DIV') el.addEventListener(evt, fn); };
 
-        // 显示/隐藏访客统计面板
-        function toggleVisitorStats() {
-            if (DOMElements.visitorStatsPanel.style.display === 'none') {
-                DOMElements.visitorStatsPanel.style.display = 'block';
-                updateVisitorStatsDisplay();
-            } else {
-                DOMElements.visitorStatsPanel.style.display = 'none';
-            }
-        }
+        // 界面交互
+        bind(DOMElements.menuToggle, 'click', () => { 
+            DOMElements.sidebar.classList.add('open'); 
+            DOMElements.sidebarOverlay.classList.add('show'); 
+        });
+        bind(DOMElements.sidebarOverlay, 'click', () => { 
+            DOMElements.sidebar.classList.remove('open'); 
+            DOMElements.sidebarOverlay.classList.remove('show'); 
+        });
+        bind(DOMElements.searchToggle, 'click', () => {
+            const isHidden = DOMElements.searchContainer.style.display === 'none';
+            DOMElements.searchContainer.style.display = isHidden ? 'block' : 'none';
+        });
 
-        function hideVisitorStats() {
-            DOMElements.visitorStatsPanel.style.display = 'none';
-        }
+        // 主题切换
+        const toggleTheme = (e) => {
+            if(e) e.preventDefault();
+            setTheme(state.currentTheme === 'light' ? 'dark' : 'light');
+        };
+        bind(DOMElements.themeToggle, 'click', toggleTheme);
+        bind(DOMElements.themeBtnSide, 'click', toggleTheme);
 
-        // 加载自定义音乐
-        async function loadCustomMusic() {
-            try {
-                const response = await fetch('/api/custom-music');
-                if (response.ok) {
-                    const musicList = await response.json();
-                    state.customMusic = musicList;
-                    
-                    // 如果有自定义音乐，优先使用自定义音乐
-                    if (musicList.length > 0 && state.settings.autoPlayMusic === 'true') {
-                        initializeCustomMusicPlayer();
-                    }
-                    
-                    // 在管理面板中显示音乐列表
-                    renderCustomMusicList(musicList);
-                }
-            } catch (error) {
-                console.error('Failed to load custom music:', error);
-            }
-        }
+        // 音乐播放器
+        bind(DOMElements.musicToggle, 'click', () => DOMElements.musicPlayer.classList.toggle('collapsed'));
+        bind(DOMElements.playPauseBtn, 'click', toggleMusicPlayback);
+        bind(DOMElements.prevBtn, 'click', playPrevMusic);
+        bind(DOMElements.nextBtn, 'click', playNextMusic);
 
-        // 初始化自定义音乐播放器
-        function initializeCustomMusicPlayer() {
-            if (!state.customMusic || state.customMusic.length === 0) return;
-            
-            // 随机选择一首音乐
-            state.currentMusicIndex = Math.floor(Math.random() * state.customMusic.length);
-            const music = state.customMusic[state.currentMusicIndex];
-            
-            // 创建音频播放器
-            state.backgroundAudio = new Audio(music.url);
-            state.backgroundAudio.preload = 'metadata';
-            
-            state.backgroundAudio.onloadeddata = () => {
-                if (state.settings.autoPlayMusic === 'true') {
-                    state.backgroundAudio.play().catch(e => console.log('Autoplay prevented:', e));
-                    state.isMusicPlaying = true;
-                    updateMusicControls();
-                    DOMElements.musicPlayer.classList.add('playing');
-                }
-            };
-            
-            state.backgroundAudio.ontimeupdate = () => {
-                if (state.backgroundAudio.duration) {
-                    const progress = (state.backgroundAudio.currentTime / state.backgroundAudio.duration) * 100;
-                    DOMElements.musicProgress.style.width = `${progress}%`;
-                }
-            };
-            
-            state.backgroundAudio.onended = () => {
-                playNextMusic();
-            };
-            
-            state.backgroundAudio.onerror = (e) => {
-                console.error("Audio error:", e);
-                showMessage('播放错误', '当前音乐播放失败，尝试播放下一首');
-                setTimeout(() => playNextMusic(), 1500);
-            };
-            
-            // 更新UI显示当前播放的音乐
-            updateMusicDisplay(music);
-        }
-
-        // 更新音乐显示
-        function updateMusicDisplay(music) {
-            DOMElements.musicTitleMini.textContent = music.title;
-            DOMElements.musicArtistMini.textContent = music.artist || '未知艺术家';
-            
-            if (music.cover) {
-                DOMElements.musicAlbumCover.src = music.cover;
-                DOMElements.musicAlbumCover.onerror = () => {
-                    DOMElements.musicAlbumCover.src = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop';
-                };
-            }
-        }
-
-        // 更新音乐控制按钮
-        function updateMusicControls() {
-            const playPauseIcon = DOMElements.playPauseMusicBtn.querySelector('i');
-            if (state.isMusicPlaying) {
-                playPauseIcon.classList.remove('fa-play');
-                playPauseIcon.classList.add('fa-pause');
-            } else {
-                playPauseIcon.classList.remove('fa-pause');
-                playPauseIcon.classList.add('fa-play');
-            }
-        }
-
-        // 播放/暂停音乐
-        function toggleMusicPlayback() {
-            if (!state.backgroundAudio) return;
-            
-            if (state.isMusicPlaying) {
-                state.backgroundAudio.pause();
-                state.isMusicPlaying = false;
-                DOMElements.musicPlayer.classList.remove('playing');
-            } else {
-                state.backgroundAudio.play();
-                state.isMusicPlaying = true;
-                DOMElements.musicPlayer.classList.add('playing');
-            }
-            updateMusicControls();
-        }
-
-        // 播放下一首音乐
-        function playNextMusic() {
-            if (!state.customMusic || state.customMusic.length === 0) return;
-            
-            state.currentMusicIndex = (state.currentMusicIndex + 1) % state.customMusic.length;
-            const nextMusic = state.customMusic[state.currentMusicIndex];
-            
-            state.backgroundAudio.src = nextMusic.url;
-            state.backgroundAudio.play();
-            state.isMusicPlaying = true;
-            updateMusicDisplay(nextMusic);
-            updateMusicControls();
-            DOMElements.musicPlayer.classList.add('playing');
-        }
-
-        // 播放上一首音乐
-        function playPrevMusic() {
-            if (!state.customMusic || state.customMusic.length === 0) return;
-            
-            state.currentMusicIndex = (state.currentMusicIndex - 1 + state.customMusic.length) % state.customMusic.length;
-            const prevMusic = state.customMusic[state.currentMusicIndex];
-            
-            state.backgroundAudio.src = prevMusic.url;
-            state.backgroundAudio.play();
-            state.isMusicPlaying = true;
-            updateMusicDisplay(prevMusic);
-            updateMusicControls();
-            DOMElements.musicPlayer.classList.add('playing');
-        }
-
-        // 渲染自定义音乐列表（管理面板）
-        function renderCustomMusicList(musicList) {
-            const container = DOMElements.customMusicList;
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            musicList.forEach((music, index) => {
-                const item = document.createElement('div');
-                item.className = 'music-item-admin';
-                item.innerHTML = `
-                    <img src="${music.cover || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop'}" 
-                         alt="${music.title}" 
-                         class="music-cover-admin"
-                         onerror="this.src='https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop'">
-                    <div class="music-info-admin">
-                        <div class="music-title-admin">${music.title}</div>
-                        <div class="music-artist-admin">${music.artist || '未知艺术家'}</div>
-                        <div class="music-url-admin">${music.url}</div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="editMusic(${music.id})" class="p-2 text-yellow-500 hover:text-yellow-400">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteMusic(${music.id})" class="p-2 text-red-500 hover:text-red-400">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        // 添加自定义音乐
-        DOMElements.addMusicForm?.addEventListener('submit', async (e) => {
+        // 管理员登录
+        bind(DOMElements.adminLoginBtn, 'click', () => DOMElements.adminModal.style.display = 'flex');
+        bind(DOMElements.closeAdminModal, 'click', () => DOMElements.adminModal.style.display = 'none');
+        bind(DOMElements.loginForm, 'submit', (e) => {
             e.preventDefault();
+            if(DOMElements.passwordInput.value === ADMIN_PASSWORD) {
+                state.isLoggedIn = true;
+                DOMElements.adminLoginView.style.display = 'none';
+                DOMElements.adminPanelView.style.display = 'block';
+                loadAdminData();
+            } else alert('密码错误');
+        });
+        bind(DOMElements.adminLogoutBtn, 'click', () => location.reload());
+
+        // --- 修复：保存设置 ---
+        bind(DOMElements.saveSettingsBtn, 'click', async () => {
+            const btn = DOMElements.saveSettingsBtn;
+            const originalText = btn.innerText;
+            btn.innerText = '保存中...';
             
-            const title = DOMElements.musicTitleInput.value;
-            const artist = DOMElements.musicArtistInput.value;
-            const url = DOMElements.musicUrlInput.value;
-            const cover = DOMElements.musicCoverInput.value;
+            const data = {
+                siteTitle: DOMElements.siteTitleInput.value,
+                siteDescription: DOMElements.siteDescInput.value,
+                avatarUrl: DOMElements.avatarInput.value,
+                backgroundUrl: DOMElements.bgInput.value,
+                welcomeTitle: DOMElements.welcomeTitleInput.value,
+                welcomeText: DOMElements.welcomeTextInput.value,
+                autoPlayMusic: DOMElements.autoPlayCheck.checked ? 'true' : 'false',
+                showVisitorStats: DOMElements.showStatsCheck.checked ? 'true' : 'false'
+            };
+
+            const res = await api.post('settings', data);
+            btn.innerText = originalText;
             
-            try {
-                const response = await fetch('/api/custom-music', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, artist, url, cover })
-                });
-                
-                if (response.ok) {
-                    showMessage('成功', '音乐添加成功');
-                    DOMElements.addMusicForm.reset();
-                    await loadCustomMusic();
-                }
-            } catch (error) {
-                console.error('Failed to add music:', error);
-                showMessage('错误', '添加失败');
+            if(res && res.ok) {
+                alert('设置已保存！');
+                location.reload();
+            } else {
+                alert('保存失败，请检查网络');
             }
         });
 
-        // 删除音乐
-        async function deleteMusic(id) {
-            if (!confirm('确定要删除这首音乐吗？')) return;
-            
-            try {
-                const response = await fetch(`/api/custom-music/${id}`, {
-                    method: 'DELETE'
-                });
-                
-                if (response.ok) {
-                    showMessage('成功', '删除成功');
-                    await loadCustomMusic();
-                }
-            } catch (error) {
-                console.error('Failed to delete music:', error);
-                showMessage('错误', '删除失败');
-            }
-        }
-
-        // 编辑音乐
-        async function editMusic(id) {
-            const music = state.customMusic.find(m => m.id === id);
-            if (!music) return;
-            
-            const newTitle = prompt('请输入新的音乐标题:', music.title);
-            if (!newTitle) return;
-            
-            const newArtist = prompt('请输入新的艺术家:', music.artist);
-            const newUrl = prompt('请输入新的音乐URL:', music.url);
-            const newCover = prompt('请输入新的封面URL:', music.cover);
-            
-            try {
-                const response = await fetch(`/api/custom-music/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title: newTitle,
-                        artist: newArtist || '',
-                        url: newUrl || music.url,
-                        cover: newCover || ''
-                    })
-                });
-                
-                if (response.ok) {
-                    showMessage('成功', '更新成功');
-                    await loadCustomMusic();
-                }
-            } catch (error) {
-                console.error('Failed to update music:', error);
-                showMessage('错误', '更新失败');
-            }
-        }
-
-        // 保存站点个性化设置
-        async function saveSiteCustomization() {
-            const settings = {
-                siteTitle: DOMElements.siteTitleInput.value,
-                siteDescription: DOMElements.siteDescriptionInput.value,
-                avatarUrl: DOMElements.avatarUrlInput.value,
-                backgroundUrl: DOMElements.backgroundUrlInput.value,
-                welcomeTitle: DOMElements.welcomeTitleInput.value,
-                welcomeText: DOMElements.welcomeTextInput.value,
-                autoPlayMusic: DOMElements.autoPlayMusicCheckbox.checked ? 'true' : 'false',
-                showVisitorStats: DOMElements.showVisitorStatsCheckbox.checked ? 'true' : 'false'
-            };
-            
-            try {
-                const response = await fetch('/api/settings', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(settings)
-                });
-                
-                if (response.ok) {
-                    showMessage('成功', '设置保存成功');
-                    loadSiteSettings(); // 重新加载设置
-                }
-            } catch (error) {
-                console.error('Failed to save settings:', error);
-                showMessage('错误', '保存失败');
-            }
-        }
-
-        // 加载站点设置并应用到页面
-        async function loadSiteSettings() {
-            try {
-                const response = await fetch('/api/settings');
-                if (response.ok) {
-                    const settings = await response.json();
-                    state.settings = settings;
-                    
-                    // 应用设置到页面
-                    applySiteSettings(settings);
-                    
-                    // 更新管理面板中的表单
-                    updateSettingsForm(settings);
-                }
-            } catch (error) {
-                console.error('Failed to load settings:', error);
-            }
-        }
-
-        // 应用站点设置
-        function applySiteSettings(settings) {
-            // 网站标题和描述
-            if (settings.siteTitle) {
-                document.title = settings.siteTitle;
-                DOMElements.siteTitle.textContent = settings.siteTitle;
-                DOMElements.sidebarSiteTitle.textContent = settings.siteTitle;
-                DOMElements.headerSiteTitle.textContent = settings.siteTitle;
-            }
-            
-            if (settings.siteDescription) {
-                DOMElements.siteDescription.textContent = settings.siteDescription;
-            }
-            
-            // 网站头像
-            if (settings.avatarUrl) {
-                DOMElements.siteAvatar.src = settings.avatarUrl;
-                DOMElements.siteAvatar.onerror = () => {
-                    DOMElements.siteAvatar.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop&crop=faces';
-                };
-            }
-            
-            // 背景图片
-            if (settings.backgroundUrl) {
-                document.body.style.backgroundImage = `url('${settings.backgroundUrl}')`;
-                document.body.style.backgroundSize = 'cover';
-                document.body.style.backgroundPosition = 'center';
-                document.body.style.backgroundAttachment = 'fixed';
-            }
-            
-            // 欢迎语
-            if (settings.welcomeTitle) {
-                DOMElements.welcomeTitle.textContent = settings.welcomeTitle;
-            }
-            
-            if (settings.welcomeText) {
-                DOMElements.welcomeText.textContent = settings.welcomeText;
-            }
-            
-            // 自动播放音乐设置
-            if (settings.autoPlayMusic === 'true') {
-                // 如果还没有初始化音乐播放器，则初始化
-                if (!state.backgroundAudio) {
-                    setTimeout(() => {
-                        if (state.customMusic.length > 0) {
-                            initializeCustomMusicPlayer();
-                        }
-                    }, 1000);
-                }
-            }
-            
-            // 访问统计显示设置
-            if (settings.showVisitorStats !== 'false') {
-                // 显示访问统计
-                initVisitorStats();
-            }
-        }
-
-        // 更新设置表单
-        function updateSettingsForm(settings) {
-            DOMElements.siteTitleInput.value = settings.siteTitle || '';
-            DOMElements.siteDescriptionInput.value = settings.siteDescription || '';
-            DOMElements.avatarUrlInput.value = settings.avatarUrl || '';
-            DOMElements.backgroundUrlInput.value = settings.backgroundUrl || '';
-            DOMElements.welcomeTitleInput.value = settings.welcomeTitle || '';
-            DOMElements.welcomeTextInput.value = settings.welcomeText || '';
-            DOMElements.autoPlayMusicCheckbox.checked = settings.autoPlayMusic === 'true';
-            DOMElements.showVisitorStatsCheckbox.checked = settings.showVisitorStats !== 'false';
-        }
-
-        // 更新管理面板中的统计数据
-        async function updateAdminStats() {
-            try {
-                const response = await fetch('/api/visitor');
-                if (response.ok) {
-                    const stats = await response.json();
-                    
-                    DOMElements.adminTotalVisits.textContent = stats.total;
-                    DOMElements.adminTodayVisits.textContent = stats.today;
-                    DOMElements.adminOnlineUsers.textContent = stats.online;
-                    DOMElements.adminUniqueVisitors.textContent = stats.unique;
-                    
-                    // 更新最近访问记录表格
-                    const tableBody = DOMElements.recentVisitsTable;
-                    if (tableBody && stats.recent) {
-                        tableBody.innerHTML = '';
-                        stats.recent.forEach(visit => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${visit.ip_address}</td>
-                                <td>${visit.country}${visit.city ? ' - ' + visit.city : ''}</td>
-                                <td>${new Date(visit.visit_time).toLocaleString()}</td>
-                                <td>${visit.user_agent ? visit.user_agent.substring(0, 30) + '...' : '未知'}</td>
-                            `;
-                            tableBody.appendChild(row);
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to update admin stats:', error);
-            }
-        }
-
-                // --- UI Functions ---
-        function setLanguage(lang) {
-            state.currentLanguage = lang;
-            localStorage.setItem('lang', lang);
-            DOMElements.html.lang = lang === 'zh' ? 'zh-CN' : 'en';
-            document.querySelectorAll('[data-i18n-key]').forEach(el => {
-                const key = el.getAttribute('data-i18n-key');
-                const translation = translations[lang][key];
-                if (translation) {
-                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                        el.placeholder = translation;
-                    } else {
-                        el.textContent = translation;
-                    }
-                }
-            });
-            renderAll();
-        }
-
-        function setTheme(theme) {
-            // --- 修复：设置主题函数 (防崩溃版) ---
-        function setTheme(theme) {
-            // 1. 保存状态
-            state.currentTheme = theme;
-            localStorage.setItem('theme', theme);
-
-            // 2. 切换 CSS 类 (让背景变白/变黑)
-            if (theme === 'light') {
-                document.body.classList.add('light-mode');
-            } else {
-                document.body.classList.remove('light-mode');
-            }
-
-            // 3. 更新顶部按钮图标 (安全更新)
-            const topBtn = document.getElementById('themeToggle');
-            if (topBtn) {
-                // 尝试找内部的 i 标签，找不到就直接改按钮文字，确保不报错
-                const icon = topBtn.querySelector('i');
-                if (icon) {
-                    // 亮色模式显示太阳，深色模式显示月亮
-                    icon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
-                }
-            }
-
-            // 4. 更新侧边栏按钮图标 (如果有的话)
-            const sideBtn = document.getElementById('toggle-theme-btn');
-            if (sideBtn) {
-                const icon = sideBtn.querySelector('i');
-                if (icon) {
-                    icon.className = (theme === 'light' ? 'fas fa-sun' : 'fas fa-moon') + ' nav-icon';
-                }
-            }
-        }
-
-        function showModal(text, buttons) {
-            DOMElements.genericModalText.textContent = text;
-            DOMElements.genericModalButtons.innerHTML = '';
-            buttons.forEach(btn => {
-                const buttonEl = document.createElement('button');
-                buttonEl.textContent = btn.text;
-                buttonEl.className = btn.class;
-                buttonEl.onclick = () => {
-                    DOMElements.genericModal.classList.remove('active');
-                    if (btn.onClick) btn.onClick();
-                };
-                DOMElements.genericModalButtons.appendChild(buttonEl);
-            });
-            DOMElements.genericModal.classList.add('active');
-        }
-        
-        function customAlert(key, useKey = true) {
-            const text = useKey ? translations[state.currentLanguage][key] : key;
-            showModal(text, [{ text: translations[state.currentLanguage].modalOk, class: 'w-full bg-blue-600 hover:bg-blue-700 rounded-md py-2 px-4 font-semibold' }]);
-        }
-        
-        function customConfirm(key, onConfirm) {
-            const text = translations[state.currentLanguage][key];
-            showModal(text, [
-                { text: translations[state.currentLanguage].modalCancel, class: 'flex-1 bg-gray-600 hover:bg-gray-700 rounded-md py-2 px-4 font-semibold' },
-                { text: translations[state.currentLanguage].modalConfirm, class: 'flex-1 bg-red-600 hover:bg-red-700 rounded-md py-2 px-4 font-semibold', onClick: onConfirm }
-            ]);
-        }
-
-        function resetSiteForm() {
-            state.editingSiteId = null;
-            DOMElements.siteForm.reset();
-            DOMElements.iconPreview.src = 'https://placehold.co/32x32/777/eee?text=?';
-            DOMElements.siteFormTitle.setAttribute('data-i18n-key', 'siteManagement');
-            DOMElements.siteSubmitBtn.setAttribute('data-i18n-key', 'addSite');
-            DOMElements.cancelEditBtn.classList.add('hidden');
-            setLanguage(state.currentLanguage);
-        }
-        
-        // Import/Export functions
-        function exportData() {
-            const data = {
-                version: '1.1',
-                exportDate: new Date().toISOString(),
-                categories: state.categories,
-                sites: state.sites,
-                siteGroups: state.siteGroups,
-                customMusic: state.customMusic,
-                visitorStats: [], // 不导出访问统计数据
-                userPreferences: state.userPreferences,
-                settings: state.settings
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `nav-backup-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        async function importData(file) {
-            try {
-                const text = await file.text();
-                const data = JSON.parse(text);
-                
-                if (!data.version || !data.categories || !data.sites) {
-                    throw new Error('Invalid data format');
-                }
-                
-                // Import data via API
-                await api.post('import', data);
-                customAlert('importSuccess');
-                await loadInitialData();
-            } catch (err) {
-                console.error('Import failed:', err);
-                customAlert('importFailed');
-            }
-        }
-
-        // --- Helper Functions ---
-        // Pinyin support for search
-        async function loadPinyinLibrary() {
-            if (window.pinyinPro) return;
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/pinyin-pro@3.19.2/dist/index.js';
-            document.head.appendChild(script);
-            return new Promise((resolve) => {
-                script.onload = resolve;
-            });
-        }
-        
-        function matchesPinyin(text, searchTerm) {
-            if (!window.pinyinPro || !state.userPreferences.enable_pinyin_search) return false;
-            const pinyin = window.pinyinPro.pinyin(text, { toneType: 'none', type: 'array' }).join('');
-            const pinyinInitials = window.pinyinPro.pinyin(text, { pattern: 'initial', toneType: 'none', type: 'array' }).join('');
-            return pinyin.toLowerCase().includes(searchTerm) || pinyinInitials.toLowerCase().includes(searchTerm);
-        }
-        
-        // Record site visit
-        async function recordSiteVisit(siteId) {
-            try {
-                await api.post(`sites/${siteId}/visit`, {});
-            } catch (err) {
-                console.error('Failed to record visit:', err);
-            }
-        }
-        
-        // Render frequent sites
-        function renderFrequentSites() {
-            const frequentSitesCount = parseInt(state.userPreferences.frequent_sites_count) || 8;
-            
-            if (!state.showFrequentSites || state.frequentSites.length === 0 || frequentSitesCount === 0) {
-                DOMElements.frequentSitesSection.classList.add('hidden');
-                return;
-            }
-            
-            DOMElements.frequentSitesSection.classList.remove('hidden');
-            DOMElements.frequentGrid.innerHTML = '';
-            
-            const maxFrequentSites = parseInt(state.userPreferences.frequent_sites_count) || 8;
-            state.frequentSites.slice(0, maxFrequentSites).forEach((site, index) => {
-                const item = document.createElement('a');
-                item.href = site.url;
-                item.target = '_blank';
-                item.rel = 'noopener noreferrer';
-                item.className = 'frequent-item';
-                item.onclick = (e) => {
-                    e.preventDefault();
-                    recordSiteVisit(site.id);
-                    window.open(site.url, '_blank');
-                };
-                
-                const iconUrl = site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=64`;
-                const shortcutKey = index < 9 ? index + 1 : null;
-                
-                item.innerHTML = `
-                    ${shortcutKey ? `<span class="shortcut-hint">${shortcutKey}</span>` : ''}
-                    <img src="${iconUrl}" alt="${site.name}" class="site-icon" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/48x48/777/eee?text=${site.name.charAt(0)}'">
-                    <span class="site-name">${site.name}</span>
-                    <div class="frequent-count">${site.visit_count || 0}</div>
-                `;
-                
-                DOMElements.frequentGrid.appendChild(item);
-            });
-        }
-
-        // --- Rendering Functions ---
-        function renderCategories() {
-            const createLink = (cat, isMobile = false) => {
-                const a = document.createElement('a');
-                a.href = '#';
-                a.textContent = cat.i18nKey ? translations[state.currentLanguage][cat.i18nKey] : cat.name;
-                a.dataset.categoryId = cat.id;
-                a.className = `nav-item ${state.selectedCategory == cat.id ? 'active' : ''}`;
-                a.onclick = e => { 
-                    e.preventDefault(); 
-                    state.selectedCategory = cat.id; 
-                    if (isMobile) toggleMobileSidebar(); 
-                    renderAll(); 
-                };
-                return a;
-            };
-            
-            ['sidebarNav', 'mobileSidebarNav', 'topbarNav'].forEach(key => {
-                if (DOMElements[key]) DOMElements[key].innerHTML = '';
-            });
-            
-            const allSitesCategory = { id: 'all', name: 'All Sites', i18nKey: 'allSites' };
-            DOMElements.sidebarNav.appendChild(createLink(allSitesCategory));
-            
-            state.categories.forEach(cat => {
-                if (cat.type === 'sidebar') {
-                    DOMElements.sidebarNav.appendChild(createLink(cat));
-                } else if (cat.type === 'topbar') {
-                    // 顶部栏导航将在后续更新中实现
-                }
-            });
-        }
-
-        function renderSites(sitesToRender) {
-            DOMElements.contentGrid.innerHTML = '';
-            if (!sitesToRender || sitesToRender.length === 0) {
-                DOMElements.contentGrid.innerHTML = `<p class="text-gray-400 text-center py-8">${translations[state.currentLanguage].noSitesFound}</p>`;
-                return;
-            }
-            
-            const sitesByCat = sitesToRender.reduce((acc, site) => { 
-                (acc[site.categoryId] = acc[site.categoryId] || []).push(site); 
-                return acc; 
-            }, {});
-            
-            // 按display_order排序每个分类中的网站
-            Object.keys(sitesByCat).forEach(catId => {
-                sitesByCat[catId].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
-            });
-            
-            const categoryOrder = state.categories.map(c => c.id);
-            categoryOrder.forEach(catId => {
-                const category = state.categories.find(c => c.id == catId);
-                if (!category || !sitesByCat[catId]) return;
-                
-                // 创建分类标题
-                const section = document.createElement('div');
-                section.className = 'fade-in';
-                
-                const header = document.createElement('div');
-                header.className = 'category-header';
-                header.innerHTML = `
-                    <div class="category-icon">
-                        <i class="fas fa-folder"></i>
-                    </div>
-                    <h2 class="category-title">${category.name}</h2>
-                `;
-                
-                // 创建网站卡片网格
-                const grid = document.createElement('div');
-                grid.className = 'site-cards';
-                
-                sitesByCat[catId].forEach((site, index) => {
-                    const card = document.createElement('div');
-                    card.className = `site-card delay-${(index % 3) + 1}`;
-                    card.onclick = (e) => {
-                        e.preventDefault();
-                        recordSiteVisit(site.id);
-                        window.open(site.url, '_blank');
-                    };
-                    
-                    const iconUrl = site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=64`;
-                    const tagsHtml = site.tags ? `<div class="site-tags">${site.tags.split(',').map(tag => 
-                        `<span class="tag">${tag.trim()}</span>`).join('')}</div>` : '';
-                    
-                    card.innerHTML = `
-                        <img src="${iconUrl}" alt="${site.name}" class="site-icon" 
-                             onerror="this.onerror=null;this.src='https://placehold.co/56x56/777/eee?text=${site.name.charAt(0)}'">
-                        <span class="site-name">${site.name}</span>
-                        ${tagsHtml}
-                    `;
-                    grid.appendChild(card);
-                });
-                
-                section.appendChild(header);
-                section.appendChild(grid);
-                DOMElements.contentGrid.appendChild(section);
-            });
-            
-            // 触发动画
-            setTimeout(() => {
-                document.querySelectorAll('.fade-in, .delay-1, .delay-2, .delay-3').forEach(el => {
-                    el.style.animationPlayState = 'running';
-                });
-            }, 100);
-        }
-
-        function renderAdminPanel() {
-            if (!state.isLoggedIn) return;
-
-            DOMElements.categoriesList.innerHTML = '';
-            
-            // 创建统一的分类列表
-            const allCategoriesContainer = document.createElement('div');
-            allCategoriesContainer.id = 'sortable-categories';
-            allCategoriesContainer.className = 'space-y-2';
-            
-            // 按显示顺序排序所有分类
-            const sortedCategories = [...state.categories].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-            
-            sortedCategories.forEach(cat => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between bg-gray-700 p-3 rounded-md';
-                div.dataset.id = cat.id;
-                div.dataset.type = cat.type;
-                
-                const typeColor = cat.type === 'sidebar' ? 'bg-blue-600' : 'bg-green-600';
-                const typeText = translations[state.currentLanguage][cat.type] || cat.type;
-                
-                div.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="grip-vertical" class="drag-handle text-gray-500 cursor-move"></i>
-                        <span class="font-medium">${cat.name}</span>
-                        <span class="text-xs px-2 py-1 rounded-full ${typeColor} text-white">${typeText}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <select data-category-id="${cat.id}" class="category-type-select bg-gray-600 text-sm rounded px-2 py-1">
-                            <option value="sidebar" ${cat.type === 'sidebar' ? 'selected' : ''}>${translations[state.currentLanguage].sidebar}</option>
-                            <option value="topbar" ${cat.type === 'topbar' ? 'selected' : ''}>${translations[state.currentLanguage].topbar}</option>
-                        </select>
-                        <button data-id="${cat.id}" class="delete-category-btn p-1 text-red-500 hover:text-red-400">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                `;
-                allCategoriesContainer.appendChild(div);
-            });
-            
-            DOMElements.categoriesList.appendChild(allCategoriesContainer);
-            
-            // 创建统一的 Sortable 实例
-            new Sortable(allCategoriesContainer, {
-                animation: 150,
-                ghostClass: 'sortable-ghost',
-                chosenClass: 'sortable-chosen',
-                handle: '.drag-handle',
-                onUpdate: () => DOMElements.saveOrderBtn.classList.remove('hidden')
-            });
-
-            // 渲染网站列表，按分类分组并支持拖拽排序
-            DOMElements.sitesListAdmin.innerHTML = '';
-            
-            // 按分类对网站进行分组
-            const sitesByCategory = {};
-            state.sites.forEach(site => {
-                if (!sitesByCategory[site.categoryId]) {
-                    sitesByCategory[site.categoryId] = [];
-                }
-                sitesByCategory[site.categoryId].push(site);
-            });
-            
-            // 按display_order排序
-            Object.keys(sitesByCategory).forEach(catId => {
-                sitesByCategory[catId].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
-            });
-            
-            // 为每个分类创建一个区域
-            state.categories.forEach(category => {
-                const sites = sitesByCategory[category.id];
-                if (!sites || sites.length === 0) return;
-                
-                const section = document.createElement('div');
-                section.className = 'sites-category-section';
-                
-                const title = document.createElement('div');
-                title.className = 'sites-category-title';
-                title.innerHTML = `
-                    <span>${category.name} (${sites.length})</span>
-                    <button class="save-sites-order-btn hidden" data-category-id="${category.id}" data-i18n-key="saveSitesOrder">
-                        ${translations[state.currentLanguage].saveSitesOrder}
-                    </button>
-                `;
-                section.appendChild(title);
-                
-                const list = document.createElement('div');
-                list.className = 'sites-sortable-list';
-                list.id = `sites-sortable-${category.id}`;
-                
-                sites.forEach(site => {
-                    const item = document.createElement('div');
-                    item.className = 'site-admin-item';
-                    item.dataset.siteId = site.id;
-                    item.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="grip-vertical" class="drag-handle text-gray-500"></i>
-                            <img src="${site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=32`}" 
-                                 class="w-8 h-8 rounded object-contain" 
-                                 onerror="this.onerror=null;this.src='https://placehold.co/32x32/777/eee?text=${site.name.charAt(0)}'">
-                            <div>
-                                <p class="font-semibold">${site.name}</p>
-                                <p class="text-xs text-gray-400">${site.url}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <a href="${site.url}" target="_blank" class="p-2 text-blue-400 hover:text-blue-300">
-                                <i data-lucide="external-link" class="w-4 h-4"></i>
-                            </a>
-                            <button data-id="${site.id}" class="edit-site-btn p-2 text-yellow-400 hover:text-yellow-300">
-                                <i data-lucide="file-pen-line" class="w-4 h-4"></i>
-                            </button>
-                            <button data-id="${site.id}" class="delete-site-btn p-2 text-red-500 hover:text-red-400">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    `;
-                    list.appendChild(item);
-                });
-                
-                section.appendChild(list);
-                DOMElements.sitesListAdmin.appendChild(section);
-                
-                // 创建 Sortable 实例
-                new Sortable(list, {
-                    animation: 150,
-                    ghostClass: 'sortable-ghost',
-                    chosenClass: 'sortable-chosen',
-                    handle: '.drag-handle',
-                    onUpdate: () => {
-                        const saveBtn = title.querySelector('.save-sites-order-btn');
-                        saveBtn.classList.remove('hidden');
-                    }
-                });
-            });
-
-            DOMElements.siteCategorySelect.innerHTML = `<option value="" data-i18n-key="selectCategory">${translations[state.currentLanguage].selectCategory}</option>`;
-            state.categories.forEach(cat => {
-                const opt = document.createElement('option');
-                opt.value = cat.id;
-                opt.textContent = `${cat.name} (${translations[state.currentLanguage][cat.type] || cat.type})`;
-                DOMElements.siteCategorySelect.appendChild(opt);
-            });
-            
-            // 设置当前的常用网站数量
-            if (DOMElements.frequentSitesCountSelect) {
-                const currentCount = state.userPreferences.frequent_sites_count || '8';
-                DOMElements.frequentSitesCountSelect.value = state.showFrequentSites ? currentCount : '0';
-            }
-            
-            lucide.createIcons();
-        }
-
-        function filterAndRenderSites() {
-            const term = DOMElements.searchInput.value.toLowerCase();
-            let filteredSites = state.sites;
-            if (state.selectedCategory !== 'all') {
-                filteredSites = filteredSites.filter(s => s.categoryId == state.selectedCategory);
-            }
-            if (term) {
-                filteredSites = filteredSites.filter(s => {
-                    const nameMatch = s.name && s.name.toLowerCase().includes(term);
-                    const descMatch = s.description && s.description.toLowerCase().includes(term);
-                    const urlMatch = s.url && s.url.toLowerCase().includes(term);
-                    const tagMatch = s.tags && s.tags.toLowerCase().includes(term);
-                    const pinyinMatch = matchesPinyin(s.name || '', term);
-                    return nameMatch || descMatch || urlMatch || tagMatch || pinyinMatch;
-                });
-            }
-            renderSites(filteredSites);
-        }
-
-        function renderAll() {
-            renderCategories();
-            renderFrequentSites();
-            filterAndRenderSites();
-            if (state.isLoggedIn) renderAdminPanel();
-        }
-
-        // --- Event Listeners (防崩溃修复版) ---
-        function setupEventListeners() {
-            // --- 修复：保存设置按钮 ---
-        const saveSettingsBtn = document.getElementById('save-settings-btn');
-        if (saveSettingsBtn) {
-            saveSettingsBtn.addEventListener('click', async () => {
-                // 1. 收集表单数据
-                const settingsData = {
-                    siteTitle: document.getElementById('siteTitleInput').value,
-                    siteDescription: document.getElementById('siteDescriptionInput').value,
-                    avatarUrl: document.getElementById('avatarUrlInput').value,
-                    backgroundUrl: document.getElementById('backgroundUrlInput').value,
-                    welcomeTitle: document.getElementById('welcomeTitleInput').value,
-                    welcomeText: document.getElementById('welcomeTextInput').value,
-                    // 获取复选框状态
-                    autoPlayMusic: document.getElementById('autoPlayMusicCheckbox')?.checked,
-                    showVisitorStats: document.getElementById('showVisitorStatsCheckbox')?.checked
-                };
-                // --- 修复：白天/黑夜切换 ---
-            const themeBtn = document.getElementById('themeToggle');
-            if (themeBtn) {
-                themeBtn.addEventListener('click', () => {
-                    // 1. 切换内部状态
-                    state.currentTheme = state.currentTheme === 'light' ? 'dark' : 'light';
-                    localStorage.setItem('theme', state.currentTheme);
-
-                    // 2. 切换 CSS 样式
-                    // 如果是亮色模式，给 body 加 light-mode 类；如果是暗色，移除它
-                    if (state.currentTheme === 'light') {
-                        document.body.classList.add('light-mode');
-                        // 切换图标为太阳
-                        themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
-                    } else {
-                        document.body.classList.remove('light-mode');
-                        // 切换图标为月亮
-                        themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
-                    }
-                });
-            }
-
-                // 2. 发送给后台
-                const saveBtn = document.getElementById('save-settings-btn');
-                const originalText = saveBtn.innerText;
-                saveBtn.innerText = '保存中...';
-                
+        // --- 修复：自动获取图标 ---
+        bind(DOMElements.siteUrlInput, 'blur', function() {
+            const url = this.value.trim();
+            if (url && !DOMElements.siteIconInput.value) {
                 try {
-                    const res = await fetch('/api/settings', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(settingsData)
-                    });
-
-                    if (res.ok) {
-                        alert('✅ 设置已保存！页面即将刷新。');
-                        location.reload(); // 刷新页面以显示新设置
-                    } else {
-                        alert('❌ 保存失败，请检查后台 Worker。');
-                    }
-                } catch (e) {
-                    alert('❌ 网络错误: ' + e.message);
-                } finally {
-                    saveBtn.innerText = originalText;
-                }
-            });
-        }
-            // --- 新增：自动获取图标功能 ---
-            if (DOMElements.siteUrlInput) {
-                DOMElements.siteUrlInput.addEventListener('blur', function() {
-                    const url = this.value.trim();
-                    // 只有当有URL且图标框为空时才自动获取
-                    if (url && !DOMElements.siteIconInput.value) {
-                        try {
-                            const domain = new URL(url).hostname;
-                            // 使用 Google Favicon 服务
-                            const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-                            DOMElements.siteIconInput.value = iconUrl;
-                            if(DOMElements.iconPreview) DOMElements.iconPreview.src = iconUrl;
-                        } catch(e) {
-                            // URL格式不对，忽略
-                        }
-                    }
-                });
+                    const domain = new URL(url).hostname;
+                    const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+                    DOMElements.siteIconInput.value = iconUrl;
+                    DOMElements.iconPreview.src = iconUrl;
+                } catch(e) {}
             }
-            // ---------------------------
-            // 辅助函数：安全绑定事件，防止元素不存在导致报错
-            const safeBind = (element, eventType, handler) => {
-                if (element) {
-                    element[eventType] = handler;
-                }
+        });
+
+        // 分类管理
+        bind(DOMElements.addCategoryForm, 'submit', async (e) => {
+            e.preventDefault();
+            if(await api.post('categories', {
+                name: DOMElements.categoryNameInput.value, 
+                type: DOMElements.categoryTypeSelect.value
+            })) {
+                DOMElements.categoryNameInput.value = '';
+                loadAdminData(); loadInitialData();
+            }
+        });
+
+        // 网站管理 (添加/编辑)
+        bind(DOMElements.siteForm, 'submit', async (e) => {
+            e.preventDefault();
+            const site = {
+                categoryId: DOMElements.siteCategorySelect.value,
+                name: DOMElements.siteNameInput.value,
+                url: DOMElements.siteUrlInput.value,
+                icon: DOMElements.siteIconInput.value,
+                description: DOMElements.siteDescInput.value,
+                tags: DOMElements.siteTagsInput.value
             };
+            
+            const id = state.editingSiteId;
+            const res = id ? await api.put(`sites/${id}`, site) : await api.post('sites', site);
+            
+            if(res && res.ok) {
+                resetSiteForm();
+                loadAdminData(); loadInitialData();
+            } else {
+                alert('操作失败');
+            }
+        });
 
-            // 侧边栏切换
-            safeBind(DOMElements.mobileMenuToggle, 'onclick', () => {
-                DOMElements.sidebar?.classList.add('open');
-                DOMElements.sidebarOverlay?.classList.add('show');
-            });
+        bind(DOMElements.cancelEditBtn, 'click', resetSiteForm);
+
+        // 全局搜索
+        bind(DOMElements.searchInput, 'input', () => {
+            const term = DOMElements.searchInput.value.toLowerCase();
+            const filtered = state.sites.filter(s => 
+                s.name.toLowerCase().includes(term) || (s.url && s.url.includes(term))
+            );
+            renderSites(filtered);
+        });
+        
+        // 列表点击代理 (处理删除/编辑)
+        const handleListClick = async (e, type) => {
+            const btn = e.target.closest('button');
+            if(!btn) return;
             
-            safeBind(DOMElements.sidebarOverlay, 'onclick', () => {
-                DOMElements.sidebar?.classList.remove('open');
-                DOMElements.sidebarOverlay?.classList.remove('show');
-            });
-            
-            // 搜索栏切换
-            safeBind(DOMElements.searchToggle, 'onclick', () => {
-                if (DOMElements.searchContainer) {
-                    const isHidden = DOMElements.searchContainer.style.display === 'none';
-                    DOMElements.searchContainer.style.display = isHidden ? 'block' : 'none';
+            const id = btn.dataset.id;
+            // 删除
+            if(btn.classList.contains('delete-btn') || btn.classList.contains('delete-site-btn') || btn.classList.contains('delete-category-btn')) {
+                if(confirm('确定删除吗？')) {
+                    const endpoint = (type === 'cat' || btn.classList.contains('delete-category-btn')) ? 'categories' : 'sites';
+                    if(await api.delete(`${endpoint}/${id}`)) {
+                        loadAdminData(); loadInitialData();
+                    }
                 }
-            });
-            
-            // 主题切换
-            safeBind(DOMElements.themeSwitcher, 'onclick', () => {
-                const newTheme = state.currentTheme === 'light' ? 'dark' : 'light';
-                setTheme(newTheme);
-            });
-            
-            // 音乐播放器控制
-            safeBind(DOMElements.musicToggle, 'onclick', () => {
-                DOMElements.musicPlayer?.classList.toggle('collapsed');
-            });
-            
-            safeBind(DOMElements.playPauseMusicBtn, 'onclick', toggleMusicPlayback);
-            safeBind(DOMElements.prevMusicBtn, 'onclick', playPrevMusic);
-            safeBind(DOMElements.nextMusicBtn, 'onclick', playNextMusic);
-            
-            // 访客统计
-            safeBind(DOMElements.statsToggle, 'onclick', toggleVisitorStats);
-            safeBind(DOMElements.visitorStatsBtn, 'onclick', toggleVisitorStats);
-            
-            // 管理员登录
-            safeBind(DOMElements.adminLoginBtn, 'onclick', () => {
-                if (DOMElements.adminModal) DOMElements.adminModal.style.display = 'flex';
-            });
-            
-            safeBind(DOMElements.closeAdminModal, 'onclick', () => {
-                if (DOMElements.adminModal) DOMElements.adminModal.style.display = 'none';
-            });
-            
-            if (DOMElements.adminModal) {
-                DOMElements.adminModal.onclick = (e) => {
-                    if (e.target === DOMElements.adminModal) {
-                        DOMElements.adminModal.style.display = 'none';
-                    }
-                };
             }
-            
-            // 管理员登录表单
-            if (DOMElements.loginForm) {
-                DOMElements.loginForm.onsubmit = async (e) => {
-                    e.preventDefault();
-                    const password = DOMElements.adminPasswordInput?.value;
+            // 编辑 (仅网站)
+            if(btn.classList.contains('edit-site-btn') || btn.classList.contains('edit-btn')) {
+                const site = state.sites.find(s => s.id == id);
+                if(site) {
+                    state.editingSiteId = id;
+                    DOMElements.siteCategorySelect.value = site.categoryId;
+                    DOMElements.siteNameInput.value = site.name;
+                    DOMElements.siteUrlInput.value = site.url;
+                    DOMElements.siteIconInput.value = site.icon;
+                    DOMElements.iconPreview.src = site.icon;
+                    DOMElements.siteDescInput.value = site.description;
+                    DOMElements.siteTagsInput.value = site.tags;
                     
-                    if (password === ADMIN_PASSWORD) {
-                        state.isLoggedIn = true;
-                        if (DOMElements.loginError) DOMElements.loginError.style.display = 'none';
-                        if (DOMElements.adminLoginView) DOMElements.adminLoginView.style.display = 'none';
-                        if (DOMElements.adminPanelView) DOMElements.adminPanelView.style.display = 'block';
-                        
-                        // 加载管理面板数据
-                        renderAdminPanel();
-                        updateAdminStats();
-                        setInterval(updateAdminStats, 60000);
-                    } else {
-                        if (DOMElements.loginError) {
-                            DOMElements.loginError.textContent = translations[state.currentLanguage]?.passwordIncorrect || '密码错误';
-                            DOMElements.loginError.style.display = 'block';
-                        }
-                    }
-                };
+                    DOMElements.siteSubmitBtn.innerHTML = '<i class="fas fa-save"></i> 保存修改';
+                    DOMElements.cancelEditBtn.classList.remove('hidden');
+                    DOMElements.siteForm.scrollIntoView({behavior:'smooth'});
+                }
             }
+        };
+        
+        if(DOMElements.categoriesList) DOMElements.categoriesList.onclick = (e) => handleListClick(e, 'cat');
+        if(DOMElements.sitesListAdmin) DOMElements.sitesListAdmin.onclick = (e) => handleListClick(e, 'site');
+    }
+
+    // --- 6. 辅助逻辑 ---
+    function resetSiteForm() {
+        state.editingSiteId = null;
+        DOMElements.siteForm.reset();
+        DOMElements.siteSubmitBtn.innerHTML = '<i class="fas fa-plus"></i> 添加网站';
+        DOMElements.cancelEditBtn.classList.add('hidden');
+        DOMElements.iconPreview.src = 'https://placehold.co/32';
+    }
+
+    // 音乐控制逻辑
+    function initializeCustomMusicPlayer() {
+        if (!state.customMusic.length) return;
+        if (!state.backgroundAudio) {
+            state.backgroundAudio = new Audio();
+            state.backgroundAudio.onended = playNextMusic;
+            state.backgroundAudio.onerror = playNextMusic;
+        }
+        playMusic(state.currentMusicIndex);
+    }
+
+    function playMusic(index) {
+        if(!state.customMusic[index]) return;
+        const music = state.customMusic[index];
+        state.currentMusicIndex = index;
+        
+        DOMElements.musicTitle.textContent = music.title;
+        DOMElements.musicArtist.textContent = music.artist || 'Unknown';
+        DOMElements.musicCover.src = music.cover || 'https://placehold.co/40';
+        
+        if(state.backgroundAudio) {
+            state.backgroundAudio.src = music.url;
+            if(state.settings.autoPlayMusic === 'true' || state.isMusicPlaying) {
+                state.backgroundAudio.play().catch(e=>console.log(e));
+                state.isMusicPlaying = true;
+                updateMusicUI(true);
+            }
+        }
+    }
+
+    function toggleMusicPlayback() {
+        if(!state.backgroundAudio) { initializeCustomMusicPlayer(); return; }
+        if(state.backgroundAudio.paused) {
+            state.backgroundAudio.play();
+            state.isMusicPlaying = true;
+        } else {
+            state.backgroundAudio.pause();
+            state.isMusicPlaying = false;
+        }
+        updateMusicUI(state.isMusicPlaying);
+    }
+
+    function playNextMusic() {
+        let next = state.currentMusicIndex + 1;
+        if(next >= state.customMusic.length) next = 0;
+        playMusic(next);
+    }
+    
+    function playPrevMusic() {
+        let prev = state.currentMusicIndex - 1;
+        if(prev < 0) prev = state.customMusic.length - 1;
+        playMusic(prev);
+    }
+
+    function updateMusicUI(isPlaying) {
+        const icon = DOMElements.playPauseBtn.querySelector('i');
+        if(icon) icon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
+        if(isPlaying) DOMElements.musicPlayer.classList.add('playing');
+        else DOMElements.musicPlayer.classList.remove('playing');
+    }
+
+    // --- 7. 数据加载与渲染 ---
+    async function loadInitialData() {
+        const [settings, cats, sites, music] = await Promise.all([
+            api.get('settings'), 
+            api.get('categories'), 
+            api.get('sites'),
+            api.get('custom-music')
+        ]);
+
+        if(settings) {
+            state.settings = settings;
+            if(settings.siteTitle) {
+                document.title = settings.siteTitle;
+                if(getEl('siteTitle')) getEl('siteTitle').textContent = settings.siteTitle;
+                if(getEl('headerSiteTitle')) getEl('headerSiteTitle').textContent = settings.siteTitle;
+                if(getEl('sidebarSiteTitle')) getEl('sidebarSiteTitle').textContent = settings.siteTitle;
+            }
+            if(settings.backgroundUrl) document.body.style.backgroundImage = `url(${settings.backgroundUrl})`;
+            if(settings.welcomeTitle && getEl('welcomeTitle')) getEl('welcomeTitle').textContent = settings.welcomeTitle;
+            if(settings.welcomeText && getEl('welcomeText')) getEl('welcomeText').textContent = settings.welcomeText;
             
-            // 管理员退出
-            safeBind(DOMElements.adminLogoutBtn, 'onclick', () => {
-                state.isLoggedIn = false;
-                if (DOMElements.adminModal) DOMElements.adminModal.style.display = 'none';
-                if (DOMElements.adminLoginView) DOMElements.adminLoginView.style.display = 'block';
-                if (DOMElements.adminPanelView) DOMElements.adminPanelView.style.display = 'none';
-                if (DOMElements.adminPasswordInput) DOMElements.adminPasswordInput.value = '';
-                if (DOMElements.loginError) DOMElements.loginError.style.display = 'none';
-            });
-            
-            // 语言切换
-            safeBind(DOMElements.toggleLanguageBtn, 'onclick', (e) => {
+            // 填充表单
+            if(DOMElements.siteTitleInput) DOMElements.siteTitleInput.value = settings.siteTitle || '';
+            if(DOMElements.siteDescInput) DOMElements.siteDescInput.value = settings.siteDescription || '';
+            if(DOMElements.avatarInput) DOMElements.avatarInput.value = settings.avatarUrl || '';
+            if(DOMElements.bgInput) DOMElements.bgInput.value = settings.backgroundUrl || '';
+            if(DOMElements.welcomeTitleInput) DOMElements.welcomeTitleInput.value = settings.welcomeTitle || '';
+            if(DOMElements.welcomeTextInput) DOMElements.welcomeTextInput.value = settings.welcomeText || '';
+            if(DOMElements.autoPlayCheck) DOMElements.autoPlayCheck.checked = settings.autoPlayMusic === 'true';
+            if(DOMElements.showStatsCheck) DOMElements.showStatsCheck.checked = settings.showVisitorStats === 'true';
+        }
+
+        state.categories = cats || [];
+        state.sites = sites || [];
+        state.customMusic = music || [];
+
+        renderSites(state.sites);
+        renderSidebar();
+        
+        // 音乐初始化
+        if(state.customMusic.length > 0) {
+            // 延迟一点以确保交互
+            setTimeout(() => {
+                if(!state.backgroundAudio) initializeCustomMusicPlayer();
+            }, 2000);
+        }
+    }
+
+    async function loadAdminData() {
+        const [cats, sites] = await Promise.all([api.get('categories'), api.get('sites')]);
+        state.categories = cats || [];
+        state.sites = sites || [];
+        
+        // 渲染分类管理列表
+        DOMElements.categoriesList.innerHTML = state.categories.map(c => `
+            <div class="flex items-center justify-between bg-gray-700 p-3 rounded mb-2">
+                <span>${c.name} <small class="bg-blue-600 px-2 rounded text-xs">${c.type}</small></span>
+                <button class="delete-category-btn text-red-500 p-2" data-id="${c.id}"><i class="fas fa-trash"></i></button>
+            </div>
+        `).join('');
+
+        // 渲染网站管理列表
+        DOMElements.sitesListAdmin.innerHTML = state.sites.map(s => `
+            <div class="flex items-center justify-between bg-gray-700 p-3 rounded mb-2">
+                <div class="flex items-center gap-3">
+                    <img src="${s.icon}" class="w-6 h-6 rounded" onerror="this.src='https://placehold.co/24'">
+                    <span class="truncate w-32">${s.name}</span>
+                </div>
+                <div class="flex gap-2">
+                    <button class="edit-btn text-yellow-500 p-2" data-id="${s.id}"><i class="fas fa-edit"></i></button>
+                    <button class="delete-btn text-red-500 p-2" data-id="${s.id}"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+
+        // 更新下拉框
+        DOMElements.siteCategorySelect.innerHTML = state.categories.map(c => 
+            `<option value="${c.id}">${c.name}</option>`
+        ).join('');
+    }
+
+    function renderSidebar() {
+        DOMElements.sidebarNav.innerHTML = '';
+        state.categories.filter(c => c.type === 'sidebar').forEach(cat => {
+            const a = document.createElement('a');
+            a.className = 'nav-item';
+            a.innerHTML = `<span>${cat.name}</span>`;
+            a.href = '#';
+            a.onclick = (e) => {
                 e.preventDefault();
-                const newLang = state.currentLanguage === 'en' ? 'zh' : 'en';
-                setLanguage(newLang);
-            });
-            
-            // 搜索功能
-            if (DOMElements.searchInput) {
-                DOMElements.searchInput.oninput = filterAndRenderSites;
-            }
-            
-            // 分类管理
-            if (DOMElements.addCategoryForm) {
-                DOMElements.addCategoryForm.onsubmit = async (e) => { 
-                    e.preventDefault(); 
-                    const name = DOMElements.categoryNameInput?.value.trim(); 
-                    const type = DOMElements.categoryTypeSelect?.value; 
-                    if (name) { 
-                        try {
-                            await api.post('categories', { name, type }); 
-                            DOMElements.categoryNameInput.value = ''; 
-                            loadInitialData(); 
-                        } catch(err) { console.error(err); }
-                    } 
-                };
-            }
-
-            // 网站管理
-            if (DOMElements.siteForm) {
-                DOMElements.siteForm.onsubmit = async (e) => {
-                    e.preventDefault();
-                    // 获取表单数据... (保持原有逻辑，但增加空值检查)
-                    const site = { 
-                        categoryId: DOMElements.siteCategorySelect?.value, 
-                        name: DOMElements.siteNameInput?.value.trim(), 
-                        url: DOMElements.siteUrlInput?.value.trim(), 
-                        icon: DOMElements.siteIconInput?.value.trim(), 
-                        description: DOMElements.siteDescInput?.value.trim(),
-                        tags: DOMElements.siteTagsInput?.value.trim(),
-                        group_id: DOMElements.siteGroupSelect?.value || null
-                    };
-                    
-                    if (!site.categoryId || !site.name || !site.url) { 
-                        customAlert('fillRequiredFields'); 
-                        return; 
-                    }
-                    
-                    try {
-                        if (state.editingSiteId) {
-                            await api.put(`sites/${state.editingSiteId}`, site);
-                            customAlert('siteUpdated');
-                        } else {
-                            await api.post('sites', site);
-                        }
-                        resetSiteForm();
-                        loadInitialData();
-                    } catch (err) {
-                        console.error("Failed to save site:", err);
-                        customAlert("Failed to save site.", false);
-                    }
-                };
-            }
-
-            // 删除/编辑 代理事件 (使用 HTML body 或 list 容器)
-            const handleListClick = async (e, listType) => {
-                // 删除按钮
-                const deleteBtn = e.target.closest(listType === 'cat' ? '.delete-category-btn' : '.delete-site-btn');
-                if (deleteBtn) {
-                     const key = listType === 'cat' ? 'confirmCategoryDeletion' : 'confirmSiteDeletion';
-                     const endpoint = listType === 'cat' ? 'categories' : 'sites';
-                     customConfirm(key, async () => { 
-                        await api.delete(`${endpoint}/${deleteBtn.dataset.id}`); 
-                        loadInitialData(); 
-                    });
-                    return;
-                }
-                
-                // 编辑按钮 (仅网站)
-                const editBtn = e.target.closest('.edit-site-btn');
-                if (editBtn && listType === 'site') {
-                    const siteId = editBtn.dataset.id;
-                    const siteToEdit = state.sites.find(s => s.id == siteId);
-                    if (siteToEdit) {
-                        state.editingSiteId = siteId;
-                        if(DOMElements.siteCategorySelect) DOMElements.siteCategorySelect.value = siteToEdit.categoryId;
-                        if(DOMElements.siteNameInput) DOMElements.siteNameInput.value = siteToEdit.name;
-                        if(DOMElements.siteUrlInput) DOMElements.siteUrlInput.value = siteToEdit.url;
-                        if(DOMElements.siteIconInput) DOMElements.siteIconInput.value = siteToEdit.icon || '';
-                        if(DOMElements.siteDescInput) DOMElements.siteDescInput.value = siteToEdit.description || '';
-                        if(DOMElements.siteTagsInput) DOMElements.siteTagsInput.value = siteToEdit.tags || '';
-                        if(DOMElements.siteGroupSelect) DOMElements.siteGroupSelect.value = siteToEdit.group_id || '';
-                        if(DOMElements.iconPreview) DOMElements.iconPreview.src = siteToEdit.icon || `https://placehold.co/32x32/777/eee?text=${siteToEdit.name.charAt(0)}`;
-                        
-                        if(DOMElements.siteFormTitle) DOMElements.siteFormTitle.setAttribute('data-i18n-key', 'editSite');
-                        if(DOMElements.siteSubmitBtn) DOMElements.siteSubmitBtn.setAttribute('data-i18n-key', 'saveChanges');
-                        if(DOMElements.cancelEditBtn) DOMElements.cancelEditBtn.classList.remove('hidden');
-                        
-                        setLanguage(state.currentLanguage);
-                        DOMElements.siteForm?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }
+                state.selectedCategory = cat.id;
+                renderSites(state.sites.filter(s => s.categoryId == cat.id));
+                // 移动端关闭侧边栏
+                DOMElements.sidebar.classList.remove('open');
+                DOMElements.sidebarOverlay.classList.remove('show');
             };
+            DOMElements.sidebarNav.appendChild(a);
+        });
+        
+        // "全部" 选项
+        const allBtn = document.createElement('a');
+        allBtn.className = 'nav-item';
+        allBtn.innerHTML = `<span>全部网站</span>`;
+        allBtn.onclick = () => { renderSites(state.sites); };
+        DOMElements.sidebarNav.insertBefore(allBtn, DOMElements.sidebarNav.firstChild);
+    }
 
-            if (DOMElements.categoriesList) DOMElements.categoriesList.onclick = (e) => handleListClick(e, 'cat');
-            if (DOMElements.sitesListAdmin) DOMElements.sitesListAdmin.onclick = (e) => handleListClick(e, 'site');
+    function renderSites(sites) {
+        DOMElements.contentGrid.innerHTML = '';
+        
+        // 按分类分组
+        const grouped = {};
+        sites.forEach(s => {
+            if(!grouped[s.categoryId]) grouped[s.categoryId] = [];
+            grouped[s.categoryId].push(s);
+        });
 
-            safeBind(DOMElements.cancelEditBtn, 'onclick', resetSiteForm);
+        // 获取分类顺序
+        const cats = state.categories.length ? state.categories : [{id: sites[0]?.categoryId, name: '默认分类'}];
 
-            // 导入导出
-            safeBind(DOMElements.exportDataBtn, 'onclick', exportData);
-            safeBind(DOMElements.importDataBtn, 'onclick', () => DOMElements.importFileInput?.click());
-            
-            if (DOMElements.importFileInput) {
-                DOMElements.importFileInput.onchange = async (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        await importData(file);
-                        e.target.value = '';
-                    }
-                };
-            }
-            
-            // 浮动按钮
-            safeBind(DOMElements.mainFab, 'onclick', () => {
-                if(DOMElements.adminModal) DOMElements.adminModal.style.display = 'flex';
-            });
+        cats.forEach(cat => {
+            const catSites = grouped[cat.id];
+            if(!catSites || !catSites.length) return;
+
+            const section = document.createElement('div');
+            section.className = 'mb-10 fade-in';
+            section.innerHTML = `
+                <div class="category-header mb-4 flex items-center gap-2">
+                    <div class="w-1 h-6 bg-blue-500 rounded"></div>
+                    <h2 class="text-xl font-bold text-white">${cat.name}</h2>
+                </div>
+                <div class="site-cards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem;">
+                    ${catSites.map(s => `
+                        <div class="site-card p-4 rounded-xl bg-gray-800 hover:bg-gray-700 transition cursor-pointer flex flex-col items-center gap-3 border border-gray-700"
+                             onclick="window.open('${s.url}', '_blank')">
+                            <img src="${s.icon}" class="w-12 h-12 rounded-lg bg-gray-600" onerror="this.src='https://placehold.co/48'">
+                            <span class="text-sm font-medium text-center truncate w-full">${s.name}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            DOMElements.contentGrid.appendChild(section);
+        });
+    }
+
+    // --- 8. 启动应用 ---
+    async function init() {
+        console.log("Starting App...");
+        if (window.lucide) lucide.createIcons();
+        
+        // 1. 绑定事件 (确保按钮可点)
+        setupEventListeners();
+        
+        // 2. 恢复主题
+        const theme = localStorage.getItem('theme') || 'dark';
+        setTheme(theme);
+
+        // 3. 加载数据
+        try {
+            await loadInitialData();
+        } catch(e) {
+            console.error("Init Error:", e);
         }
+    }
 
-        // --- 原有功能函数 ---
-        function toggleMobileSidebar() {
-            DOMElements.mobileSidebar.classList.toggle('-translate-x-full');
-            DOMElements.mobileSidebarContainer.classList.toggle('hidden');
-        }
-
-        function toggleDesktopSidebar() {
-            const isCollapsed = DOMElements.appContainer.classList.toggle('sidebar-collapsed');
-            localStorage.setItem('desktopSidebarState', isCollapsed ? 'collapsed' : 'open');
-            const iconName = isCollapsed ? 'panel-right-close' : 'panel-left-close';
-            DOMElements.desktopSidebarIcon.outerHTML = `<i data-lucide="${iconName}" id="desktop-sidebar-icon"></i>`;
-            lucide.createIcons();
-        }
-
-        // --- 数据加载函数 ---
-        async function loadInitialData() {
-            try {
-                const [settings, categories, sites, frequentSites, siteGroups, preferences, customMusic] = await Promise.all([
-                    api.get('settings'),
-                    api.get('categories'),
-                    api.get('sites'),
-                    api.get('sites/frequent').catch(() => []),
-                    api.get('site-groups').catch(() => []),
-                    api.get('user-preferences').catch(() => ({})),
-                    api.get('custom-music').catch(() => [])
-                ]);
-
-                // 应用站点设置
-                if (settings) {
-                    state.settings = settings;
-                    applySiteSettings(settings);
-                }
-                
-                state.categories = categories || [];
-                state.sites = sites || [];
-                state.frequentSites = frequentSites || [];
-                state.siteGroups = siteGroups || [];
-                state.userPreferences = preferences || {};
-                state.customMusic = customMusic || [];
-                state.showFrequentSites = state.userPreferences.show_frequent_sites !== 'false';
-                
-                // 初始化音乐播放器
-                if (state.customMusic.length > 0 && state.settings.autoPlayMusic === 'true') {
-                    setTimeout(() => {
-                        initializeCustomMusicPlayer();
-                    }, 1000);
-                }
-                
-                // 初始化访客统计
-                if (state.settings.showVisitorStats !== 'false') {
-                    setTimeout(() => {
-                        initVisitorStats();
-                    }, 1500);
-                }
-                
-                renderAll();
-            } catch (error) {
-                console.error("Failed to load initial data:", error);
-                const errorMsg = `${translations[state.currentLanguage].dataLoadFailed} (Status: ${error.status || 'N/A'})`;
-                customAlert(errorMsg, false);
-            }
-        }
-
-        // --- Application Initialization ---
-        async function init() {
-            // 先加载图标库，防止报错
-            if (window.lucide) lucide.createIcons();
-            
-            // 1. 先绑定按钮事件 (修复点击无反应)
-            setupEventListeners();
-
-            // 2. 尝试加载后台数据
-            try {
-                await loadInitialData();
-            } catch (e) {
-                console.warn("数据加载异常，可能是网络问题或API配置:", e);
-            }
-
-            // 3. 设置语言
-            const savedLang = localStorage.getItem('lang');
-            // 强制默认为中文 'zh'
-            setLanguage(savedLang || 'zh');
-
-            // 4. 设置主题
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            setTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
-
-            // 5. 拼音库 (如果存在)
-            if (state.currentLanguage === 'zh' && typeof loadPinyinLibrary === 'function') {
-                loadPinyinLibrary();
-            }
-
-            console.log('App started!');
-        }
-
-        // 启动应用
-        init();
-    </script>
+    init();
+</script>
     <script type="module" src="/worker.js"></script>
 </body>
 </html>
