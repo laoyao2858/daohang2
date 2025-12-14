@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal - 专属空间</title>
+    <title>我的导航站</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-blur: blur(16px);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-blur: blur(12px);
         }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; background: #000; color: white; }
+        body { 
+            margin: 0; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; 
+            background: #0f172a; color: white; min-height: 100vh;
+        }
         
-        /* 背景幻灯片 */
+        /* 幻灯片背景 */
         .bg-slide {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover; background-position: center;
@@ -28,11 +31,11 @@
 
         /* 顶部磨砂栏 */
         .top-bar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(10, 10, 10, 0.6); backdrop-filter: var(--glass-blur);
+            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: var(--glass-blur);
             border-bottom: 1px solid var(--glass-border);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 1.5rem; z-index: 100;
+            padding: 0 1.5rem; z-index: 50;
         }
 
         /* 滚动说明语 */
@@ -41,33 +44,31 @@
             mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
         }
         .marquee-text {
-            display: inline-block; animation: scroll 25s linear infinite; font-size: 0.9rem; color: #ccc;
+            display: inline-block; animation: scroll 20s linear infinite; font-size: 0.9rem; color: #cbd5e1;
         }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* 主容器 */
-        .container { max-width: 1200px; margin: 90px auto 50px; padding: 0 20px; }
+        /* 内容容器 */
+        .container { max-width: 1200px; margin: 100px auto 50px; padding: 0 20px; }
 
-        /* 折叠分类 */
-        .category-box { margin-bottom: 40px; }
+        /* 分类与网站 */
+        .category-box { margin-bottom: 40px; animation: fadeIn 0.5s ease; }
         .cat-header {
             display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
             padding: 8px 20px; background: rgba(255,255,255,0.05); border-radius: 30px;
             border: 1px solid transparent; transition: 0.3s; user-select: none;
         }
         .cat-header:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+        
         .cat-content {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
-            gap: 25px; padding: 25px 10px 10px; transition: all 0.5s ease;
-            max-height: 2000px; overflow: hidden; opacity: 1;
+            gap: 25px; padding: 25px 10px; transition: all 0.5s ease;
+            max-height: 2000px; overflow: hidden;
         }
         .cat-content.collapsed { max-height: 0; padding: 0; opacity: 0; }
 
         /* 圆形玻璃图标 */
-        .site-item {
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-            text-decoration: none; color: white; group;
-        }
+        .site-item { text-decoration: none; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .site-circle {
             width: 80px; height: 80px; border-radius: 50%;
             background: var(--glass-bg); backdrop-filter: var(--glass-blur);
@@ -81,11 +82,7 @@
             border-color: rgba(255,255,255,0.5); box-shadow: 0 0 25px rgba(255,255,255,0.3); 
         }
         .site-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .site-name { 
-            font-size: 0.8rem; text-align: center; color: #ddd; 
-            width: 120%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
+        .site-name { font-size: 0.8rem; text-align: center; opacity: 0.8; width: 120%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* 顶部按钮 */
         .icon-btn {
@@ -94,27 +91,26 @@
             align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;
         }
         .icon-btn:hover { background: white; color: black; }
-        .icon-btn.playing { 
-            animation: pulse 2s infinite; background: rgba(16, 185, 129, 0.8); border-color: transparent; 
-        }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
-
+        .icon-btn.playing { animation: pulse 2s infinite; background: #10b981; border-color: transparent; }
+        
         /* 模态框 */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
             display: none; justify-content: center; align-items: center; z-index: 2000;
         }
         .modal-box {
-            background: #18181b; width: 95%; max-width: 850px; max-height: 85vh;
-            border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column;
-            border: 1px solid #333; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            background: #1e293b; width: 95%; max-width: 900px; max-height: 85vh;
+            border-radius: 16px; display: flex; flex-direction: column; overflow: hidden;
+            border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
-        .modal-content { padding: 25px; overflow-y: auto; flex: 1; }
         
-        /* 滚动条美化 */
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 滚动条 */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -124,21 +120,20 @@
 
     <div class="top-bar">
         <div class="flex items-center gap-3">
-            <img id="site-logo" src="" class="w-8 h-8 rounded-full border border-white/20 hidden">
-            <span class="font-bold tracking-widest hidden md:block text-sm opacity-80">PORTAL</span>
+            <img id="site-logo-img" src="" class="w-8 h-8 rounded-full border border-white/20 hidden">
+            <span class="font-bold tracking-widest text-sm">PORTAL</span>
         </div>
 
         <div class="marquee-box">
-            <span id="welcome-text" class="marquee-text">正在加载...</span>
+            <span id="welcome-text" class="marquee-text">正在连接...</span>
         </div>
 
         <div class="flex items-center gap-3">
             <div class="relative group">
                 <input id="search-input" placeholder="搜索..." class="bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs focus:outline-none focus:bg-black/50 transition w-24 focus:w-40 text-white placeholder-gray-400">
             </div>
-            
-            <button id="music-btn" class="icon-btn" title="播放音乐"><i class="fas fa-music text-sm"></i></button>
-            <button id="private-btn" class="icon-btn" title="私密空间"><i class="fas fa-user-shield text-sm"></i></button>
+            <button id="music-btn" class="icon-btn" title="播放/暂停"><i class="fas fa-music text-xs"></i></button>
+            <button onclick="openAdmin()" class="icon-btn" title="私密空间"><i class="fas fa-shield-alt text-xs"></i></button>
         </div>
     </div>
 
@@ -146,84 +141,82 @@
 
     <div id="admin-modal" class="modal">
         <div class="modal-box">
-            <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-gray-900 sticky top-0 z-10">
-                <h2 class="text-lg font-bold flex items-center gap-2 text-white">
-                    <i class="fas fa-shield-alt text-indigo-500"></i> 私密空间管理
-                </h2>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+            <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-800">
+                <h2 class="text-lg font-bold">管理后台 & 私密空间</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
 
-            <div class="modal-content">
-                <div id="login-section" class="text-center py-12">
-                    <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl border border-gray-700">🔒</div>
-                    <h3 class="text-xl mb-6 text-gray-300">身份验证</h3>
-                    <input type="password" id="admin-pwd" class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-center text-white w-64 focus:border-indigo-500 outline-none mb-4 transition" placeholder="输入管理员密码">
+            <div class="p-6 overflow-y-auto">
+                <div id="login-section" class="text-center py-10">
+                    <h3 class="text-xl mb-4">身份验证</h3>
+                    <input type="password" id="admin-pwd" class="bg-gray-700 border border-gray-600 p-2 rounded text-center text-white w-64 mb-4" placeholder="输入密码 (默认 Qq110110.)">
                     <br>
-                    <button onclick="login()" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-2 rounded-lg font-bold transition shadow-lg shadow-indigo-500/30">解锁空间</button>
+                    <button onclick="login()" class="bg-indigo-600 hover:bg-indigo-500 px-6 py-2 rounded font-bold">解锁</button>
                 </div>
 
-                <div id="admin-content" class="hidden space-y-8">
+                <div id="admin-panel" class="hidden space-y-8">
                     
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-center">
-                            <div class="text-xs text-gray-400 uppercase mb-1">Total Visits</div>
-                            <div id="stat-total" class="text-2xl font-bold text-white">0</div>
+                        <div class="bg-gray-800 p-4 rounded-xl text-center border border-gray-700">
+                            <div class="text-xs text-gray-400">总访问</div>
+                            <div id="stat-total" class="text-2xl font-bold">0</div>
                         </div>
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-center">
-                            <div class="text-xs text-gray-400 uppercase mb-1">Today</div>
+                        <div class="bg-gray-800 p-4 rounded-xl text-center border border-gray-700">
+                            <div class="text-xs text-gray-400">今日</div>
                             <div id="stat-today" class="text-2xl font-bold text-green-400">0</div>
                         </div>
                     </div>
                     
-                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                        <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">最近访客 (IP)</h3>
-                        <div id="visitor-list" class="text-xs text-gray-400 space-y-1 max-h-32 overflow-y-auto"></div>
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                        <h4 class="text-xs font-bold text-gray-400 mb-2 uppercase">最近访客 IP</h4>
+                        <div id="visitor-list" class="text-xs text-gray-400 space-y-1 max-h-32 overflow-y-auto font-mono"></div>
                     </div>
 
                     <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                        <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">站点设置</h3>
+                        <h3 class="text-sm font-bold text-blue-400 mb-4 uppercase">全局设置</h3>
                         <div class="space-y-3">
-                            <input id="set-icon" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="网站头像 URL">
-                            <input id="set-welcome" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="顶部滚动说明语">
-                            <textarea id="set-bg" rows="3" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="背景图片URL (支持多张，每行一个，幻灯片播放)"></textarea>
-                            <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm font-bold w-full transition">保存设置</button>
+                            <input id="set-icon" class="w-full bg-gray-900 border border-gray-600 p-2 rounded text-sm text-gray-300" placeholder="网站头像 URL (例如 favicon.ico)">
+                            <input id="set-welcome" class="w-full bg-gray-900 border border-gray-600 p-2 rounded text-sm text-gray-300" placeholder="顶部滚动说明语">
+                            <label class="text-xs text-gray-500">背景图片 (支持多张，每行一个链接，自动轮播)</label>
+                            <textarea id="set-bg" rows="4" class="w-full bg-gray-900 border border-gray-600 p-2 rounded text-sm text-gray-300" placeholder="https://example.com/bg1.jpg"></textarea>
+                            <button onclick="saveSettings()" class="bg-blue-600 px-4 py-2 rounded text-sm font-bold w-full">保存设置</button>
                         </div>
                     </div>
 
                     <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                        <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">背景音乐</h3>
+                        <h3 class="text-sm font-bold text-green-400 mb-4 uppercase">背景音乐</h3>
                         <div class="flex gap-2 mb-3">
-                            <input id="music-name" class="bg-gray-900 border border-gray-700 p-2 rounded flex-1 text-sm" placeholder="歌名">
-                            <input id="music-url" class="bg-gray-900 border border-gray-700 p-2 rounded flex-1 text-sm" placeholder="MP3链接">
-                            <button onclick="addMusic()" class="bg-green-600 hover:bg-green-500 px-4 rounded transition"><i class="fas fa-plus"></i></button>
+                            <input id="music-name" class="bg-gray-900 border border-gray-600 p-2 rounded flex-1 text-sm" placeholder="歌名">
+                            <input id="music-url" class="bg-gray-900 border border-gray-600 p-2 rounded flex-1 text-sm" placeholder="MP3链接">
+                            <button onclick="addMusic()" class="bg-green-600 px-4 rounded"><i class="fas fa-plus"></i></button>
                         </div>
-                        <div id="music-list" class="space-y-2 max-h-40 overflow-y-auto pr-2"></div>
+                        <div id="music-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
                     </div>
 
                     <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                        <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">添加内容</h3>
+                        <h3 class="text-sm font-bold text-purple-400 mb-4 uppercase">内容管理</h3>
                         
-                        <div class="flex gap-2 mb-6 items-center bg-gray-900 p-3 rounded-lg border border-gray-700">
-                            <input id="cat-name" class="bg-transparent outline-none flex-1 text-sm" placeholder="新分类名称">
-                            <label class="flex items-center gap-2 text-xs text-yellow-500 cursor-pointer select-none">
+                        <div class="flex gap-2 mb-6 items-center bg-gray-900 p-2 rounded border border-gray-700">
+                            <input id="cat-name" class="bg-transparent outline-none flex-1 text-sm text-white px-2" placeholder="新分类名称">
+                            <label class="flex items-center gap-2 text-xs text-yellow-500 cursor-pointer select-none whitespace-nowrap">
                                 <input type="checkbox" id="cat-private"> 设为私密
                             </label>
-                            <button onclick="addCategory()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs ml-2">添加</button>
+                            <button onclick="addCategory()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs ml-2">添加分类</button>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                            <select id="site-cat" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm"></select>
-                            <input id="site-name" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm" placeholder="网站名称">
-                            <input id="site-url" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm md:col-span-2" placeholder="网址 (自动抓取图标)">
-                            <input id="site-icon" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm md:col-span-2" placeholder="图标URL (可选，为空自动获取)">
+                            <select id="site-cat" class="bg-gray-900 border border-gray-600 p-2 rounded text-sm"></select>
+                            <input id="site-name" class="bg-gray-900 border border-gray-600 p-2 rounded text-sm" placeholder="网站名称">
+                            <input id="site-url" class="bg-gray-900 border border-gray-600 p-2 rounded text-sm md:col-span-2" placeholder="网址 (移开鼠标自动抓取图标)">
+                            <input id="site-icon" class="bg-gray-900 border border-gray-600 p-2 rounded text-sm md:col-span-2" placeholder="图标URL (可选)">
                         </div>
-                        <button onclick="addSite()" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded font-bold text-sm transition">添加网站</button>
+                        <button onclick="addSite()" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded font-bold text-sm">添加网站</button>
 
-                        <div id="admin-site-list" class="space-y-2 mt-6 max-h-80 overflow-y-auto pr-2"></div>
+                        <div id="admin-site-list" class="space-y-2 mt-6 max-h-80 overflow-y-auto"></div>
                     </div>
 
-                    <div class="text-center pt-4 border-t border-gray-800">
-                        <button onclick="location.reload()" class="text-red-400 text-sm hover:text-red-300">退出登录并刷新</button>
+                    <div class="text-center pt-4">
+                        <button onclick="location.reload()" class="text-red-400 text-sm underline">退出登录</button>
                     </div>
                 </div>
             </div>
@@ -237,7 +230,7 @@
         const state = { loggedIn: false, sites: [], cats: [], music: [], settings: {}, bgIdx: 0 };
         const $ = (id) => document.getElementById(id);
 
-        // --- API 封装 ---
+        // --- API Client ---
         const api = {
             get: async (ep) => (await fetch(`/api/${ep}`)).json(),
             post: async (ep, d) => (await fetch(`/api/${ep}`, { method:'POST', body:JSON.stringify(d) })).json(),
@@ -247,50 +240,66 @@
         // --- 初始化 ---
         async function init() {
             try {
+                // 加载所有数据
                 const [s, c, si, m, v] = await Promise.all([
                     api.get('settings'), api.get('categories'), api.get('sites'), api.get('custom-music'), api.get('visitor')
                 ]);
-                state.settings = s || {}; state.cats = c || []; state.sites = si || []; state.music = m || [];
+                state.settings = s || {}; 
+                state.cats = c || []; 
+                state.sites = si || []; 
+                state.music = m || [];
 
+                // 渲染界面
                 renderBackgrounds();
                 renderMain();
                 
+                // 应用设置
                 if(state.settings.welcomeMessage) $('welcome-text').innerText = state.settings.welcomeMessage;
                 if(state.settings.siteIconUrl) {
-                    $('site-logo').src = state.settings.siteIconUrl;
-                    $('site-logo').classList.remove('hidden');
+                    const logo = $('site-logo-img');
+                    logo.src = state.settings.siteIconUrl;
+                    logo.classList.remove('hidden');
+                    // 同时也尝试修改浏览器 favicon
+                    let link = document.querySelector("link[rel~='icon']");
+                    if (!link) {
+                        link = document.createElement('link');
+                        link.rel = 'icon';
+                        document.head.appendChild(link);
+                    }
+                    link.href = state.settings.siteIconUrl;
                 }
 
+                // 统计数据
                 if(v) { 
-                    $('stat-total').innerText = v.total; 
-                    $('stat-today').innerText = v.today; 
+                    $('stat-total').innerText = v.total || 0; 
+                    $('stat-today').innerText = v.today || 0; 
                     if(v.recent) renderVisitorList(v.recent);
                 }
                 
                 initMusic();
-                api.post('visitor', {}); // 统计访问
+                api.post('visitor', {}); // 记录本次访问
 
             } catch(e) { console.error("Init Error", e); }
         }
 
-        // --- 核心渲染 ---
+        // --- 渲染主页 ---
         function renderMain() {
             const container = $('main-container');
             container.innerHTML = '';
 
             state.cats.forEach(cat => {
-                // 私密逻辑：未登录且是私密分类 -> 跳过
+                // 如果未登录且分类是私密的，则不显示
                 if (!state.loggedIn && cat.is_private) return;
 
                 const sites = state.sites.filter(s => s.categoryId == cat.id);
                 const box = document.createElement('div');
-                box.className = 'category-box fade-in';
+                box.className = 'category-box';
                 
                 const lockIcon = cat.is_private ? '<i class="fas fa-lock text-yellow-500 text-xs ml-2"></i>' : '';
                 
                 box.innerHTML = `
                     <div class="cat-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-                        <i class="fas fa-chevron-right text-gray-400 text-xs transition-transform group-hover:rotate-90"></i>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs transition-transform"></i>
                         <span class="font-bold tracking-wide ml-2">${cat.name}</span>${lockIcon}
                         <span class="text-[10px] bg-white/10 px-1.5 rounded ml-2 opacity-60">${sites.length}</span>
                     </div>
@@ -312,33 +321,40 @@
         function renderBackgrounds() {
             const bgBox = $('slideshow');
             let urls = [];
-            try { urls = JSON.parse(state.settings.backgroundUrls || '[]'); } catch(e) {
-                // 兼容旧数据
-                urls = [state.settings.backgroundUrls || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920']; 
+            try { 
+                urls = JSON.parse(state.settings.backgroundUrls || '[]'); 
+            } catch(e) {
+                urls = [state.settings.backgroundUrls || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920']; 
             }
-            if(!urls.length) urls = ['https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920'];
+            if(!urls.length) urls = ['https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920'];
 
             bgBox.innerHTML = urls.map((u, i) => 
                 `<div class="bg-slide ${i===0?'active':''}" style="background-image: url('${u}')"></div>`
             ).join('');
 
+            // 启动幻灯片
             if(urls.length > 1) {
                 setInterval(() => {
                     const slides = document.querySelectorAll('.bg-slide');
-                    slides[state.bgIdx].classList.remove('active');
-                    state.bgIdx = (state.bgIdx + 1) % slides.length;
-                    slides[state.bgIdx].classList.add('active');
+                    if(slides.length > 0) {
+                        slides[state.bgIdx].classList.remove('active');
+                        state.bgIdx = (state.bgIdx + 1) % slides.length;
+                        slides[state.bgIdx].classList.add('active');
+                    }
                 }, 8000);
             }
         }
 
         function renderVisitorList(list) {
             $('visitor-list').innerHTML = list.map(v => 
-                `<div class="flex justify-between border-b border-white/5 pb-1"><span>${v.ip_address}</span><span>${new Date(v.visit_time).toLocaleTimeString()}</span></div>`
+                `<div class="flex justify-between border-b border-white/5 pb-1">
+                    <span>${v.ip_address}</span>
+                    <span>${new Date(v.visit_time).toLocaleTimeString()}</span>
+                </div>`
             ).join('');
         }
 
-        // --- 强力音乐播放 ---
+        // --- 音乐系统 ---
         function initMusic() {
             if(!state.music.length) return;
             const audio = $('bg-audio');
@@ -350,14 +366,14 @@
                 audio.play()
                     .then(() => btn.classList.add('playing'))
                     .catch(() => {
-                        // 自动播放失败，等待用户点击任意处触发
+                        // 浏览器拦截：等待用户第一次点击
                         document.addEventListener('click', () => { 
                             audio.play(); btn.classList.add('playing'); 
                         }, {once:true});
                     });
             };
             
-            play(); // 进站尝试播放
+            play(); // 尝试自动播放
 
             audio.onended = () => {
                 trackIdx = (trackIdx + 1) % state.music.length;
@@ -370,25 +386,88 @@
             };
         }
 
-        // --- 后台管理逻辑 ---
-        $('private-btn').onclick = () => {
+        // --- 这里的函数全部挂载到 window，确保 HTML onclick 能调用 ---
+        window.openAdmin = () => {
             $('admin-modal').style.display = 'flex';
             if(state.loggedIn) loadAdminPanel();
         };
+        
         window.closeModal = () => $('admin-modal').style.display = 'none';
 
         window.login = () => {
             if($('admin-pwd').value === ADMIN_PASS) {
                 state.loggedIn = true;
                 $('login-section').classList.add('hidden');
-                $('admin-content').classList.remove('hidden');
+                $('admin-panel').classList.remove('hidden');
                 loadAdminPanel();
-                renderMain(); // 解锁私密内容
+                renderMain(); // 刷新主页（解锁私密）
             } else alert('密码错误');
         };
 
+        window.saveSettings = async () => {
+            const bgs = $('set-bg').value.split('\n').filter(t=>t.trim());
+            const data = {
+                siteIconUrl: $('set-icon').value,
+                welcomeMessage: $('set-welcome').value,
+                backgroundUrls: JSON.stringify(bgs)
+            };
+            if((await api.post('settings', data)).ok) { alert('已保存'); location.reload(); }
+        };
+
+        // 自动抓取图标
+        $('site-url').onblur = function() {
+            if(this.value && !$('site-icon').value) {
+                try { $('site-icon').value = `https://www.google.com/s2/favicons?domain=${new URL(this.value).hostname}&sz=64`; } catch(e){}
+            }
+        };
+
+        window.addCategory = async () => {
+            const name = $('cat-name').value;
+            const priv = $('cat-private').checked;
+            if(!name) return alert('请输入分类名称');
+            
+            if((await api.post('categories', { name, is_private: priv })).ok) {
+                $('cat-name').value=''; 
+                await reloadData();
+            }
+        };
+
+        window.addSite = async () => {
+            const data = {
+                categoryId: $('site-cat').value,
+                name: $('site-name').value,
+                url: $('site-url').value,
+                icon: $('site-icon').value || `https://www.google.com/s2/favicons?domain=${new URL($('site-url').value).hostname}&sz=64`
+            };
+            if((await api.post('sites', data)).ok) {
+                $('site-name').value=''; $('site-url').value='';
+                await reloadData();
+            }
+        };
+
+        window.addMusic = async () => {
+            if((await api.post('custom-music', {title: $('music-name').value, url: $('music-url').value})).ok) {
+                $('music-name').value=''; $('music-url').value='';
+                await reloadData();
+            }
+        };
+
+        window.delItem = async (type, id) => {
+            if(confirm('确定删除吗？')) {
+                if((await api.del(`${type}/${id}`)).ok) await reloadData();
+            }
+        };
+
+        // --- 内部辅助 ---
+        async function reloadData() {
+            const [c, s, m] = await Promise.all([api.get('categories'), api.get('sites'), api.get('custom-music')]);
+            state.cats = c; state.sites = s; state.music = m;
+            loadAdminPanel(); 
+            renderMain();
+        }
+
         async function loadAdminPanel() {
-            // 设置
+            // 填充设置
             $('set-icon').value = state.settings.siteIconUrl || '';
             $('set-welcome').value = state.settings.welcomeMessage || '';
             try { 
@@ -418,49 +497,7 @@
             `).join('');
         }
 
-        // --- 操作逻辑 ---
-        window.saveSettings = async () => {
-            const bgs = $('set-bg').value.split('\n').filter(t=>t.trim());
-            const data = {
-                siteIconUrl: $('set-icon').value,
-                welcomeMessage: $('set-welcome').value,
-                backgroundUrls: JSON.stringify(bgs)
-            };
-            if((await api.post('settings', data)).ok) { alert('已保存'); location.reload(); }
-        };
-
-        // 自动图标
-        $('site-url').onblur = function() {
-            if(this.value && !$('site-icon').value) {
-                try { $('site-icon').value = `https://www.google.com/s2/favicons?domain=${new URL(this.value).hostname}&sz=64`; } catch(e){}
-            }
-        };
-
-        window.addCategory = async () => {
-            if((await api.post('categories', {name: $('cat-name').value, is_private: $('cat-private').checked})).ok) reloadData();
-        };
-        window.addSite = async () => {
-            const data = {
-                categoryId: $('site-cat').value,
-                name: $('site-name').value,
-                url: $('site-url').value,
-                icon: $('site-icon').value || `https://www.google.com/s2/favicons?domain=${new URL($('site-url').value).hostname}&sz=64`
-            };
-            if((await api.post('sites', data)).ok) reloadData();
-        };
-        window.addMusic = async () => {
-            if((await api.post('custom-music', {title: $('music-name').value, url: $('music-url').value})).ok) reloadData();
-        };
-        window.delItem = async (type, id) => {
-            if(confirm('删除？') && (await api.del(`${type}/${id}`)).ok) reloadData();
-        };
-
-        async function reloadData() {
-            const [c, s, m] = await Promise.all([api.get('categories'), api.get('sites'), api.get('custom-music')]);
-            state.cats = c; state.sites = s; state.music = m;
-            loadAdminPanel(); renderMain();
-        }
-
+        // 搜索过滤
         $('search-input').oninput = function() {
             const term = this.value.toLowerCase();
             document.querySelectorAll('.site-item').forEach(el => {
@@ -469,6 +506,7 @@
             });
         };
 
+        // 启动
         init();
     </script>
 </body>
