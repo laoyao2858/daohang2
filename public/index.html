@@ -2863,6 +2863,27 @@
                     autoPlayMusic: document.getElementById('autoPlayMusicCheckbox')?.checked,
                     showVisitorStats: document.getElementById('showVisitorStatsCheckbox')?.checked
                 };
+                // --- 修复：白天/黑夜切换 ---
+            const themeBtn = document.getElementById('themeToggle');
+            if (themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    // 1. 切换内部状态
+                    state.currentTheme = state.currentTheme === 'light' ? 'dark' : 'light';
+                    localStorage.setItem('theme', state.currentTheme);
+
+                    // 2. 切换 CSS 样式
+                    // 如果是亮色模式，给 body 加 light-mode 类；如果是暗色，移除它
+                    if (state.currentTheme === 'light') {
+                        document.body.classList.add('light-mode');
+                        // 切换图标为太阳
+                        themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                    } else {
+                        document.body.classList.remove('light-mode');
+                        // 切换图标为月亮
+                        themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                    }
+                });
+            }
 
                 // 2. 发送给后台
                 const saveBtn = document.getElementById('save-settings-btn');
