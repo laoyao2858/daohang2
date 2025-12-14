@@ -3155,22 +3155,24 @@
             }
         }
 
-        // --- Application Initialization (防卡死修复版 + 默认中文) ---
+        // --- Application Initialization ---
         async function init() {
-            // 1. 最优先：初始化图标和绑定点击事件
+            // 先加载图标库，防止报错
             if (window.lucide) lucide.createIcons();
+            
+            // 1. 先绑定按钮事件 (修复点击无反应)
             setupEventListeners();
 
-            // 2. 加载初始数据
+            // 2. 尝试加载后台数据
             try {
                 await loadInitialData();
-            } catch (error) {
-                console.error("Data load warning:", error);
+            } catch (e) {
+                console.warn("数据加载异常，可能是网络问题或API配置:", e);
             }
 
-            // 3. 设置语言 (已修改为默认中文)
+            // 3. 设置语言
             const savedLang = localStorage.getItem('lang');
-            // 优先使用用户保存的设置，如果没有，则强制默认为 'zh' (中文)
+            // 强制默认为中文 'zh'
             setLanguage(savedLang || 'zh');
 
             // 4. 设置主题
@@ -3178,19 +3180,12 @@
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             setTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
 
-            // 5. 加载其他配置
-            const savedSearchEngine = localStorage.getItem('preferredSearchEngine');
-            if (savedSearchEngine && searchEngines[savedSearchEngine]) {
-                state.currentSearchEngine = savedSearchEngine;
-                if(DOMElements.currentEngineIcon) DOMElements.currentEngineIcon.src = searchEngines[savedSearchEngine].icon;
-                if(DOMElements.currentEngineName) DOMElements.currentEngineName.textContent = searchEngines[savedSearchEngine].name;
-            }
-
-            if (state.currentLanguage === 'zh') {
+            // 5. 拼音库 (如果存在)
+            if (state.currentLanguage === 'zh' && typeof loadPinyinLibrary === 'function') {
                 loadPinyinLibrary();
             }
 
-            console.log('Application initialized successfully!');
+            console.log('App started!');
         }
 
         // 启动应用
