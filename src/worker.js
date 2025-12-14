@@ -1,4 +1,7 @@
-// Cloudflare Worker 后端逻辑 - 修复设置保存和 IP 获取
+/**
+ * Cloudflare Worker 后端逻辑 - 最终修复版
+ * 支持通用设置保存、真实 IP 获取和完整 CRUD
+ */
 
 const jsonResponse = (data, status = 200) => {
   return new Response(JSON.stringify(data), {
@@ -18,22 +21,22 @@ async function handleApiRequest(request, env) {
 
   try {
     switch (resource) {
-      // --- 1. 设置接口 (修复：支持保存 Logo、公告、多背景等所有设置) ---
+      // --- 1. 设置接口 (核心修复：支持保存所有类型的设置) ---
       case 'settings':
         if (request.method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM settings').all();
           const settings = {};
-          // 将数据库的 key-value 行转换为对象 { key: value }
+          // 将数据库行转换为对象 { key: value }
           results.forEach(row => { settings[row.key] = row.value; });
           return jsonResponse(settings);
         }
         if (request.method === 'POST') {
-          // 接收前端传来的所有设置项
+          // 接收前端传来的任意 JSON 数据
           const data = await request.json();
           const statements = [];
           
           for (const [key, value] of Object.entries(data)) {
-            // 将值转换为字符串存入数据库 (包括 JSON 数组)
+            // 将值强制转换为字符串存入数据库 (包括 JSON 数组)
             const valStr = typeof value === 'object' ? JSON.stringify(value) : String(value);
             statements.push(
               env.DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
@@ -135,9 +138,11 @@ async function handleApiRequest(request, env) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // 路由所有 /api 开头的请求
     if (url.pathname.startsWith('/api')) {
       return handleApiRequest(request, env);
     }
+    // 其他请求尝试返回静态资源 (index.html)
     try {
       return await env.ASSETS.fetch(request);
     } catch (e) {
