@@ -26,6 +26,55 @@
             --card-gradient: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
             --glass-effect: rgba(255, 255, 255, 0.05);
         }
+        /* --- 亮色模式样式 (修复点击无反应问题) --- */
+        body.light-mode {
+            background: #f3f4f6; /* 浅灰背景 */
+            color: #1f2937;      /* 深色文字 */
+        }
+        
+        /* 让卡片变白 */
+        body.light-mode .site-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(0,0,0,0.1);
+            color: #1f2937;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 让侧边栏变白 */
+        body.light-mode .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            border-right: 1px solid rgba(0,0,0,0.1);
+            color: #1f2937;
+        }
+        
+        /* 让头部变白 */
+        body.light-mode .header {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        /* 让搜索框变白 */
+        body.light-mode .search-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0,0,0,0.1);
+            color: #1f2937;
+        }
+        
+        /* 让文字变深 */
+        body.light-mode .site-name,
+        body.light-mode .category-title,
+        body.light-mode .logo,
+        body.light-mode .nav-item {
+            color: #1f2937;
+        }
+        
+        body.light-mode .nav-item:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        body.light-mode .search-input {
+            color: #1f2937;
+        }
 
         * {
             margin: 0;
