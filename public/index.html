@@ -1694,76 +1694,63 @@
             }
         };
 
-        // --- DOM Elements Cache ---
+        // --- DOM Elements Cache (修复版) ---
         const DOMElements = {
-            // 原有DOM元素
             html: document.documentElement,
             body: document.body,
-            sidebarNav: document.getElementById('sidebar-nav'),
-            contentGrid: document.getElementById('content-grid'),
-            searchInput: document.getElementById('search-input'),
-            adminLoginBtn: document.getElementById('admin-login-btn'),
-            langSwitcher: document.getElementById('lang-switcher'),
-            themeSwitcher: document.getElementById('theme-switcher'),
-            adminModal: document.getElementById('admin-modal'),
-            adminLoginView: document.getElementById('admin-login-view'),
-            adminPanelView: document.getElementById('admin-panel-view'),
-            loginForm: document.getElementById('login-form'),
-            passwordInput: document.getElementById('password-input'),
-            loginError: document.getElementById('login-error'),
-            adminLogoutBtn: document.getElementById('admin-logout-btn'),
-            addCategoryForm: document.getElementById('add-category-form'),
-            categoryNameInput: document.getElementById('category-name-input'),
-            categoryTypeSelect: document.getElementById('category-type-select'),
-            categoriesList: document.getElementById('categories-list'),
-            saveOrderBtn: document.getElementById('save-order-btn'),
-            siteForm: document.getElementById('site-form'),
-            siteFormTitle: document.getElementById('site-form-title'),
-            siteCategorySelect: document.getElementById('site-category-select'),
-            siteNameInput: document.getElementById('site-name-input'),
-            siteUrlInput: document.getElementById('site-url-input'),
-            siteIconInput: document.getElementById('site-icon-input'),
-            siteDescInput: document.getElementById('site-desc-input'),
-            siteSubmitBtn: document.getElementById('site-submit-btn'),
-            cancelEditBtn: document.getElementById('cancel-edit-btn'),
-            sitesListAdmin: document.getElementById('sites-list-admin'),
-            iconPreview: document.getElementById('icon-preview'),
-            siteTagsInput: document.getElementById('site-tags-input'),
-            siteGroupSelect: document.getElementById('site-group-select'),
-            exportDataBtn: document.getElementById('export-data-btn'),
-            importDataBtn: document.getElementById('import-data-btn'),
-            importFileInput: document.getElementById('import-file-input'),
-            frequentSitesSection: document.getElementById('frequent-sites'),
-            frequentSitesGrid: document.getElementById('frequent-sites-grid'),
-            frequentSitesCountSelect: document.getElementById('frequent-sites-count-select'),
-            savePreferencesBtn: document.getElementById('save-preferences-btn'),
-            mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
-            desktopSidebarToggle: document.getElementById('desktop-sidebar-toggle'),
-            desktopSidebarIcon: document.getElementById('desktop-sidebar-icon'),
-            mobileSidebar: document.getElementById('mobile-sidebar'),
-            mobileSidebarClose: document.getElementById('mobile-sidebar-close'),
-            mobileSidebarContainer: document.getElementById('mobile-sidebar-container'),
-            genericModal: document.getElementById('generic-modal'),
-            genericModalText: document.getElementById('generic-modal-text'),
-            genericModalButtons: document.getElementById('generic-modal-buttons'),
-            webSearchForm: document.getElementById('web-search-form'),
-            webSearchInput: document.getElementById('web-search-input'),
-            searchEngineToggle: document.getElementById('search-engine-toggle'),
-            searchEngineMenu: document.getElementById('search-engine-menu'),
-            currentEngineIcon: document.getElementById('current-engine-icon'),
-            currentEngineName: document.getElementById('current-engine-name'),
-            // 新增DOM元素
+            
+            // 侧边栏与导航
             sidebar: document.getElementById('sidebar'),
+            sidebarNav: document.getElementById('sidebar-nav'),
             sidebarOverlay: document.getElementById('sidebarOverlay'),
             menuToggle: document.getElementById('menuToggle'),
-            searchContainer: document.getElementById('searchContainer'),
+            
+            // 侧边栏底部按钮 (修复 ID 匹配)
+            toggleThemeBtn: document.getElementById('toggle-theme-btn'),
+            toggleLanguageBtn: document.getElementById('toggle-language-btn'),
+            adminLoginBtn: document.getElementById('admin-login-btn'),
+            visitorStatsBtn: document.getElementById('visitor-stats-btn'),
+
+            // 头部控制区
+            headerSiteTitle: document.getElementById('headerSiteTitle'),
             searchToggle: document.getElementById('searchToggle'),
             themeToggle: document.getElementById('themeToggle'),
             musicToggle: document.getElementById('musicToggle'),
             statsToggle: document.getElementById('statsToggle'),
+
+            // 搜索区域 (修复 ID 匹配)
+            searchContainer: document.getElementById('searchContainer'),
             engineBtn: document.getElementById('engineBtn'),
+            searchInput: document.getElementById('searchInput'), // 修正: search-input -> searchInput
             voiceSearch: document.getElementById('voiceSearch'),
-            visitorStatsBtn: document.getElementById('visitor-stats-btn'),
+            // webSearchForm 在 HTML 中可能不存在，使用可选链访问防止报错
+
+            // 主内容区 (修复 ID 匹配)
+            siteHeader: document.getElementById('siteHeader'),
+            siteAvatar: document.getElementById('siteAvatar'),
+            siteTitle: document.getElementById('siteTitle'),
+            siteDescription: document.getElementById('siteDescription'),
+            welcomeMessage: document.getElementById('welcomeMessage'),
+            welcomeTitle: document.getElementById('welcomeTitle'),
+            welcomeText: document.getElementById('welcomeText'),
+            
+            // 网站网格 (修复 ID 匹配)
+            frequentSitesSection: document.getElementById('frequentSites'), // 修正: frequent-sites -> frequentSites
+            frequentGrid: document.getElementById('frequentGrid'),          // 修正: frequent-sites-grid -> frequentGrid
+            contentGrid: document.getElementById('contentGrid'),            // 修正: content-grid -> contentGrid
+            mainFab: document.getElementById('mainFab'),
+
+            // 音乐播放器
+            musicPlayer: document.getElementById('musicPlayer'),
+            musicAlbumCover: document.getElementById('musicAlbumCover'),
+            musicTitleMini: document.getElementById('musicTitleMini'),
+            musicArtistMini: document.getElementById('musicArtistMini'),
+            prevMusicBtn: document.getElementById('prevMusicBtn'),
+            playPauseMusicBtn: document.getElementById('playPauseMusicBtn'),
+            nextMusicBtn: document.getElementById('nextMusicBtn'),
+            musicProgress: document.getElementById('musicProgress'),
+
+            // 访客统计面板
             visitorStatsPanel: document.getElementById('visitorStatsPanel'),
             totalVisits: document.getElementById('totalVisits'),
             todayVisits: document.getElementById('todayVisits'),
@@ -1771,22 +1758,18 @@
             uniqueVisitors: document.getElementById('uniqueVisitors'),
             visitorLocations: document.getElementById('visitorLocations'),
             statsUpdateTime: document.getElementById('statsUpdateTime'),
-            musicPlayer: document.getElementById('musicPlayer'),
-            musicAlbumCover: document.getElementById('musicAlbumCover'),
-            musicTitleMini: document.getElementById('musicTitleMini'),
-            musicArtistMini: document.getElementById('musicArtistMini'),
-            playPauseMusicBtn: document.getElementById('playPauseMusicBtn'),
-            prevMusicBtn: document.getElementById('prevMusicBtn'),
-            nextMusicBtn: document.getElementById('nextMusicBtn'),
-            musicProgress: document.getElementById('musicProgress'),
+
+            // 管理员模态框
             adminModal: document.getElementById('adminModal'),
             closeAdminModal: document.getElementById('closeAdminModal'),
             adminLoginView: document.getElementById('adminLoginView'),
-            adminPanelView: document.getElementById('adminPanelView'),
             loginForm: document.getElementById('loginForm'),
             adminPasswordInput: document.getElementById('adminPasswordInput'),
             loginError: document.getElementById('loginError'),
+            adminPanelView: document.getElementById('adminPanelView'),
             adminLogoutBtn: document.getElementById('admin-logout-btn'),
+
+            // 管理后台 - 个性化设置表单
             siteTitleInput: document.getElementById('siteTitleInput'),
             siteDescriptionInput: document.getElementById('siteDescriptionInput'),
             avatarUrlInput: document.getElementById('avatarUrlInput'),
@@ -1795,27 +1778,53 @@
             welcomeTextInput: document.getElementById('welcomeTextInput'),
             autoPlayMusicCheckbox: document.getElementById('autoPlayMusicCheckbox'),
             showVisitorStatsCheckbox: document.getElementById('showVisitorStatsCheckbox'),
+
+            // 管理后台 - 音乐管理
             addMusicForm: document.getElementById('addMusicForm'),
             musicTitleInput: document.getElementById('musicTitleInput'),
             musicArtistInput: document.getElementById('musicArtistInput'),
             musicUrlInput: document.getElementById('musicUrlInput'),
             musicCoverInput: document.getElementById('musicCoverInput'),
             customMusicList: document.getElementById('customMusicList'),
+
+            // 管理后台 - 分类管理
+            addCategoryForm: document.getElementById('addCategoryForm'),
+            categoryNameInput: document.getElementById('categoryNameInput'),
+            categoryTypeSelect: document.getElementById('categoryTypeSelect'),
+            categoriesList: document.getElementById('categoriesList'),
+            saveOrderBtn: document.getElementById('save-order-btn'),
+
+            // 管理后台 - 网站管理 (注意这些ID在HTML里是短横线)
+            siteForm: document.getElementById('site-form'),
+            siteFormTitle: document.getElementById('site-form-title'),
+            siteCategorySelect: document.getElementById('site-category-select'),
+            siteNameInput: document.getElementById('site-name-input'),
+            siteUrlInput: document.getElementById('site-url-input'),
+            siteIconInput: document.getElementById('site-icon-input'),
+            siteDescInput: document.getElementById('site-desc-input'),
+            siteTagsInput: document.getElementById('site-tags-input'),
+            siteGroupSelect: document.getElementById('site-group-select'),
+            siteSubmitBtn: document.getElementById('site-submit-btn'),
+            cancelEditBtn: document.getElementById('cancel-edit-btn'),
+            sitesListAdmin: document.getElementById('sitesListAdmin'), 
+            iconPreview: document.getElementById('icon-preview'),
+
+            // 导入导出
+            exportDataBtn: document.getElementById('export-data-btn'),
+            importDataBtn: document.getElementById('import-data-btn'),
+            importFileInput: document.getElementById('import-file-input'),
+
+            // 管理后台统计
             adminTotalVisits: document.getElementById('adminTotalVisits'),
             adminTodayVisits: document.getElementById('adminTodayVisits'),
             adminOnlineUsers: document.getElementById('adminOnlineUsers'),
             adminUniqueVisitors: document.getElementById('adminUniqueVisitors'),
             recentVisitsTable: document.getElementById('recentVisitsTable'),
+
+            // 消息模态框
             messageModal: document.getElementById('messageModal'),
             messageTitle: document.getElementById('messageTitle'),
-            messageText: document.getElementById('messageText'),
-            siteAvatar: document.getElementById('siteAvatar'),
-            siteTitle: document.getElementById('siteTitle'),
-            siteDescription: document.getElementById('siteDescription'),
-            welcomeTitle: document.getElementById('welcomeTitle'),
-            welcomeText: document.getElementById('welcomeText'),
-            sidebarSiteTitle: document.getElementById('sidebarSiteTitle'),
-            headerSiteTitle: document.getElementById('headerSiteTitle')
+            messageText: document.getElementById('messageText')
         };
 
         // --- API Client ---
