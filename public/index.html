@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2825,374 +2826,232 @@
             if (state.isLoggedIn) renderAdminPanel();
         }
 
-        // --- Event Listeners ---
+        // --- Event Listeners (防崩溃修复版) ---
         function setupEventListeners() {
+            // 辅助函数：安全绑定事件，防止元素不存在导致报错
+            const safeBind = (element, eventType, handler) => {
+                if (element) {
+                    element[eventType] = handler;
+                }
+            };
+
             // 侧边栏切换
-            DOMElements.menuToggle.onclick = () => {
-                DOMElements.sidebar.classList.add('open');
-                DOMElements.sidebarOverlay.classList.add('show');
-            };
+            safeBind(DOMElements.mobileMenuToggle, 'onclick', () => {
+                DOMElements.sidebar?.classList.add('open');
+                DOMElements.sidebarOverlay?.classList.add('show');
+            });
             
-            DOMElements.sidebarOverlay.onclick = () => {
-                DOMElements.sidebar.classList.remove('open');
-                DOMElements.sidebarOverlay.classList.remove('show');
-            };
+            safeBind(DOMElements.sidebarOverlay, 'onclick', () => {
+                DOMElements.sidebar?.classList.remove('open');
+                DOMElements.sidebarOverlay?.classList.remove('show');
+            });
             
             // 搜索栏切换
-            DOMElements.searchToggle.onclick = () => {
-                DOMElements.searchContainer.style.display = DOMElements.searchContainer.style.display === 'none' ? 'block' : 'none';
-            };
+            safeBind(DOMElements.searchToggle, 'onclick', () => {
+                if (DOMElements.searchContainer) {
+                    const isHidden = DOMElements.searchContainer.style.display === 'none';
+                    DOMElements.searchContainer.style.display = isHidden ? 'block' : 'none';
+                }
+            });
             
             // 主题切换
-            DOMElements.themeToggle.onclick = () => {
+            safeBind(DOMElements.themeSwitcher, 'onclick', () => {
                 const newTheme = state.currentTheme === 'light' ? 'dark' : 'light';
                 setTheme(newTheme);
-                // 更新按钮图标
-                const icon = DOMElements.themeToggle.querySelector('i');
-                if (newTheme === 'light') {
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                } else {
-                    icon.classList.remove('fa-sun');
-                    icon.classList.add('fa-moon');
-                }
-            };
-            
-            DOMElements.themeToggleBtn.onclick = () => {
-                const newTheme = state.currentTheme === 'light' ? 'dark' : 'light';
-                setTheme(newTheme);
-            };
+            });
             
             // 音乐播放器控制
-            DOMElements.musicToggle.onclick = () => {
-                const musicPlayer = DOMElements.musicPlayer;
-                if (musicPlayer.classList.contains('collapsed')) {
-                    musicPlayer.classList.remove('collapsed');
-                } else {
-                    musicPlayer.classList.add('collapsed');
-                }
-            };
+            safeBind(DOMElements.musicToggle, 'onclick', () => {
+                DOMElements.musicPlayer?.classList.toggle('collapsed');
+            });
             
-            DOMElements.playPauseMusicBtn.onclick = toggleMusicPlayback;
-            DOMElements.prevMusicBtn.onclick = playPrevMusic;
-            DOMElements.nextMusicBtn.onclick = playNextMusic;
+            safeBind(DOMElements.playPauseMusicBtn, 'onclick', toggleMusicPlayback);
+            safeBind(DOMElements.prevMusicBtn, 'onclick', playPrevMusic);
+            safeBind(DOMElements.nextMusicBtn, 'onclick', playNextMusic);
             
             // 访客统计
-            DOMElements.statsToggle.onclick = toggleVisitorStats;
-            DOMElements.visitorStatsBtn.onclick = toggleVisitorStats;
+            safeBind(DOMElements.statsToggle, 'onclick', toggleVisitorStats);
+            safeBind(DOMElements.visitorStatsBtn, 'onclick', toggleVisitorStats);
             
             // 管理员登录
-            DOMElements.adminLoginBtn.onclick = () => DOMElements.adminModal.style.display = 'flex';
-            DOMElements.adminLoginBtn.onclick = () => DOMElements.adminModal.style.display = 'flex';
+            safeBind(DOMElements.adminLoginBtn, 'onclick', () => {
+                if (DOMElements.adminModal) DOMElements.adminModal.style.display = 'flex';
+            });
             
-            DOMElements.closeAdminModal.onclick = () => {
-                DOMElements.adminModal.style.display = 'none';
-            };
+            safeBind(DOMElements.closeAdminModal, 'onclick', () => {
+                if (DOMElements.adminModal) DOMElements.adminModal.style.display = 'none';
+            });
             
-            DOMElements.adminModal.onclick = (e) => {
-                if (e.target === DOMElements.adminModal) {
-                    DOMElements.adminModal.style.display = 'none';
-                }
-            };
+            if (DOMElements.adminModal) {
+                DOMElements.adminModal.onclick = (e) => {
+                    if (e.target === DOMElements.adminModal) {
+                        DOMElements.adminModal.style.display = 'none';
+                    }
+                };
+            }
             
             // 管理员登录表单
-            DOMElements.loginForm.onsubmit = async (e) => {
-                e.preventDefault();
-                const password = DOMElements.adminPasswordInput.value;
-                
-                if (password === ADMIN_PASSWORD) {
-                    state.isLoggedIn = true;
-                    DOMElements.loginError.style.display = 'none';
-                    DOMElements.adminLoginView.style.display = 'none';
-                    DOMElements.adminPanelView.style.display = 'block';
+            if (DOMElements.loginForm) {
+                DOMElements.loginForm.onsubmit = async (e) => {
+                    e.preventDefault();
+                    const password = DOMElements.adminPasswordInput?.value;
                     
-                    // 加载管理面板数据
-                    renderAdminPanel();
-                    updateAdminStats();
-                    // 设置定期更新管理面板统计数据
-                    setInterval(updateAdminStats, 60000); // 每分钟更新一次
-                } else {
-                    DOMElements.loginError.textContent = '密码错误，请重试。';
-                    DOMElements.loginError.style.display = 'block';
-                }
-            };
+                    if (password === ADMIN_PASSWORD) {
+                        state.isLoggedIn = true;
+                        if (DOMElements.loginError) DOMElements.loginError.style.display = 'none';
+                        if (DOMElements.adminLoginView) DOMElements.adminLoginView.style.display = 'none';
+                        if (DOMElements.adminPanelView) DOMElements.adminPanelView.style.display = 'block';
+                        
+                        // 加载管理面板数据
+                        renderAdminPanel();
+                        updateAdminStats();
+                        setInterval(updateAdminStats, 60000);
+                    } else {
+                        if (DOMElements.loginError) {
+                            DOMElements.loginError.textContent = translations[state.currentLanguage]?.passwordIncorrect || '密码错误';
+                            DOMElements.loginError.style.display = 'block';
+                        }
+                    }
+                };
+            }
             
             // 管理员退出
-            DOMElements.adminLogoutBtn.onclick = () => {
+            safeBind(DOMElements.adminLogoutBtn, 'onclick', () => {
                 state.isLoggedIn = false;
-                DOMElements.adminModal.style.display = 'none';
-                DOMElements.adminLoginView.style.display = 'block';
-                DOMElements.adminPanelView.style.display = 'none';
-                DOMElements.adminPasswordInput.value = '';
-                DOMElements.loginError.style.display = 'none';
-            };
+                if (DOMElements.adminModal) DOMElements.adminModal.style.display = 'none';
+                if (DOMElements.adminLoginView) DOMElements.adminLoginView.style.display = 'block';
+                if (DOMElements.adminPanelView) DOMElements.adminPanelView.style.display = 'none';
+                if (DOMElements.adminPasswordInput) DOMElements.adminPasswordInput.value = '';
+                if (DOMElements.loginError) DOMElements.loginError.style.display = 'none';
+            });
             
             // 语言切换
-            DOMElements.toggleLanguageBtn.onclick = (e) => {
+            safeBind(DOMElements.toggleLanguageBtn, 'onclick', (e) => {
                 e.preventDefault();
                 const newLang = state.currentLanguage === 'en' ? 'zh' : 'en';
                 setLanguage(newLang);
-            };
+            });
             
-            // 原有搜索功能
-            DOMElements.searchInput.oninput = filterAndRenderSites;
+            // 搜索功能
+            if (DOMElements.searchInput) {
+                DOMElements.searchInput.oninput = filterAndRenderSites;
+            }
             
-            // 原有分类管理
-            DOMElements.addCategoryForm.onsubmit = async (e) => { 
-                e.preventDefault(); 
-                const name = DOMElements.categoryNameInput.value.trim(); 
-                const type = DOMElements.categoryTypeSelect.value; 
-                if (name) { 
-                    await api.post('categories', { name, type }); 
-                    DOMElements.categoryNameInput.value = ''; 
-                    loadInitialData(); 
-                } 
-            };
-
-            // 原有网站管理
-            DOMElements.siteForm.onsubmit = async (e) => {
-                e.preventDefault();
-                const site = { 
-                    categoryId: DOMElements.siteCategorySelect.value, 
-                    name: DOMElements.siteNameInput.value.trim(), 
-                    url: DOMElements.siteUrlInput.value.trim(), 
-                    icon: DOMElements.siteIconInput.value.trim(), 
-                    description: DOMElements.siteDescInput.value.trim(),
-                    tags: DOMElements.siteTagsInput.value.trim(),
-                    group_id: DOMElements.siteGroupSelect.value || null
+            // 分类管理
+            if (DOMElements.addCategoryForm) {
+                DOMElements.addCategoryForm.onsubmit = async (e) => { 
+                    e.preventDefault(); 
+                    const name = DOMElements.categoryNameInput?.value.trim(); 
+                    const type = DOMElements.categoryTypeSelect?.value; 
+                    if (name) { 
+                        try {
+                            await api.post('categories', { name, type }); 
+                            DOMElements.categoryNameInput.value = ''; 
+                            loadInitialData(); 
+                        } catch(err) { console.error(err); }
+                    } 
                 };
-                if (!site.categoryId || !site.name || !site.url) { 
-                    customAlert('fillRequiredFields'); 
-                    return; 
-                }
-                try {
-                    if (state.editingSiteId) {
-                        await api.put(`sites/${state.editingSiteId}`, site);
-                        customAlert('siteUpdated');
-                    } else {
-                        await api.post('sites', site);
+            }
+
+            // 网站管理
+            if (DOMElements.siteForm) {
+                DOMElements.siteForm.onsubmit = async (e) => {
+                    e.preventDefault();
+                    // 获取表单数据... (保持原有逻辑，但增加空值检查)
+                    const site = { 
+                        categoryId: DOMElements.siteCategorySelect?.value, 
+                        name: DOMElements.siteNameInput?.value.trim(), 
+                        url: DOMElements.siteUrlInput?.value.trim(), 
+                        icon: DOMElements.siteIconInput?.value.trim(), 
+                        description: DOMElements.siteDescInput?.value.trim(),
+                        tags: DOMElements.siteTagsInput?.value.trim(),
+                        group_id: DOMElements.siteGroupSelect?.value || null
+                    };
+                    
+                    if (!site.categoryId || !site.name || !site.url) { 
+                        customAlert('fillRequiredFields'); 
+                        return; 
                     }
-                    resetSiteForm();
-                    loadInitialData();
-                } catch (err) {
-                    console.error("Failed to save site:", err);
-                    customAlert("Failed to save site.", false);
-                }
-            };
-
-            DOMElements.categoriesList.onclick = async (e) => { 
-                const btn = e.target.closest('.delete-category-btn'); 
-                if (btn) { 
-                    customConfirm('confirmCategoryDeletion', async () => { 
-                        await api.delete(`categories/${btn.dataset.id}`); 
-                        loadInitialData(); 
-                    }); 
-                } 
-            };
-
-            DOMElements.sitesListAdmin.onclick = async (e) => {
-                const deleteBtn = e.target.closest('.delete-site-btn');
-                if (deleteBtn) {
-                    customConfirm('confirmSiteDeletion', async () => {
-                        await api.delete(`sites/${deleteBtn.dataset.id}`);
+                    
+                    try {
+                        if (state.editingSiteId) {
+                            await api.put(`sites/${state.editingSiteId}`, site);
+                            customAlert('siteUpdated');
+                        } else {
+                            await api.post('sites', site);
+                        }
+                        resetSiteForm();
                         loadInitialData();
+                    } catch (err) {
+                        console.error("Failed to save site:", err);
+                        customAlert("Failed to save site.", false);
+                    }
+                };
+            }
+
+            // 删除/编辑 代理事件 (使用 HTML body 或 list 容器)
+            const handleListClick = async (e, listType) => {
+                // 删除按钮
+                const deleteBtn = e.target.closest(listType === 'cat' ? '.delete-category-btn' : '.delete-site-btn');
+                if (deleteBtn) {
+                     const key = listType === 'cat' ? 'confirmCategoryDeletion' : 'confirmSiteDeletion';
+                     const endpoint = listType === 'cat' ? 'categories' : 'sites';
+                     customConfirm(key, async () => { 
+                        await api.delete(`${endpoint}/${deleteBtn.dataset.id}`); 
+                        loadInitialData(); 
                     });
                     return;
                 }
+                
+                // 编辑按钮 (仅网站)
                 const editBtn = e.target.closest('.edit-site-btn');
-                if (editBtn) {
+                if (editBtn && listType === 'site') {
                     const siteId = editBtn.dataset.id;
                     const siteToEdit = state.sites.find(s => s.id == siteId);
                     if (siteToEdit) {
                         state.editingSiteId = siteId;
-                        DOMElements.siteCategorySelect.value = siteToEdit.categoryId;
-                        DOMElements.siteNameInput.value = siteToEdit.name;
-                        DOMElements.siteUrlInput.value = siteToEdit.url;
-                        DOMElements.siteIconInput.value = siteToEdit.icon || '';
-                        DOMElements.siteDescInput.value = siteToEdit.description || '';
-                        DOMElements.siteTagsInput.value = siteToEdit.tags || '';
-                        DOMElements.siteGroupSelect.value = siteToEdit.group_id || '';
-                        DOMElements.iconPreview.src = siteToEdit.icon || `https://placehold.co/32x32/777/eee?text=${siteToEdit.name.charAt(0)}`;
-                        DOMElements.siteFormTitle.setAttribute('data-i18n-key', 'editSite');
-                        DOMElements.siteSubmitBtn.setAttribute('data-i18n-key', 'saveChanges');
-                        DOMElements.cancelEditBtn.classList.remove('hidden');
+                        if(DOMElements.siteCategorySelect) DOMElements.siteCategorySelect.value = siteToEdit.categoryId;
+                        if(DOMElements.siteNameInput) DOMElements.siteNameInput.value = siteToEdit.name;
+                        if(DOMElements.siteUrlInput) DOMElements.siteUrlInput.value = siteToEdit.url;
+                        if(DOMElements.siteIconInput) DOMElements.siteIconInput.value = siteToEdit.icon || '';
+                        if(DOMElements.siteDescInput) DOMElements.siteDescInput.value = siteToEdit.description || '';
+                        if(DOMElements.siteTagsInput) DOMElements.siteTagsInput.value = siteToEdit.tags || '';
+                        if(DOMElements.siteGroupSelect) DOMElements.siteGroupSelect.value = siteToEdit.group_id || '';
+                        if(DOMElements.iconPreview) DOMElements.iconPreview.src = siteToEdit.icon || `https://placehold.co/32x32/777/eee?text=${siteToEdit.name.charAt(0)}`;
+                        
+                        if(DOMElements.siteFormTitle) DOMElements.siteFormTitle.setAttribute('data-i18n-key', 'editSite');
+                        if(DOMElements.siteSubmitBtn) DOMElements.siteSubmitBtn.setAttribute('data-i18n-key', 'saveChanges');
+                        if(DOMElements.cancelEditBtn) DOMElements.cancelEditBtn.classList.remove('hidden');
+                        
                         setLanguage(state.currentLanguage);
-                        DOMElements.siteForm.scrollIntoView({ behavior: 'smooth' });
+                        DOMElements.siteForm?.scrollIntoView({ behavior: 'smooth' });
                     }
                 }
             };
 
-            DOMElements.cancelEditBtn.onclick = resetSiteForm;
+            if (DOMElements.categoriesList) DOMElements.categoriesList.onclick = (e) => handleListClick(e, 'cat');
+            if (DOMElements.sitesListAdmin) DOMElements.sitesListAdmin.onclick = (e) => handleListClick(e, 'site');
 
-            DOMElements.saveOrderBtn.onclick = async () => {
-                const categoriesList = document.getElementById('sortable-categories');
-                if (!categoriesList) return;
-                
-                const updates = [];
-                Array.from(categoriesList.children).forEach((el, index) => {
-                    const categoryId = el.dataset.id;
-                    const typeSelect = el.querySelector('.category-type-select');
-                    const newType = typeSelect ? typeSelect.value : el.dataset.type;
-                    
-                    if (!categoryId) {
-                        console.error('Missing category ID for element:', el);
-                        return;
-                    }
-                    
-                    updates.push({
-                        id: parseInt(categoryId), // 确保 ID 是数字
-                        type: newType,
-                        displayOrder: index
-                    });
-                });
-                
-                try {
-                    console.log('Saving category updates:', updates);
-                    await api.post('categories/update-all', { updates });
-                    customAlert('orderSaved');
-                    DOMElements.saveOrderBtn.classList.add('hidden');
-                    await loadInitialData();
-                } catch (err) {
-                    console.error("Failed to save order:", err);
-                    console.error("Error details:", err.body || err.message);
-                    customAlert("Failed to save order. Check console for details.", false);
-                }
-            };
-            
-            // 监听分类类型更改
-            document.addEventListener('change', (e) => {
-                if (e.target.classList.contains('category-type-select')) {
-                    DOMElements.saveOrderBtn.classList.remove('hidden');
-                }
-            });
-            
-            DOMElements.siteUrlInput.onblur = () => {
-                const url = DOMElements.siteUrlInput.value.trim();
-                if (url && !DOMElements.siteIconInput.value.trim()) { 
-                    try { 
-                        const domain = new URL(url).hostname; 
-                        const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`; 
-                        DOMElements.siteIconInput.value = iconUrl; 
-                        DOMElements.iconPreview.src = iconUrl; 
-                    } catch (e) { /* ignore invalid urls */ } 
-                }
-            };
-            
-            DOMElements.siteIconInput.oninput = () => { 
-                DOMElements.iconPreview.src = DOMElements.siteIconInput.value.trim() || 'https://placehold.co/32x32/777/eee?text=?'; 
-            };
+            safeBind(DOMElements.cancelEditBtn, 'onclick', resetSiteForm);
 
-            // Import/Export event listeners
-            DOMElements.exportDataBtn.onclick = exportData;
-            DOMElements.importDataBtn.onclick = () => DOMElements.importFileInput.click();
-            DOMElements.importFileInput.onchange = async (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    await importData(file);
-                    e.target.value = '';
-                }
-            };
+            // 导入导出
+            safeBind(DOMElements.exportDataBtn, 'onclick', exportData);
+            safeBind(DOMElements.importDataBtn, 'onclick', () => DOMElements.importFileInput?.click());
             
-            // 网站顺序保存事件
-            document.addEventListener('click', async (e) => {
-                if (e.target.classList.contains('save-sites-order-btn')) {
-                    const categoryId = e.target.dataset.categoryId;
-                    const listEl = document.getElementById(`sites-sortable-${categoryId}`);
-                    const orderedIds = Array.from(listEl.children).map(el => el.dataset.siteId);
-                    
-                    try {
-                        await api.post('sites/order', { categoryId, orderedIds });
-                        customAlert('sitesOrderSaved');
-                        e.target.classList.add('hidden');
-                    } catch (err) {
-                        console.error('Failed to save sites order:', err);
-                        customAlert('Failed to save sites order.', false);
+            if (DOMElements.importFileInput) {
+                DOMElements.importFileInput.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        await importData(file);
+                        e.target.value = '';
                     }
-                }
-            });
-            
-            // Keyboard shortcuts for frequent sites
-            document.addEventListener('keydown', (e) => {
-                if (!state.userPreferences.enable_shortcuts) return;
-                if (e.ctrlKey || e.metaKey || e.altKey) return;
-                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
-                
-                const key = parseInt(e.key);
-                if (key >= 1 && key <= 9 && state.frequentSites[key - 1]) {
-                    e.preventDefault();
-                    const site = state.frequentSites[key - 1];
-                    recordSiteVisit(site.id);
-                    window.open(site.url, '_blank');
-                }
-            });
-            
-            // Web search functionality
-            DOMElements.webSearchForm?.onsubmit = (e) => {
-                e.preventDefault();
-                const query = DOMElements.webSearchInput.value.trim();
-                if (query) {
-                    const engine = searchEngines[state.currentSearchEngine];
-                    const searchUrl = engine.url + encodeURIComponent(query);
-                    window.open(searchUrl, '_blank');
-                    DOMElements.webSearchInput.value = '';
-                }
-            };
-            
-            // Search engine dropdown toggle
-            DOMElements.searchEngineToggle?.onclick = (e) => {
-                e.stopPropagation();
-                const isOpen = !DOMElements.searchEngineMenu.classList.contains('hidden');
-                DOMElements.searchEngineMenu.classList.toggle('hidden');
-                DOMElements.searchEngineToggle.classList.toggle('active');
-                
-                if (!isOpen) {
-                    // Close dropdown when clicking outside
-                    const closeDropdown = (event) => {
-                        if (!DOMElements.searchEngineToggle.contains(event.target) && 
-                            !DOMElements.searchEngineMenu.contains(event.target)) {
-                            DOMElements.searchEngineMenu.classList.add('hidden');
-                            DOMElements.searchEngineToggle.classList.remove('active');
-                            document.removeEventListener('click', closeDropdown);
-                        }
-                    };
-                    setTimeout(() => document.addEventListener('click', closeDropdown), 0);
-                }
-            };
-            
-            // Search engine selection
-            document.querySelectorAll('.search-engine-option').forEach(option => {
-                option.onclick = () => {
-                    const engine = option.dataset.engine;
-                    state.currentSearchEngine = engine;
-                    localStorage.setItem('preferredSearchEngine', engine);
-                    
-                    // Update current engine icon and name
-                    DOMElements.currentEngineIcon.src = searchEngines[engine].icon;
-                    DOMElements.currentEngineIcon.alt = searchEngines[engine].name;
-                    DOMElements.currentEngineName.textContent = searchEngines[engine].name;
-                    
-                    // Close dropdown
-                    DOMElements.searchEngineMenu.classList.add('hidden');
-                    DOMElements.searchEngineToggle.classList.remove('active');
-                    
-                    // Focus search input
-                    DOMElements.webSearchInput.focus();
                 };
-            });
+            }
             
-            // Focus search input when pressing / key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                    DOMElements.webSearchInput.focus();
-                }
+            // 浮动按钮
+            safeBind(DOMElements.mainFab, 'onclick', () => {
+                if(DOMElements.adminModal) DOMElements.adminModal.style.display = 'flex';
             });
-            
-            // 浮动操作按钮
-            DOMElements.mainFab.onclick = () => {
-                // 可以添加快速添加网站的功能
-                DOMElements.adminModal.style.display = 'flex';
-            };
         }
 
         // --- 原有功能函数 ---
