@@ -3,52 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal</title>
+    <title>我的导航站</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --glass: rgba(20, 20, 20, 0.7); --border: rgba(255, 255, 255, 0.1); }
+        :root { --glass: rgba(20, 20, 20, 0.6); --border: rgba(255, 255, 255, 0.1); }
         body { margin: 0; font-family: sans-serif; background: #0f172a; color: white; min-height: 100vh; overflow-x: hidden; }
         
-        /* 背景幻灯片 */
+        /* 幻灯片背景 */
         #bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
-        .bg-slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 1s; }
+        .bg-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 1.5s; }
         .bg-slide.active { opacity: 1; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; pointer-events: none; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: -1; }
 
-        /* 顶部栏 */
-        .top-bar { position: fixed; top: 0; width: 100%; height: 60px; background: var(--glass); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; }
-        .marquee { flex: 1; margin: 0 20px; overflow: hidden; white-space: nowrap; color: #ccc; font-size: 0.9rem; }
+        /* 顶部磨砂栏 */
+        .top-bar { position: fixed; top: 0; width: 100%; height: 64px; background: var(--glass); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; z-index: 50; }
+        .marquee { flex: 1; margin: 0 2rem; overflow: hidden; white-space: nowrap; color: #ccc; font-size: 0.9rem; mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
+        .marquee span { display: inline-block; animation: scroll 20s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* 主内容区 */
+        .container { max-width: 1200px; margin: 100px auto 50px; padding: 0 20px; }
         
-        /* 主内容 */
-        .container { max-width: 1200px; margin: 80px auto 40px; padding: 0 20px; }
-        
-        /* 分类与网站 */
+        /* 折叠分类 */
         .cat-box { margin-bottom: 40px; }
-        .cat-header { display: inline-flex; align-items: center; padding: 8px 20px; background: rgba(255,255,255,0.1); border-radius: 20px; cursor: pointer; margin-bottom: 20px; user-select: none; }
-        .cat-sites { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 20px; transition: 0.3s; }
-        .cat-sites.collapsed { display: none; }
+        .cat-header { display: inline-flex; align-items: center; gap: 10px; padding: 8px 20px; background: rgba(255,255,255,0.05); border-radius: 30px; cursor: pointer; border: 1px solid transparent; transition: 0.3s; }
+        .cat-header:hover { background: rgba(255,255,255,0.15); border-color: var(--border); }
+        .cat-content { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 25px; padding: 25px 10px; transition: 0.5s; overflow: hidden; max-height: 2000px; }
+        .cat-content.collapsed { max-height: 0; padding: 0; opacity: 0; }
 
-        /* 圆形图标 */
-        .site { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: white; transition: 0.3s; }
-        .site:hover { transform: translateY(-5px); }
-        .icon-circle { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .icon-img { width: 100%; height: 100%; object-fit: cover; }
-        .site-name { font-size: 0.8rem; opacity: 0.9; text-align: center; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* 圆形玻璃图标 */
+        .site { display: flex; flex-direction: column; align-items: center; gap: 10px; text-decoration: none; color: white; }
+        .icon-box { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .site:hover .icon-box { transform: scale(1.1); background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.5); }
+        .site-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .site-name { font-size: 0.8rem; opacity: 0.8; width: 120%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        /* 按钮与输入框 */
-        .btn-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        /* 顶部按钮 */
+        .btn-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; }
         .btn-icon:hover { background: white; color: black; }
-        .btn-icon.playing { background: #10b981; border-color: #10b981; }
-        
-        input, textarea, select { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; padding: 8px 12px; border-radius: 6px; outline: none; width: 100%; }
-        input:focus { border-color: #6366f1; background: rgba(0,0,0,0.5); }
-        
+        .btn-icon.playing { animation: pulse 2s infinite; background: #10b981; border-color: transparent; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
+
         /* 模态框 */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-box { background: #1e293b; width: 90%; max-width: 800px; max-height: 90vh; border-radius: 12px; border: 1px solid #333; display: flex; flex-direction: column; }
-        .modal-head { padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-weight: bold; }
-        .modal-body { padding: 20px; overflow-y: auto; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-box { background: #1e293b; width: 95%; max-width: 900px; max-height: 85vh; border-radius: 16px; border: 1px solid #334155; display: flex; flex-direction: column; }
+        .modal-head { padding: 15px 20px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; font-weight: bold; background: #0f172a; }
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+
+        input, textarea, select { background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; padding: 8px; border-radius: 6px; width: 100%; outline: none; font-size: 14px; }
+        input:focus { border-color: #6366f1; background: rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -58,15 +62,18 @@
 
     <div class="top-bar">
         <div class="flex items-center gap-3">
-            <img id="logo-img" src="" class="w-8 h-8 rounded-full hidden">
-            <span class="font-bold">PORTAL</span>
+            <img id="logo-img" class="w-8 h-8 rounded-full border border-white/20 hidden">
+            <span class="font-bold tracking-widest text-sm">PORTAL</span>
         </div>
         <div class="marquee">
-            <marquee id="welcome-text" scrollamount="5">正在加载...</marquee>
+            <span id="welcome-text">正在连接服务器...</span>
         </div>
-        <div class="flex gap-3">
-            <button id="music-btn" class="btn-icon" onclick="toggleMusic()"><i class="fas fa-music"></i></button>
-            <button class="btn-icon" onclick="openAdmin()"><i class="fas fa-user-shield"></i></button>
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <input id="search-input" placeholder="搜索..." class="rounded-full px-4 py-1 text-xs w-24 focus:w-40 transition" style="background:rgba(255,255,255,0.1)">
+            </div>
+            <button id="music-btn" class="btn-icon" onclick="toggleMusic()" title="播放/暂停"><i class="fas fa-music text-xs"></i></button>
+            <button class="btn-icon" onclick="openAdmin()" title="私密空间"><i class="fas fa-shield-alt text-xs"></i></button>
         </div>
     </div>
 
@@ -75,59 +82,65 @@
     <div id="admin-modal" class="modal">
         <div class="modal-box">
             <div class="modal-head">
-                <span>管理后台</span>
-                <button onclick="closeAdmin()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+                <span><i class="fas fa-cogs text-blue-400 mr-2"></i> 管理后台 & 私密空间</span>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body space-y-8">
                 
-                <div id="login-view" class="text-center py-10">
-                    <input type="password" id="pwd" placeholder="密码 (默认 Qq110110.)" class="w-64 mb-4 text-center">
-                    <br>
-                    <button onclick="doLogin()" class="bg-indigo-600 px-6 py-2 rounded font-bold hover:bg-indigo-500">解锁</button>
+                <div id="login-view" class="text-center py-12">
+                    <div class="text-4xl mb-4">🔒</div>
+                    <h3 class="text-xl font-bold mb-6">身份验证</h3>
+                    <input type="password" id="pwd" placeholder="请输入密码 (默认 Qq110110.)" class="w-64 mb-4 text-center mx-auto block">
+                    <button onclick="doLogin()" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-2 rounded font-bold transition">解锁</button>
                 </div>
 
                 <div id="panel-view" class="hidden space-y-6">
-                    <div class="grid grid-cols-2 gap-4 text-center bg-black/20 p-4 rounded">
-                        <div><div class="text-xs text-gray-400">总访问</div><div id="stat-total" class="text-xl font-bold">0</div></div>
-                        <div><div class="text-xs text-gray-400">今日</div><div id="stat-today" class="text-xl font-bold text-green-400">0</div></div>
+                    <div class="grid grid-cols-2 gap-4 text-center bg-black/20 p-4 rounded-xl border border-white/5">
+                        <div><div class="text-xs text-gray-400">总访问</div><div id="stat-total" class="text-2xl font-bold">0</div></div>
+                        <div><div class="text-xs text-gray-400">今日</div><div id="stat-today" class="text-2xl font-bold text-green-400">0</div></div>
                     </div>
-                    
-                    <div class="border border-white/10 p-4 rounded">
-                        <h3 class="text-blue-400 font-bold mb-3">全局设置</h3>
-                        <div class="space-y-2">
-                            <input id="set-icon" placeholder="网站头像 URL">
-                            <input id="set-welcome" placeholder="顶部欢迎语">
-                            <textarea id="set-bg" rows="3" placeholder="背景图URL (每行一张)"></textarea>
-                            <button onclick="saveSettings()" class="bg-blue-600 w-full py-2 rounded font-bold hover:bg-blue-500">保存设置</button>
-                        </div>
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/5">
+                        <div class="text-xs text-gray-400 mb-2 font-bold uppercase">最近访客 IP</div>
+                        <div id="visitor-list" class="text-xs text-gray-400 space-y-1 font-mono max-h-24 overflow-y-auto"></div>
                     </div>
 
-                    <div class="border border-white/10 p-4 rounded">
-                        <h3 class="text-green-400 font-bold mb-3">背景音乐</h3>
-                        <div class="flex gap-2 mb-2">
+                    <div class="bg-white/5 p-5 rounded-xl border border-white/10 space-y-3">
+                        <h3 class="text-sm font-bold text-blue-400 uppercase">全局设置</h3>
+                        <input id="set-icon" placeholder="网站头像 URL (如 favicon.ico)">
+                        <input id="set-welcome" placeholder="顶部滚动说明语">
+                        <textarea id="set-bg" rows="3" placeholder="背景图URL (每行一张，自动轮播)"></textarea>
+                        <button onclick="saveSettings()" class="bg-blue-600 w-full py-2 rounded font-bold text-sm hover:bg-blue-500">保存设置</button>
+                    </div>
+
+                    <div class="bg-white/5 p-5 rounded-xl border border-white/10">
+                        <h3 class="text-sm font-bold text-green-400 uppercase mb-3">背景音乐</h3>
+                        <div class="flex gap-2 mb-3">
                             <input id="music-name" placeholder="歌名" class="flex-1">
                             <input id="music-url" placeholder="MP3链接" class="flex-1">
-                            <button onclick="addMusic()" class="bg-green-600 px-4 rounded hover:bg-green-500">+</button>
+                            <button onclick="addMusic()" class="bg-green-600 px-4 rounded hover:bg-green-500 text-sm font-bold">添加</button>
                         </div>
-                        <div id="music-list" class="space-y-1 max-h-32 overflow-y-auto"></div>
+                        <div id="music-list" class="space-y-1 max-h-40 overflow-y-auto"></div>
                     </div>
 
-                    <div class="border border-white/10 p-4 rounded">
-                        <h3 class="text-purple-400 font-bold mb-3">内容管理</h3>
-                        <div class="flex gap-2 mb-4">
-                            <input id="cat-name" placeholder="新分类名称">
-                            <label class="flex items-center gap-1 text-xs whitespace-nowrap"><input type="checkbox" id="cat-private"> 私密</label>
-                            <button onclick="addCat()" class="bg-purple-600 px-3 rounded text-sm hover:bg-purple-500">加分类</button>
+                    <div class="bg-white/5 p-5 rounded-xl border border-white/10">
+                        <h3 class="text-sm font-bold text-purple-400 uppercase mb-3">内容管理</h3>
+                        <div class="flex gap-2 mb-4 bg-black/20 p-2 rounded">
+                            <input id="cat-name" placeholder="新分类名称" class="bg-transparent border-none">
+                            <label class="flex items-center gap-1 text-xs text-yellow-500 whitespace-nowrap cursor-pointer"><input type="checkbox" id="cat-private"> 私密</label>
+                            <button onclick="addCat()" class="bg-gray-700 px-3 rounded text-xs hover:bg-gray-600">加分类</button>
                         </div>
                         <div class="grid grid-cols-2 gap-2 mb-2">
                             <select id="site-cat"></select>
                             <input id="site-name" placeholder="网站名称">
                             <input id="site-url" class="col-span-2" placeholder="网址 (移开自动抓取图标)" onblur="autoIcon(this)">
-                            <input id="site-icon" class="col-span-2" placeholder="图标URL">
+                            <input id="site-icon" class="col-span-2" placeholder="图标URL (可选)">
                         </div>
-                        <button onclick="addSite()" class="w-full bg-indigo-600 py-2 rounded font-bold hover:bg-indigo-500">添加网站</button>
-                        
-                        <div id="site-list" class="mt-4 space-y-1 max-h-48 overflow-y-auto"></div>
+                        <button onclick="addSite()" class="w-full bg-indigo-600 py-2 rounded font-bold text-sm hover:bg-indigo-500">添加网站</button>
+                        <div id="site-list" class="mt-4 space-y-1 max-h-60 overflow-y-auto"></div>
+                    </div>
+                    
+                    <div class="text-center pt-2">
+                        <button onclick="location.reload()" class="text-red-400 text-xs hover:underline">退出登录</button>
                     </div>
                 </div>
             </div>
@@ -137,37 +150,33 @@
     <audio id="audio" loop></audio>
 
     <script>
-        // --- 核心逻辑 ---
         const API = '/api';
         const PWD = 'Qq110110.';
         let state = { logged: false, bgIdx: 0 };
-
-        // 简写选择器
         const $ = (id) => document.getElementById(id);
+        
         const req = async (ep, method='GET', data) => {
             try {
                 const opts = { method, headers: {'Content-Type': 'application/json'} };
                 if(data) opts.body = JSON.stringify(data);
                 const res = await fetch(API + ep, opts);
                 return res.ok ? await res.json() : null;
-            } catch(e) { console.error(e); alert('网络错误'); return null; }
+            } catch { return null; }
         };
 
-        // 初始化
+        // --- 初始化 ---
         async function init() {
             const [s, c, si, m, v] = await Promise.all([
                 req('/settings'), req('/categories'), req('/sites'), req('/custom-music'), req('/visitor')
             ]);
             
-            // 渲染背景
+            // 背景幻灯片
             let bgs = [];
-            try { bgs = JSON.parse(s.backgroundUrls); } catch { bgs = [s.backgroundUrls || '']; }
+            try { bgs = JSON.parse(s.backgroundUrls); } catch { bgs = [s.backgroundUrls]; }
             bgs = bgs.filter(x=>x);
             if(!bgs.length) bgs=['https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920'];
             
-            const bgDiv = $('bg-container');
-            bgDiv.innerHTML = bgs.map((u,i) => `<div class="bg-slide ${i==0?'active':''}" style="background-image:url('${u}')"></div>`).join('');
-            
+            $('bg-container').innerHTML = bgs.map((u,i) => `<div class="bg-slide ${i==0?'active':''}" style="background-image:url('${u}')"></div>`).join('');
             if(bgs.length > 1) setInterval(() => {
                 const slides = document.querySelectorAll('.bg-slide');
                 slides[state.bgIdx].classList.remove('active');
@@ -175,141 +184,120 @@
                 slides[state.bgIdx].classList.add('active');
             }, 8000);
 
-            // 渲染界面
+            // 应用设置
             if(s.siteIconUrl) { $('logo-img').src = s.siteIconUrl; $('logo-img').classList.remove('hidden'); }
             if(s.welcomeMessage) $('welcome-text').innerText = s.welcomeMessage;
             
-            // 渲染内容
+            // 渲染主页
             renderMain(c || [], si || []);
             
-            // 音乐
+            // 音乐 (强力自动播放)
             if(m && m.length) {
-                const audio = $('audio');
-                let track = 0;
-                const play = () => { audio.src = m[track].url; audio.play().then(()=>$('music-btn').classList.add('playing')).catch(()=>{}); };
-                audio.onended = () => { track = (track+1)%m.length; play(); };
-                
-                // 尝试自动播放
+                const a = $('audio');
+                let idx = 0;
+                const play = () => { 
+                    a.src = m[idx].url; 
+                    a.play().then(()=>$('music-btn').classList.add('playing')).catch(()=>{
+                        document.addEventListener('click', ()=>{a.play();$('music-btn').classList.add('playing')}, {once:true});
+                    }); 
+                };
                 play();
-                document.body.addEventListener('click', ()=>{ if(audio.paused) play(); }, {once:true});
+                a.onended = () => { idx = (idx+1)%m.length; play(); };
+                $('music-btn').onclick = () => { if(a.paused){a.play();$('music-btn').classList.add('playing')}else{a.pause();$('music-btn').classList.remove('playing')} };
             }
 
             // 统计
-            if(v) { $('stat-total').innerText = v.total; $('stat-today').innerText = v.today; }
-            req('/visitor', 'POST', {}); // 记录访问
+            if(v) { 
+                $('stat-total').innerText = v.total; 
+                $('stat-today').innerText = v.today; 
+                if(v.recent) $('visitor-list').innerHTML = v.recent.map(r=>`<div class="flex justify-between border-b border-white/5 pb-1"><span>${r.ip_address}</span><span>${new Date(r.visit_time).toLocaleTimeString()}</span></div>`).join('');
+            }
+            req('/visitor', 'POST', {});
 
-            // 保存数据供后台使用
             state.data = { s, c, si, m };
         }
 
-        function renderMain(cats, sites) {
+        function renderMain(c, si) {
             const box = $('main-content'); box.innerHTML = '';
-            cats.forEach(c => {
-                if(!state.logged && c.is_private) return; // 隐藏私密
-                const items = sites.filter(s => s.categoryId == c.id);
+            c.forEach(cat => {
+                if(!state.logged && cat.is_private) return;
+                const items = si.filter(s => s.categoryId == cat.id);
                 const div = document.createElement('div');
-                div.className = 'cat-box';
+                div.className = 'cat-box fade-in';
                 div.innerHTML = `
                     <div class="cat-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-                        <i class="fas fa-folder text-blue-400 mr-2"></i> ${c.name}
-                        ${c.is_private ? '<i class="fas fa-lock text-yellow-500 text-xs ml-2"></i>' : ''}
+                        <i class="fas fa-folder text-blue-400 mr-2"></i> ${cat.name}
+                        ${cat.is_private ? '<i class="fas fa-lock text-yellow-500 text-xs ml-2"></i>' : ''}
                     </div>
-                    <div class="cat-sites">
+                    <div class="cat-content">
                         ${items.map(s => `
-                            <a href="${s.url}" target="_blank" class="site">
-                                <div class="icon-circle">
-                                    <img src="${s.icon}" class="icon-img" onerror="this.src='https://placehold.co/50'">
-                                </div>
-                                <div class="site-name">${s.name}</div>
+                            <a href="${s.url}" target="_blank" class="site group">
+                                <div class="icon-box"><img src="${s.icon}" class="site-img" onerror="this.src='https://placehold.co/50'"></div>
+                                <div class="site-name group-hover:text-blue-400">${s.name}</div>
                             </a>
                         `).join('')}
-                    </div>
-                `;
+                    </div>`;
                 box.appendChild(div);
             });
         }
 
-        // --- 全局功能函数 (修复点击无效的关键) ---
+        // --- 强制挂载到 window 的函数 (解决点击无效) ---
         window.openAdmin = () => { $('admin-modal').style.display = 'flex'; if(state.logged) loadPanel(); };
-        window.closeAdmin = () => $('admin-modal').style.display = 'none';
+        window.closeModal = () => $('admin-modal').style.display = 'none';
         
         window.doLogin = () => {
             if($('pwd').value === PWD) {
-                state.logged = true;
-                $('login-view').classList.add('hidden');
-                $('panel-view').classList.remove('hidden');
-                loadPanel();
-                renderMain(state.data.c, state.data.si); // 刷新显示私密分类
+                state.logged = true; $('login-view').classList.add('hidden'); $('panel-view').classList.remove('hidden');
+                loadPanel(); renderMain(state.data.c, state.data.si);
             } else alert('密码错误');
         };
 
         window.loadPanel = () => {
-            const {s, c, si, m} = state.data;
-            $('set-icon').value = s.siteIconUrl || '';
-            $('set-welcome').value = s.welcomeMessage || '';
+            const { s, c, si, m } = state.data;
+            $('set-icon').value = s.siteIconUrl||''; 
+            $('set-welcome').value = s.welcomeMessage||'';
             try { $('set-bg').value = JSON.parse(s.backgroundUrls).join('\n'); } catch { $('set-bg').value = s.backgroundUrls||''; }
             
-            // 音乐列表
-            $('music-list').innerHTML = m.map(x => `
-                <div class="flex justify-between bg-white/5 p-2 rounded text-xs">
-                    <span class="truncate w-32">${x.title}</span>
-                    <button onclick="del('custom-music', ${x.id})" class="text-red-400">删</button>
-                </div>
-            `).join('');
-
-            // 分类下拉
-            $('site-cat').innerHTML = c.map(x => `<option value="${x.id}">${x.name}</option>`).join('');
-
-            // 网站列表
-            $('site-list').innerHTML = si.map(x => `
-                <div class="flex justify-between bg-white/5 p-2 rounded text-xs">
-                    <span class="truncate w-32">${x.name}</span>
-                    <button onclick="del('sites', ${x.id})" class="text-red-400">删</button>
-                </div>
-            `).join('');
+            $('music-list').innerHTML = m.map(x => `<div class="flex justify-between bg-white/5 p-2 rounded text-xs mb-1 border border-white/5"><span class="truncate w-40">${x.title}</span><button onclick="del('custom-music',${x.id})" class="text-red-400">删</button></div>`).join('');
+            $('site-cat').innerHTML = c.map(x => `<option value="${x.id}">${x.name}${x.is_private?' (私)':''}</option>`).join('');
+            $('site-list').innerHTML = si.map(x => `<div class="flex justify-between bg-white/5 p-2 rounded text-xs mb-1 border border-white/5"><span class="truncate w-40">${x.name}</span><button onclick="del('sites',${x.id})" class="text-red-400">删</button></div>`).join('');
         };
 
         window.saveSettings = async () => {
             const bgs = $('set-bg').value.split('\n').filter(x=>x.trim());
-            const data = {
-                siteIconUrl: $('set-icon').value,
-                welcomeMessage: $('set-welcome').value,
-                backgroundUrls: JSON.stringify(bgs)
-            };
-            if(await req('/settings', 'POST', data)) { alert('保存成功'); location.reload(); }
-        };
-
-        window.addMusic = async () => {
-            if(await req('/custom-music', 'POST', {title:$('music-name').value, url:$('music-url').value})) reload();
+            const data = { siteIconUrl: $('set-icon').value, welcomeMessage: $('set-welcome').value, backgroundUrls: JSON.stringify(bgs) };
+            if(await req('/settings', 'POST', data)) { alert('已保存'); location.reload(); }
         };
 
         window.addCat = async () => {
-            if(await req('/categories', 'POST', {name:$('cat-name').value, is_private:$('cat-private').checked})) reload();
+            if(await req('/categories', 'POST', { name: $('cat-name').value, is_private: $('cat-private').checked })) reload();
         };
 
         window.addSite = async () => {
-            if(await req('/sites', 'POST', {
+            const data = {
                 categoryId: $('site-cat').value,
                 name: $('site-name').value,
                 url: $('site-url').value,
                 icon: $('site-icon').value || `https://www.google.com/s2/favicons?domain=${new URL($('site-url').value).hostname}&sz=64`
-            })) reload();
+            };
+            if(await req('/sites', 'POST', data)) reload();
         };
 
-        window.del = async (type, id) => {
-            if(confirm('确认删除？') && await req(`/${type}/${id}`, 'DELETE')) reload();
+        window.addMusic = async () => {
+            if(await req('/custom-music', 'POST', { title: $('music-name').value, url: $('music-url').value })) reload();
+        };
+
+        window.del = async (t, id) => {
+            if(confirm('确认删除？') && await req(`/${t}/${id}`, 'DELETE')) reload();
+        };
+
+        window.autoIcon = (el) => {
+            if(el.value && !$('site-icon').value) try { $('site-icon').value = `https://www.google.com/s2/favicons?domain=${new URL(el.value).hostname}&sz=64`; } catch{}
         };
 
         window.toggleMusic = () => {
             const a = $('audio');
-            if(a.paused) { a.play(); $('music-btn').classList.add('playing'); }
-            else { a.pause(); $('music-btn').classList.remove('playing'); }
-        };
-
-        window.autoIcon = (el) => {
-            if(el.value && !$('site-icon').value) {
-                try { $('site-icon').value = `https://www.google.com/s2/favicons?domain=${new URL(el.value).hostname}&sz=64`; } catch{}
-            }
+            if(a.paused) { a.play(); $('music-btn').classList.add('playing'); } else { a.pause(); $('music-btn').classList.remove('playing'); }
         };
 
         async function reload() {
@@ -317,6 +305,12 @@
             state.data.c = c; state.data.si = si; state.data.m = m;
             loadPanel(); renderMain(c, si);
         }
+
+        // 搜索
+        $('search-input').oninput = function() {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('.site').forEach(el => el.style.display = el.innerText.toLowerCase().includes(term) ? 'flex' : 'none');
+        };
 
         init();
     </script>
