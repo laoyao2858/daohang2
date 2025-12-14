@@ -1,18 +1,15 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    
-    // 跨域支持 (允许前端调试)
     if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Methods": "*",
+          "Access-Control-Allow-Headers": "*"
         }
       });
     }
-
     if (url.pathname.startsWith('/api/')) {
       try {
         return await handleApi(request, env);
@@ -20,7 +17,6 @@ export default {
         return new Response(JSON.stringify({ error: e.message }), { status: 500 });
       }
     }
-    
     return env.ASSETS ? env.ASSETS.fetch(request) : new Response("Frontend missing", { status: 404 });
   }
 };
@@ -49,7 +45,7 @@ async function handleApi(req, env) {
     }
   }
 
-  // 2. 分类接口
+  // 2. 分类接口 (关键：处理 is_private)
   if (res === 'categories') {
     if (method === 'GET') return json((await env.DB.prepare('SELECT * FROM categories ORDER BY displayOrder').all()).results);
     if (method === 'POST') {
@@ -69,7 +65,7 @@ async function handleApi(req, env) {
     if (method === 'GET') return json((await env.DB.prepare('SELECT * FROM sites ORDER BY id DESC').all()).results);
     if (method === 'POST') {
       const d = await req.json();
-      await env.DB.prepare('INSERT INTO sites (categoryId, name, url, icon, description) VALUES (?, ?, ?, ?, ?)').bind(d.categoryId, d.name, d.url, d.icon, d.description).run();
+      await env.DB.prepare('INSERT INTO sites (categoryId, name, url, icon) VALUES (?, ?, ?, ?)').bind(d.categoryId, d.name, d.url, d.icon).run();
       return json({ ok: true });
     }
     if (method === 'DELETE') {
@@ -83,7 +79,7 @@ async function handleApi(req, env) {
     if (method === 'GET') return json((await env.DB.prepare('SELECT * FROM custom_music ORDER BY id DESC').all()).results);
     if (method === 'POST') {
       const d = await req.json();
-      await env.DB.prepare('INSERT INTO custom_music (title, url, artist) VALUES (?, ?, ?)').bind(d.title, d.url, d.artist||'').run();
+      await env.DB.prepare('INSERT INTO custom_music (title, url) VALUES (?, ?)').bind(d.title, d.url).run();
       return json({ ok: true });
     }
     if (method === 'DELETE') {
