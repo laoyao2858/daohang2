@@ -3126,35 +3126,30 @@
             }
         }
 
-        // --- Application Initialization (防卡死修复版) ---
+        // --- Application Initialization (防卡死修复版 + 默认中文) ---
         async function init() {
             // 1. 最优先：初始化图标和绑定点击事件
-            // 这样即使后台挂了，按钮至少能点（比如打开侧边栏去设置）
             if (window.lucide) lucide.createIcons();
             setupEventListeners();
 
-            // 2. 其次：设置界面语言和主题
-            // 设置语言
-            const savedLang = localStorage.getItem('lang');
-            // 修改：如果没有保存的语言设置，强制默认使用中文 'zh'
-            setLanguage(savedLang || 'zh');
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            setTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
-
-            // 3. 最后：尝试加载后台数据
-            // 使用 try-catch 包裹，防止数据加载失败导致整个页面脚本崩溃
+            // 2. 加载初始数据
             try {
                 await loadInitialData();
             } catch (error) {
                 console.error("Data load warning:", error);
-                // 可以在这里提示用户，但不要阻塞页面交互
-                if (typeof showMessage === 'function') {
-                    // showMessage("连接提示", "连接后台数据库失败，请检查 Worker 配置。但您仍可操作界面。");
-                }
             }
 
-            // 加载其他非关键配置
+            // 3. 设置语言 (已修改为默认中文)
+            const savedLang = localStorage.getItem('lang');
+            // 优先使用用户保存的设置，如果没有，则强制默认为 'zh' (中文)
+            setLanguage(savedLang || 'zh');
+
+            // 4. 设置主题
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
+
+            // 5. 加载其他配置
             const savedSearchEngine = localStorage.getItem('preferredSearchEngine');
             if (savedSearchEngine && searchEngines[savedSearchEngine]) {
                 state.currentSearchEngine = savedSearchEngine;
