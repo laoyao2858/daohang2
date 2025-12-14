@@ -1,45 +1,42 @@
--- 添加网站访问统计表
-CREATE TABLE IF NOT EXISTS site_visits (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  site_id INTEGER NOT NULL,
-  visit_count INTEGER DEFAULT 0,
-  last_visit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (site_id) REFERENCES sites(id) ON DELETE CASCADE
-);
-
--- 为sites表添加额外字段
-ALTER TABLE sites ADD COLUMN visit_count INTEGER DEFAULT 0;
+-- 如果有旧版本数据库，可以运行此脚本来更新表结构
 ALTER TABLE sites ADD COLUMN tags TEXT;
+ALTER TABLE sites ADD COLUMN group_id INTEGER;
+ALTER TABLE sites ADD COLUMN display_order INTEGER DEFAULT 0;
 ALTER TABLE sites ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE sites ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
--- 添加网站分组表
-CREATE TABLE IF NOT EXISTS site_groups (
+-- 创建新表
+CREATE TABLE IF NOT EXISTS custom_music (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  color TEXT,
-  icon TEXT,
+  title TEXT NOT NULL,
+  artist TEXT,
+  url TEXT NOT NULL,
+  cover TEXT,
+  enabled BOOLEAN DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   display_order INTEGER DEFAULT 0
 );
 
--- 为sites表添加分组关联
-ALTER TABLE sites ADD COLUMN group_id INTEGER REFERENCES site_groups(id);
-
--- 添加用户偏好设置表
-CREATE TABLE IF NOT EXISTS user_preferences (
-  key TEXT PRIMARY KEY,
-  value TEXT NOT NULL
+CREATE TABLE IF NOT EXISTS visitor_stats (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ip_address TEXT,
+  user_agent TEXT,
+  referrer TEXT,
+  country TEXT,
+  city TEXT,
+  visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  session_id TEXT,
+  page_views INTEGER DEFAULT 1,
+  last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 初始化一些默认设置
-INSERT OR IGNORE INTO user_preferences (key, value) VALUES 
-  ('show_frequent_sites', 'true'),
-  ('frequent_sites_count', '8'),
-  ('enable_shortcuts', 'true'),
-  ('enable_pinyin_search', 'true');
-
--- 为sites表添加display_order字段
-ALTER TABLE sites ADD COLUMN display_order INTEGER DEFAULT 0;
-
--- 为现有网站设置初始排序值
-UPDATE sites SET display_order = id WHERE display_order = 0;
+-- 更新设置表
+INSERT OR IGNORE INTO settings (key, value) VALUES 
+  ('avatarUrl', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop&crop=faces'),
+  ('welcomeMessage', '欢迎使用导航站！\n您可以在这里快速访问常用网站和工具'),
+  ('autoPlayMusic', 'true'),
+  ('showVisitorStats', 'true'),
+  ('siteTitle', '我的导航站'),
+  ('siteDescription', '一个简洁高效的导航网站'),
+  ('welcomeTitle', '欢迎访问导航站'),
+  ('welcomeText', '发现更多精彩内容');
