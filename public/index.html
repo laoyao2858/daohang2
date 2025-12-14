@@ -2847,6 +2847,48 @@
 
         // --- Event Listeners (防崩溃修复版) ---
         function setupEventListeners() {
+            // --- 修复：保存设置按钮 ---
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        if (saveSettingsBtn) {
+            saveSettingsBtn.addEventListener('click', async () => {
+                // 1. 收集表单数据
+                const settingsData = {
+                    siteTitle: document.getElementById('siteTitleInput').value,
+                    siteDescription: document.getElementById('siteDescriptionInput').value,
+                    avatarUrl: document.getElementById('avatarUrlInput').value,
+                    backgroundUrl: document.getElementById('backgroundUrlInput').value,
+                    welcomeTitle: document.getElementById('welcomeTitleInput').value,
+                    welcomeText: document.getElementById('welcomeTextInput').value,
+                    // 获取复选框状态
+                    autoPlayMusic: document.getElementById('autoPlayMusicCheckbox')?.checked,
+                    showVisitorStats: document.getElementById('showVisitorStatsCheckbox')?.checked
+                };
+
+                // 2. 发送给后台
+                const saveBtn = document.getElementById('save-settings-btn');
+                const originalText = saveBtn.innerText;
+                saveBtn.innerText = '保存中...';
+                
+                try {
+                    const res = await fetch('/api/settings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(settingsData)
+                    });
+
+                    if (res.ok) {
+                        alert('✅ 设置已保存！页面即将刷新。');
+                        location.reload(); // 刷新页面以显示新设置
+                    } else {
+                        alert('❌ 保存失败，请检查后台 Worker。');
+                    }
+                } catch (e) {
+                    alert('❌ 网络错误: ' + e.message);
+                } finally {
+                    saveBtn.innerText = originalText;
+                }
+            });
+        }
             // --- 新增：自动获取图标功能 ---
             if (DOMElements.siteUrlInput) {
                 DOMElements.siteUrlInput.addEventListener('blur', function() {
