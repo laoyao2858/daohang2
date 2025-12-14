@@ -1,6 +1,6 @@
 {
   "name": "my-nav-site",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,4 +11,3 @@
     "wrangler": "^3.80.0"
   }
 }
-
