@@ -1421,27 +1421,49 @@
                     </div>
 
                     <div class="music-management-section">
-                        <h3 id="site-form-title" class="text-xl font-semibold mb-4" data-i18n-key="siteManagement">网站管理</h3>
-                        <form id="site-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end mb-6 p-4 bg-gray-800 rounded-lg">
-                            <select id="site-category-select" class="bg-gray-700 border border-gray-600 rounded-md p-2" required><option value="" data-i18n-key="selectCategory">选择一个分类</option></select>
-                            <input type="text" id="site-name-input" data-i18n-key="siteNamePlaceholder" placeholder="网站名称" class="bg-gray-700 rounded-md p-2" required>
-                            <input type="url" id="site-url-input" data-i18n-key="siteUrlPlaceholder" placeholder="网站 URL" class="bg-gray-700 rounded-md p-2" required>
-                            <div class="flex items-center space-x-2">
-                               <input type="text" id="site-icon-input" data-i18n-key="iconUrlPlaceholder" placeholder="图标 URL (可选)" class="flex-grow bg-gray-700 rounded-md p-2">
-                               <img id="icon-preview" src="https://placehold.co/32x32/777/eee?text=?" alt="Icon Preview" class="icon-preview">
-                            </div>
-                            <input type="text" id="site-tags-input" data-i18n-key="tagsPlaceholder" placeholder="标签 (用逗号分隔)" class="bg-gray-700 rounded-md p-2">
-                            <select id="site-group-select" class="bg-gray-700 border border-gray-600 rounded-md p-2">
-                                <option value="" data-i18n-key="selectGroup">选择分组 (可选)</option>
-                            </select>
-                            <textarea id="site-desc-input" data-i18n-key="siteDescPlaceholder" placeholder="网站简介" class="bg-gray-700 rounded-md p-2 md:col-span-2" rows="2"></textarea>
-                            <div class="flex items-center gap-2 md:col-start-4">
-                                <button type="button" id="cancel-edit-btn" class="w-full bg-gray-600 hover:bg-gray-700 rounded-md py-2 px-4 font-semibold hidden" data-i18n-key="cancel">取消</button>
-                                <button type="submit" id="site-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="addSite">添加网站</button>
-                            </div>
-                        </form>
-                        <div id="sitesListAdmin" class="space-y-4"></div>
+            <h3 id="site-form-title" class="text-xl font-semibold mb-4" data-i18n-key="siteManagement">网站管理</h3>
+            
+            <form id="site-form" class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-gray-800 rounded-lg p-5">
+                <div class="md:col-span-3">
+                    <select id="site-category-select" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required></select>
+                </div>
+                <div class="md:col-span-3">
+                    <input type="text" id="site-name-input" data-i18n-key="siteNamePlaceholder" placeholder="网站名称" class="w-full bg-gray-700 rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+                </div>
+                <div class="md:col-span-6 relative">
+                    <input type="url" id="site-url-input" data-i18n-key="siteUrlPlaceholder" placeholder="网站链接 (输入后自动抓取图标)" class="w-full bg-gray-700 rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <div class="absolute right-3 top-2.5 text-gray-400 text-xs pointer-events-none">
+                        <i class="fas fa-magic"></i> 自动获取
                     </div>
+                </div>
+
+                <div class="md:col-span-5 flex gap-2">
+                    <input type="text" id="site-icon-input" data-i18n-key="iconUrlPlaceholder" placeholder="图标 URL" class="w-full bg-gray-700 rounded-md p-2.5 text-sm text-gray-400">
+                    <div class="w-10 h-10 flex-shrink-0 bg-gray-700 rounded-md flex items-center justify-center border border-gray-600">
+                        <img id="icon-preview" src="https://placehold.co/32" class="w-6 h-6 object-contain">
+                    </div>
+                </div>
+                <div class="md:col-span-4">
+                    <input type="text" id="site-tags-input" data-i18n-key="tagsPlaceholder" placeholder="标签 (逗号分隔)" class="w-full bg-gray-700 rounded-md p-2.5 text-sm">
+                </div>
+                <div class="md:col-span-3 hidden"> <select id="site-group-select" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-sm">
+                        <option value="">默认分组</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-9">
+                    <input type="text" id="site-desc-input" data-i18n-key="siteDescPlaceholder" placeholder="网站简介 (可选)" class="w-full bg-gray-700 rounded-md p-2.5 text-sm">
+                </div>
+                <div class="md:col-span-3 flex gap-2">
+                    <button type="button" id="cancel-edit-btn" class="hidden w-1/3 bg-gray-600 hover:bg-gray-500 rounded-md text-sm transition-colors" data-i18n-key="cancel">取消</button>
+                    <button type="submit" id="site-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 rounded-md p-2.5 font-semibold text-sm shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2" data-i18n-key="addSite">
+                        <i class="fas fa-plus"></i> 添加网站
+                    </button>
+                </div>
+            </form>
+
+            <div id="sitesListAdmin" class="space-y-2 mt-4 max-h-[400px] overflow-y-auto custom-scrollbar"></div>
+        </div>
 
                     <div class="music-management-section">
                         <h3 class="text-xl font-semibold mb-4" data-i18n-key="importExport">导入导出</h3>
