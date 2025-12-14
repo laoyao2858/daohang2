@@ -3134,10 +3134,10 @@
             setupEventListeners();
 
             // 2. 其次：设置界面语言和主题
+            // 设置语言
             const savedLang = localStorage.getItem('lang');
-            const browserLang = navigator.language.startsWith('zh') ? 'zh' : 'en';
-            setLanguage(savedLang || browserLang);
-
+            // 修改：如果没有保存的语言设置，强制默认使用中文 'zh'
+            setLanguage(savedLang || 'zh');
             const savedTheme = localStorage.getItem('theme');
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             setTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
