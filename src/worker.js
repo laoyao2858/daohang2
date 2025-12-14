@@ -2,7 +2,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     
-    // 跨域配置 (允许前端调试)
+    // 允许跨域 (方便调试)
     if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
@@ -17,7 +17,7 @@ export default {
       try {
         return await handleApi(request, env);
       } catch (e) {
-        return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+        return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
       }
     }
     
@@ -49,7 +49,7 @@ async function handleApi(req, env) {
     }
   }
 
-  // 2. 分类接口 (支持私密字段)
+  // 2. 分类接口 (支持私密属性)
   if (res === 'categories') {
     if (method === 'GET') return json((await env.DB.prepare('SELECT * FROM categories ORDER BY displayOrder').all()).results);
     if (method === 'POST') {
