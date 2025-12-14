@@ -2,7 +2,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     
-    // 跨域支持
+    // 跨域支持 (允许前端调试)
     if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
@@ -32,7 +32,7 @@ async function handleApi(req, env) {
   const path = url.pathname.split('/').filter(Boolean); // ['api', 'sites', '1']
   const res = path[1], id = path[2];
 
-  // 1. 设置接口 (Global Settings)
+  // 1. 设置接口
   if (res === 'settings') {
     if (method === 'GET') {
       const { results } = await env.DB.prepare('SELECT * FROM settings').all();
@@ -49,12 +49,11 @@ async function handleApi(req, env) {
     }
   }
 
-  // 2. 分类接口 (Categories)
+  // 2. 分类接口
   if (res === 'categories') {
     if (method === 'GET') return json((await env.DB.prepare('SELECT * FROM categories ORDER BY displayOrder').all()).results);
     if (method === 'POST') {
       const { name, is_private } = await req.json();
-      // 强制转换布尔值为数字 0/1
       const priv = (is_private === true || is_private === 'true' || is_private === 1) ? 1 : 0;
       await env.DB.prepare('INSERT INTO categories (name, is_private, displayOrder) VALUES (?, ?, 0)').bind(name, priv).run();
       return json({ ok: true });
@@ -65,7 +64,7 @@ async function handleApi(req, env) {
     }
   }
 
-  // 3. 网站接口 (Sites)
+  // 3. 网站接口
   if (res === 'sites') {
     if (method === 'GET') return json((await env.DB.prepare('SELECT * FROM sites ORDER BY id DESC').all()).results);
     if (method === 'POST') {
@@ -79,7 +78,7 @@ async function handleApi(req, env) {
     }
   }
 
-  // 4. 音乐接口 (Music)
+  // 4. 音乐接口
   if (res === 'custom-music') {
     if (method === 'GET') return json((await env.DB.prepare('SELECT * FROM custom_music ORDER BY id DESC').all()).results);
     if (method === 'POST') {
@@ -93,7 +92,7 @@ async function handleApi(req, env) {
     }
   }
 
-  // 5. 访客统计 (Visitor Stats)
+  // 5. 访客统计
   if (res === 'visitor') {
     if (method === 'POST') {
        const ip = req.headers.get('cf-connecting-ip') || 'unknown';
@@ -103,7 +102,6 @@ async function handleApi(req, env) {
     if (method === 'GET') {
        const total = await env.DB.prepare('SELECT COUNT(*) as c FROM visitor_stats').first();
        const today = await env.DB.prepare("SELECT COUNT(*) as c FROM visitor_stats WHERE date(visit_time) = date('now')").first();
-       // 获取最近 10 条访问记录
        const recent = await env.DB.prepare('SELECT ip_address, visit_time FROM visitor_stats ORDER BY id DESC LIMIT 10').all();
        return json({ total: total.c, today: today.c, recent: recent.results });
     }
