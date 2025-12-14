@@ -1,0 +1,21 @@
+{
+  "name": "star-navigation",
+  "version": "1.0.0",
+  "description": "星际主题导航网站",
+  "main": "index.html",
+  "scripts": {
+    "dev": "wrangler pages dev ./",
+    "deploy": "wrangler pages deploy ./",
+    "build": "echo 'No build step required'",
+    "test": "echo 'No tests yet'"
+  },
+  "keywords": ["navigation", "cloudflare", "d1", "dashboard"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
