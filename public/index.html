@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal - 极简私密导航</title>
+    <title>Portal - 专属空间</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --glass-blur: blur(12px);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-blur: blur(16px);
         }
-        body { margin: 0; font-family: 'Poppins', sans-serif; overflow-x: hidden; background: #000; color: white; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; background: #000; color: white; }
         
         /* 背景幻灯片 */
         .bg-slide {
@@ -23,16 +23,16 @@
         .bg-slide.active { opacity: 1; }
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.3); z-index: -1; pointer-events: none;
+            background: rgba(0, 0, 0, 0.4); z-index: -1; pointer-events: none;
         }
 
-        /* 顶部模糊栏 */
+        /* 顶部磨砂栏 */
         .top-bar {
-            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
-            background: rgba(20, 20, 20, 0.6); backdrop-filter: var(--glass-blur);
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(10, 10, 10, 0.6); backdrop-filter: var(--glass-blur);
             border-bottom: 1px solid var(--glass-border);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 2rem; z-index: 100;
+            padding: 0 1.5rem; z-index: 100;
         }
 
         /* 滚动说明语 */
@@ -41,69 +41,80 @@
             mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
         }
         .marquee-text {
-            display: inline-block; animation: scroll 20s linear infinite; font-size: 0.9rem; color: #ddd;
+            display: inline-block; animation: scroll 25s linear infinite; font-size: 0.9rem; color: #ccc;
         }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         /* 主容器 */
-        .container { max-width: 1200px; margin: 100px auto 50px; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 90px auto 50px; padding: 0 20px; }
 
         /* 折叠分类 */
-        .category-box { margin-bottom: 30px; }
+        .category-box { margin-bottom: 40px; }
         .cat-header {
             display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
-            padding: 8px 20px; background: rgba(0,0,0,0.4); border-radius: 30px;
-            border: 1px solid transparent; transition: 0.3s;
+            padding: 8px 20px; background: rgba(255,255,255,0.05); border-radius: 30px;
+            border: 1px solid transparent; transition: 0.3s; user-select: none;
         }
-        .cat-header:hover { background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.3); }
+        .cat-header:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
         .cat-content {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
-            gap: 25px; padding: 20px 10px; transition: all 0.5s ease;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
+            gap: 25px; padding: 25px 10px 10px; transition: all 0.5s ease;
             max-height: 2000px; overflow: hidden; opacity: 1;
         }
         .cat-content.collapsed { max-height: 0; padding: 0; opacity: 0; }
 
-        /* 圆形玻璃图标 */
+        /* 圆形玻璃图标 (核心设计) */
         .site-item {
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
             text-decoration: none; color: white; group;
         }
         .site-circle {
-            width: 90px; height: 90px; border-radius: 50%;
+            width: 80px; height: 80px; border-radius: 50%;
             background: var(--glass-bg); backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
             display: flex; align-items: center; justify-content: center;
             transition: 0.3s; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .site-circle:hover { transform: scale(1.1) rotate(5deg); background: rgba(255,255,255,0.2); box-shadow: 0 0 25px rgba(255,255,255,0.2); }
-        .site-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-        .site-name { font-size: 0.85rem; text-align: center; opacity: 0.9; width: 120%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .site-circle:hover { 
+            transform: scale(1.1); background: rgba(255,255,255,0.2); 
+            border-color: rgba(255,255,255,0.5); box-shadow: 0 0 25px rgba(255,255,255,0.3); 
+        }
+        .site-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .site-name { 
+            font-size: 0.8rem; text-align: center; color: #ddd; 
+            width: 120%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
 
-        /* 音乐与私密按钮 */
+        /* 顶部按钮 */
         .icon-btn {
-            width: 40px; height: 40px; border-radius: 50%; background: var(--glass-bg);
-            border: 1px solid var(--glass-border); color: white; display: flex;
+            width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1); color: white; display: flex;
             align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;
         }
         .icon-btn:hover { background: white; color: black; }
-        .icon-btn.playing { animation: pulse 2s infinite; border-color: #4f46e5; color: #4f46e5; background: white; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
+        .icon-btn.playing { 
+            animation: pulse 2s infinite; background: rgba(16, 185, 129, 0.8); border-color: transparent; 
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
 
         /* 模态框 */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
             display: none; justify-content: center; align-items: center; z-index: 2000;
         }
         .modal-box {
-            background: #1e293b; width: 90%; max-width: 900px; max-height: 90vh;
-            border-radius: 20px; padding: 20px; overflow-y: auto; color: #e2e8f0;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: #18181b; width: 95%; max-width: 850px; max-height: 85vh;
+            border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column;
+            border: 1px solid #333; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
+        .modal-content { padding: 25px; overflow-y: auto; flex: 1; }
         
         /* 滚动条美化 */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -113,22 +124,21 @@
 
     <div class="top-bar">
         <div class="flex items-center gap-3">
-            <div id="site-logo" class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold">P</div>
-            <span class="font-bold tracking-widest hidden md:block">PORTAL</span>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-sm shadow-lg">P</div>
+            <span class="font-bold tracking-widest hidden md:block text-sm opacity-80">PORTAL</span>
         </div>
 
         <div class="marquee-box">
-            <span id="welcome-text" class="marquee-text">Loading...</span>
+            <span id="welcome-text" class="marquee-text">正在加载...</span>
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
             <div class="relative group">
-                <input id="search-input" placeholder="搜索..." class="bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:bg-black/50 transition w-32 focus:w-48 text-white placeholder-gray-400">
-                <i class="fas fa-search absolute right-3 top-2.5 text-gray-400 text-xs"></i>
+                <input id="search-input" placeholder="搜索..." class="bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs focus:outline-none focus:bg-black/50 transition w-24 focus:w-40 text-white placeholder-gray-400">
             </div>
             
-            <button id="music-btn" class="icon-btn" title="播放音乐"><i class="fas fa-music"></i></button>
-            <button id="private-btn" class="icon-btn" title="私密空间"><i class="fas fa-user-shield"></i></button>
+            <button id="music-btn" class="icon-btn" title="播放音乐"><i class="fas fa-music text-sm"></i></button>
+            <button id="private-btn" class="icon-btn" title="私密空间"><i class="fas fa-user-shield text-sm"></i></button>
         </div>
     </div>
 
@@ -136,85 +146,79 @@
 
     <div id="admin-modal" class="modal">
         <div class="modal-box">
-            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                <h2 class="text-2xl font-bold flex items-center gap-2"><i class="fas fa-cogs"></i> 私密空间 & 管理后台</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-gray-900 sticky top-0 z-10">
+                <h2 class="text-lg font-bold flex items-center gap-2 text-white">
+                    <i class="fas fa-shield-alt text-indigo-500"></i> 私密空间管理
+                </h2>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-white"><i class="fas fa-times text-lg"></i></button>
             </div>
 
-            <div id="login-section" class="text-center py-12">
-                <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">🔒</div>
-                <h3 class="text-xl mb-6">请输入管理员密码进入私密空间</h3>
-                <input type="password" id="admin-pwd" class="bg-gray-700 border border-gray-600 p-3 rounded-lg text-center text-white w-64 focus:border-indigo-500 outline-none mb-4" placeholder="Password">
-                <br>
-                <button onclick="login()" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-2 rounded-lg font-bold transition">解锁</button>
-            </div>
-
-            <div id="admin-content" class="hidden space-y-8">
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-indigo-900/30 p-4 rounded-xl border border-indigo-500/30 text-center">
-                        <div class="text-sm text-indigo-300">总访问量</div>
-                        <div id="stat-total" class="text-3xl font-bold text-white">0</div>
-                    </div>
-                    <div class="bg-green-900/30 p-4 rounded-xl border border-green-500/30 text-center">
-                        <div class="text-sm text-green-300">今日访问</div>
-                        <div id="stat-today" class="text-3xl font-bold text-white">0</div>
-                    </div>
+            <div class="modal-content">
+                <div id="login-section" class="text-center py-12">
+                    <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl border border-gray-700">🔒</div>
+                    <h3 class="text-xl mb-6 text-gray-300">身份验证</h3>
+                    <input type="password" id="admin-pwd" class="bg-gray-800 border border-gray-700 p-3 rounded-lg text-center text-white w-64 focus:border-indigo-500 outline-none mb-4 transition" placeholder="输入管理员密码">
+                    <br>
+                    <button onclick="login()" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-2 rounded-lg font-bold transition shadow-lg shadow-indigo-500/30">解锁空间</button>
                 </div>
 
-                <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                    <h3 class="font-bold text-lg mb-4 text-blue-400">全局设置</h3>
-                    <div class="space-y-3">
-                        <input id="set-welcome" class="w-full bg-gray-700 p-2 rounded" placeholder="顶部滚动说明语">
-                        <textarea id="set-bg" rows="3" class="w-full bg-gray-700 p-2 rounded" placeholder="背景图片URL (每行一张，自动轮播)"></textarea>
-                        <button onclick="saveSettings()" class="bg-blue-600 px-4 py-2 rounded text-sm font-bold">保存设置</button>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                    <h3 class="font-bold text-lg mb-4 text-green-400">背景音乐</h3>
-                    <div class="flex gap-2 mb-3">
-                        <input id="music-name" class="bg-gray-700 p-2 rounded flex-1" placeholder="歌名">
-                        <input id="music-url" class="bg-gray-700 p-2 rounded flex-1" placeholder="MP3链接">
-                        <button onclick="addMusic()" class="bg-green-600 px-4 rounded"><i class="fas fa-plus"></i></button>
-                    </div>
-                    <div id="music-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
-                </div>
-
-                <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                    <h3 class="font-bold text-lg mb-4 text-purple-400">内容管理</h3>
+                <div id="admin-content" class="hidden space-y-8">
                     
-                    <div class="flex gap-2 mb-6 items-center bg-gray-900/50 p-3 rounded">
-                        <input id="cat-name" class="bg-gray-700 p-2 rounded w-40" placeholder="分类名称">
-                        <label class="flex items-center gap-2 text-sm text-gray-300">
-                            <input type="checkbox" id="cat-private"> 设为私密
-                        </label>
-                        <button onclick="addCategory()" class="bg-purple-600 px-4 py-2 rounded text-sm font-bold ml-auto">添加分类</button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 mb-4 bg-gray-900/50 p-3 rounded">
-                        <div class="md:col-span-3">
-                            <select id="site-cat" class="w-full bg-gray-700 p-2 rounded h-full"></select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-center">
+                            <div class="text-xs text-gray-400 uppercase mb-1">Total Visits</div>
+                            <div id="stat-total" class="text-2xl font-bold text-white">0</div>
                         </div>
-                        <div class="md:col-span-3">
-                            <input id="site-name" class="w-full bg-gray-700 p-2 rounded" placeholder="网站名称">
-                        </div>
-                        <div class="md:col-span-6 relative">
-                            <input id="site-url" class="w-full bg-gray-700 p-2 rounded" placeholder="网址 (自动抓取图标)">
-                        </div>
-                        <div class="md:col-span-10">
-                            <input id="site-icon" class="w-full bg-gray-700 p-2 rounded" placeholder="图标URL (可选)">
-                        </div>
-                        <div class="md:col-span-2">
-                            <button onclick="addSite()" class="w-full bg-blue-600 h-full rounded font-bold">添加</button>
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-center">
+                            <div class="text-xs text-gray-400 uppercase mb-1">Today</div>
+                            <div id="stat-today" class="text-2xl font-bold text-green-400">0</div>
                         </div>
                     </div>
 
-                    <div id="admin-site-list" class="space-y-2 max-h-96 overflow-y-auto"></div>
-                </div>
+                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+                        <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">站点设置</h3>
+                        <div class="space-y-3">
+                            <input id="set-welcome" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="顶部滚动说明语">
+                            <textarea id="set-bg" rows="3" class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm text-gray-300" placeholder="背景图片URL (支持多张，每行一个)"></textarea>
+                            <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm font-bold w-full transition">保存设置</button>
+                        </div>
+                    </div>
 
-                <div class="text-center">
-                    <button onclick="location.reload()" class="text-red-400 hover:underline">退出登录</button>
+                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+                        <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">背景音乐</h3>
+                        <div class="flex gap-2 mb-3">
+                            <input id="music-name" class="bg-gray-900 border border-gray-700 p-2 rounded flex-1 text-sm" placeholder="歌名">
+                            <input id="music-url" class="bg-gray-900 border border-gray-700 p-2 rounded flex-1 text-sm" placeholder="MP3链接">
+                            <button onclick="addMusic()" class="bg-green-600 hover:bg-green-500 px-4 rounded transition"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="music-list" class="space-y-2 max-h-40 overflow-y-auto pr-2"></div>
+                    </div>
+
+                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+                        <h3 class="font-bold text-sm mb-4 text-gray-400 uppercase">添加内容</h3>
+                        
+                        <div class="flex gap-2 mb-6 items-center bg-gray-900 p-3 rounded-lg border border-gray-700">
+                            <input id="cat-name" class="bg-transparent outline-none flex-1 text-sm" placeholder="新分类名称">
+                            <label class="flex items-center gap-2 text-xs text-yellow-500 cursor-pointer select-none">
+                                <input type="checkbox" id="cat-private"> 设为私密
+                            </label>
+                            <button onclick="addCategory()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs ml-2">添加</button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                            <select id="site-cat" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm"></select>
+                            <input id="site-name" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm" placeholder="网站名称">
+                            <input id="site-url" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm md:col-span-2" placeholder="网址 (自动抓取图标)">
+                            <input id="site-icon" class="bg-gray-900 border border-gray-700 p-2 rounded text-sm md:col-span-2" placeholder="图标URL (可选，为空自动获取)">
+                        </div>
+                        <button onclick="addSite()" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded font-bold text-sm transition">添加网站</button>
+
+                        <div id="admin-site-list" class="space-y-2 mt-6 max-h-80 overflow-y-auto pr-2"></div>
+                    </div>
+
+                    <div class="text-center pt-4 border-t border-gray-800">
+                        <button onclick="location.reload()" class="text-red-400 text-sm hover:text-red-300">退出登录并刷新</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -227,7 +231,7 @@
         const state = { loggedIn: false, sites: [], cats: [], music: [], settings: {}, bgIdx: 0 };
         const $ = (id) => document.getElementById(id);
 
-        // --- API ---
+        // --- API 封装 ---
         const api = {
             get: async (ep) => (await fetch(`/api/${ep}`)).json(),
             post: async (ep, d) => (await fetch(`/api/${ep}`, { method:'POST', body:JSON.stringify(d) })).json(),
@@ -237,54 +241,51 @@
         // --- 初始化 ---
         async function init() {
             try {
-                // 1. 加载数据
                 const [s, c, si, m, v] = await Promise.all([
                     api.get('settings'), api.get('categories'), api.get('sites'), api.get('custom-music'), api.get('visitor')
                 ]);
                 state.settings = s || {}; state.cats = c || []; state.sites = si || []; state.music = m || [];
 
-                // 2. 渲染界面
                 renderBackgrounds();
                 renderMain();
-                renderWelcome();
                 
-                // 3. 音乐自动播放 (尝试)
-                initMusic();
-
-                // 4. 填充后台数据
+                if(state.settings.welcomeMessage) $('welcome-text').innerText = state.settings.welcomeMessage;
                 if(v) { $('stat-total').innerText = v.total; $('stat-today').innerText = v.today; }
                 
-                // 5. 记录访问
-                api.post('visitor', {});
+                initMusic();
+                api.post('visitor', {}); // 统计访问
 
-            } catch(e) { console.error("Init failed", e); }
+            } catch(e) { console.error("Init Error", e); }
         }
 
-        // --- 核心逻辑 ---
+        // --- 核心渲染 ---
         function renderMain() {
             const container = $('main-container');
             container.innerHTML = '';
 
             state.cats.forEach(cat => {
-                // 私密过滤：未登录且分类是私密的 -> 跳过
+                // 私密逻辑：未登录且是私密分类 -> 跳过
                 if (!state.loggedIn && cat.is_private) return;
 
                 const sites = state.sites.filter(s => s.categoryId == cat.id);
                 const box = document.createElement('div');
                 box.className = 'category-box fade-in';
+                
+                const lockIcon = cat.is_private ? '<i class="fas fa-lock text-yellow-500 text-xs ml-2"></i>' : '';
+                
                 box.innerHTML = `
                     <div class="cat-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
-                        <i class="fas ${cat.is_private ? 'fa-lock text-yellow-400' : 'fa-folder text-blue-400'}"></i>
-                        <span class="font-bold text-lg select-none">${cat.name}</span>
-                        <span class="text-xs bg-white/20 px-2 rounded-full">${sites.length}</span>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs transition-transform group-hover:rotate-90"></i>
+                        <span class="font-bold tracking-wide ml-2">${cat.name}</span>${lockIcon}
+                        <span class="text-[10px] bg-white/10 px-1.5 rounded ml-2 opacity-60">${sites.length}</span>
                     </div>
                     <div class="cat-content">
                         ${sites.map(s => `
-                            <a href="${s.url}" target="_blank" class="site-item group">
+                            <a href="${s.url}" target="_blank" class="site-item group" title="${s.name}">
                                 <div class="site-circle">
-                                    <img src="${s.icon}" class="site-img" onerror="this.src='https://placehold.co/50'">
+                                    <img src="${s.icon}" class="site-img" onerror="this.src='https://placehold.co/40/333/fff?text=?'">
                                 </div>
-                                <div class="site-name group-hover:text-blue-400">${s.name}</div>
+                                <div class="site-name group-hover:text-white group-hover:font-bold transition-all">${s.name}</div>
                             </a>
                         `).join('')}
                     </div>
@@ -296,8 +297,11 @@
         function renderBackgrounds() {
             const bgBox = $('slideshow');
             let urls = [];
-            try { urls = JSON.parse(state.settings.backgroundUrls || '[]'); } catch(e) {}
-            if(!urls.length) urls = ['https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920']; // 默认
+            try { urls = JSON.parse(state.settings.backgroundUrls || '[]'); } catch(e) {
+                // 兼容旧数据
+                urls = [state.settings.backgroundUrls || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920']; 
+            }
+            if(!urls.length) urls = ['https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920'];
 
             bgBox.innerHTML = urls.map((u, i) => 
                 `<div class="bg-slide ${i===0?'active':''}" style="background-image: url('${u}')"></div>`
@@ -313,11 +317,7 @@
             }
         }
 
-        function renderWelcome() {
-            if(state.settings.welcomeMessage) $('welcome-text').innerText = state.settings.welcomeMessage;
-        }
-
-        // --- 音乐系统 ---
+        // --- 强力音乐播放 ---
         function initMusic() {
             if(!state.music.length) return;
             const audio = $('bg-audio');
@@ -326,11 +326,17 @@
 
             const play = () => {
                 audio.src = state.music[trackIdx].url;
-                audio.play().then(() => btn.classList.add('playing'))
-                     .catch(() => document.addEventListener('click', () => { audio.play(); btn.classList.add('playing'); }, {once:true}));
+                audio.play()
+                    .then(() => btn.classList.add('playing'))
+                    .catch(() => {
+                        // 自动播放失败，等待用户点击任意处触发
+                        document.addEventListener('click', () => { 
+                            audio.play(); btn.classList.add('playing'); 
+                        }, {once:true});
+                    });
             };
             
-            play(); // 尝试自动播放
+            play(); // 进站尝试播放
 
             audio.onended = () => {
                 trackIdx = (trackIdx + 1) % state.music.length;
@@ -343,7 +349,7 @@
             };
         }
 
-        // --- 私密空间/后台 ---
+        // --- 后台管理逻辑 ---
         $('private-btn').onclick = () => {
             $('admin-modal').style.display = 'flex';
             if(state.loggedIn) loadAdminPanel();
@@ -356,12 +362,12 @@
                 $('login-section').classList.add('hidden');
                 $('admin-content').classList.remove('hidden');
                 loadAdminPanel();
-                renderMain(); // 刷新主页显示私密内容
+                renderMain(); // 解锁私密内容
             } else alert('密码错误');
         };
 
         async function loadAdminPanel() {
-            // 填充设置
+            // 设置
             $('set-welcome').value = state.settings.welcomeMessage || '';
             try { 
                 $('set-bg').value = JSON.parse(state.settings.backgroundUrls).join('\n');
@@ -369,28 +375,28 @@
 
             // 音乐列表
             $('music-list').innerHTML = state.music.map(m => `
-                <div class="flex justify-between bg-gray-700 p-2 rounded items-center">
-                    <span class="truncate w-40 text-xs">${m.title}</span>
-                    <button onclick="delItem('custom-music', ${m.id})" class="text-red-400"><i class="fas fa-trash"></i></button>
+                <div class="flex justify-between bg-black/20 p-2 rounded items-center text-sm mb-1 border border-white/5">
+                    <span class="truncate flex-1 text-gray-300">${m.title}</span>
+                    <button onclick="delItem('custom-music', ${m.id})" class="text-red-400 hover:text-red-300 ml-2"><i class="fas fa-trash"></i></button>
                 </div>
             `).join('');
 
             // 分类下拉
-            $('site-cat').innerHTML = state.cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            $('site-cat').innerHTML = state.cats.map(c => `<option value="${c.id}">${c.name}${c.is_private?' (私)':''}</option>`).join('');
 
             // 网站列表
             $('admin-site-list').innerHTML = state.sites.map(s => `
-                <div class="flex justify-between bg-gray-700 p-2 rounded items-center text-sm">
-                    <div class="flex items-center gap-2">
-                        <img src="${s.icon}" class="w-5 h-5 rounded-full">
-                        <span>${s.name}</span>
+                <div class="flex justify-between bg-black/20 p-2 rounded items-center text-sm mb-1 border border-white/5">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <img src="${s.icon}" class="w-5 h-5 rounded-full opacity-70">
+                        <span class="text-gray-300 truncate">${s.name}</span>
                     </div>
-                    <button onclick="delItem('sites', ${s.id})" class="text-red-400"><i class="fas fa-trash"></i></button>
+                    <button onclick="delItem('sites', ${s.id})" class="text-red-400 hover:text-red-300 ml-2"><i class="fas fa-trash"></i></button>
                 </div>
             `).join('');
         }
 
-        // --- CRUD 操作 ---
+        // --- 操作逻辑 ---
         window.saveSettings = async () => {
             const bgs = $('set-bg').value.split('\n').filter(t=>t.trim());
             const data = {
@@ -400,6 +406,7 @@
             if((await api.post('settings', data)).ok) { alert('已保存'); location.reload(); }
         };
 
+        // 自动图标
         $('site-url').onblur = function() {
             if(this.value && !$('site-icon').value) {
                 try { $('site-icon').value = `https://www.google.com/s2/favicons?domain=${new URL(this.value).hostname}&sz=64`; } catch(e){}
@@ -431,13 +438,11 @@
             loadAdminPanel(); renderMain();
         }
 
-        // 搜索过滤
         $('search-input').oninput = function() {
             const term = this.value.toLowerCase();
-            const items = document.querySelectorAll('.site-item');
-            items.forEach(el => {
+            document.querySelectorAll('.site-item').forEach(el => {
                 const text = el.innerText.toLowerCase();
-                el.style.display = text.includes(term) ? 'flex' : 'none';
+                el.parentElement.style.display = text.includes(term) ? 'block' : 'none';
             });
         };
 
