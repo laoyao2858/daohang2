@@ -1705,148 +1705,148 @@
             }
         };
 
-        // --- DOM Elements Cache (ID修正版) ---
+        // --- DOM Elements Cache (防崩溃修复版) ---
+        // 辅助函数：如果找不到元素，就返回一个假的空元素，防止报错
+        const getEl = (id) => document.getElementById(id) || document.createElement('div');
+
         const DOMElements = {
             html: document.documentElement,
             body: document.body,
             
             // 侧边栏与导航
-            sidebarNav: document.getElementById('sidebar-nav'),
-            contentGrid: document.getElementById('contentGrid'), // 修正: content-grid -> contentGrid
-            searchInput: document.getElementById('searchInput'), // 修正: search-input -> searchInput
+            sidebarNav: getEl('sidebar-nav'),
+            contentGrid: getEl('contentGrid'), // 注意这里ID可能需要根据你的HTML调整，原版是 content-grid
+            searchInput: getEl('searchInput'), // 你新改的ID
             
-            // 按钮与开关
-            adminLoginBtn: document.getElementById('admin-login-btn'),
-            toggleLanguageBtn: document.getElementById('toggle-language-btn'), // 修正: lang-switcher -> toggle-language-btn
-            toggleThemeBtn: document.getElementById('toggle-theme-btn'), // 修正
-            themeToggle: document.getElementById('themeToggle'), // 修正
-            themeSwitcher: document.getElementById('themeToggle'), // 兼容旧代码变量名
+            // 按钮与开关 (使用 getEl 防止因删除HTML导致报错)
+            adminLoginBtn: getEl('admin-login-btn'),
+            toggleLanguageBtn: getEl('toggle-language-btn'), 
+            themeSwitcher: getEl('themeToggle'), // 映射到新ID
+            themeToggle: getEl('themeToggle'),
             
             // 模态框与视图
-            adminModal: document.getElementById('adminModal'), // 修正: admin-modal -> adminModal
-            adminLoginView: document.getElementById('adminLoginView'), // 修正
-            adminPanelView: document.getElementById('adminPanelView'), // 修正
-            loginForm: document.getElementById('loginForm'), // 修正
-            adminPasswordInput: document.getElementById('adminPasswordInput'), // 修正
-            loginError: document.getElementById('loginError'), // 修正
-            adminLogoutBtn: document.getElementById('admin-logout-btn'),
+            adminModal: getEl('adminModal'),
+            adminLoginView: getEl('adminLoginView'),
+            adminPanelView: getEl('adminPanelView'),
+            loginForm: getEl('loginForm'),
+            adminPasswordInput: getEl('adminPasswordInput'),
+            loginError: getEl('loginError'),
+            adminLogoutBtn: getEl('admin-logout-btn'),
             
             // 管理表单
-            addCategoryForm: document.getElementById('addCategoryForm'), // 修正
-            categoryNameInput: document.getElementById('categoryNameInput'), // 修正
-            categoryTypeSelect: document.getElementById('categoryTypeSelect'), // 修正
-            categoriesList: document.getElementById('categoriesList'), // 修正
-            saveOrderBtn: document.getElementById('save-order-btn'),
+            addCategoryForm: getEl('addCategoryForm'),
+            categoryNameInput: getEl('categoryNameInput'),
+            categoryTypeSelect: getEl('categoryTypeSelect'),
+            categoriesList: getEl('categoriesList'),
+            saveOrderBtn: getEl('save-order-btn'),
             
-            siteForm: document.getElementById('site-form'),
-            siteFormTitle: document.getElementById('site-form-title'),
-            siteCategorySelect: document.getElementById('site-category-select'),
-            siteNameInput: document.getElementById('site-name-input'),
-            siteUrlInput: document.getElementById('site-url-input'),
-            siteIconInput: document.getElementById('site-icon-input'),
-            siteDescInput: document.getElementById('site-desc-input'),
-            siteTagsInput: document.getElementById('site-tags-input'),
-            siteGroupSelect: document.getElementById('site-group-select'),
-            siteSubmitBtn: document.getElementById('site-submit-btn'),
-            cancelEditBtn: document.getElementById('cancel-edit-btn'),
-            sitesListAdmin: document.getElementById('sitesListAdmin'), // 修正: sites-list-admin -> sitesListAdmin
-            iconPreview: document.getElementById('icon-preview'),
+            // 网站管理表单 (匹配你刚才改的新ID)
+            siteForm: getEl('site-form'),
+            siteFormTitle: getEl('site-form-title'),
+            siteCategorySelect: getEl('site-category-select'),
+            siteNameInput: getEl('site-name-input'),
+            siteUrlInput: getEl('site-url-input'),
+            siteIconInput: getEl('site-icon-input'),
+            siteDescInput: getEl('site-desc-input'),
+            siteTagsInput: getEl('site-tags-input'),
+            siteGroupSelect: getEl('site-group-select'),
+            siteSubmitBtn: getEl('site-submit-btn'),
+            cancelEditBtn: getEl('cancel-edit-btn'),
+            sitesListAdmin: getEl('sitesListAdmin'),
+            iconPreview: getEl('icon-preview'),
             
             // 导入导出
-            exportDataBtn: document.getElementById('export-data-btn'),
-            importDataBtn: document.getElementById('import-data-btn'),
-            importFileInput: document.getElementById('import-file-input'),
+            exportDataBtn: getEl('export-data-btn'),
+            importDataBtn: getEl('import-data-btn'),
+            importFileInput: getEl('import-file-input'),
             
             // 常用网站
-            frequentSitesSection: document.getElementById('frequentSites'), // 修正
-            frequentGrid: document.getElementById('frequentGrid'), // 修正
-            frequentSitesCountSelect: document.getElementById('frequent-sites-count-select'),
-            savePreferencesBtn: document.getElementById('save-preferences-btn'),
+            frequentSitesSection: getEl('frequentSites'),
+            frequentGrid: getEl('frequentGrid'),
+            frequentSitesCountSelect: getEl('frequent-sites-count-select'),
+            savePreferencesBtn: getEl('save-preferences-btn'),
             
             // 移动端菜单
-            mobileMenuToggle: document.getElementById('menuToggle'), // 修正
-            desktopSidebarToggle: document.getElementById('desktop-sidebar-toggle'),
-            desktopSidebarIcon: document.getElementById('desktop-sidebar-icon'),
-            mobileSidebar: document.getElementById('sidebar'), // 修正指向
-            mobileSidebarClose: document.getElementById('mobile-sidebar-close'),
-            mobileSidebarContainer: document.getElementById('sidebarOverlay'), // 修正
+            mobileMenuToggle: getEl('menuToggle'),
+            mobileSidebar: getEl('sidebar'),
+            mobileSidebarContainer: getEl('sidebarOverlay'),
             
-            // 搜索相关
-            webSearchForm: document.getElementById('web-search-form'),
-            webSearchInput: document.getElementById('web-search-input'),
-            searchEngineToggle: document.getElementById('search-engine-toggle'),
-            searchEngineMenu: document.getElementById('search-engine-menu'),
-            currentEngineIcon: document.getElementById('current-engine-icon'),
-            currentEngineName: document.getElementById('current-engine-name'),
+            // ⚠️ 关键：下面这些是你删掉的搜索按钮，getEl会给它们创建替身，防止脚本报错
+            voiceSearch: getEl('voiceSearch'), 
+            engineBtn: getEl('engineBtn'),
+            webSearchForm: getEl('web-search-form'),
+            webSearchInput: getEl('web-search-input'),
+            searchEngineToggle: getEl('search-engine-toggle'),
+            searchEngineMenu: getEl('search-engine-menu'),
+            currentEngineIcon: getEl('current-engine-icon'),
+            currentEngineName: getEl('current-engine-name'),
             
             // 新版UI元素
-            sidebar: document.getElementById('sidebar'),
-            sidebarOverlay: document.getElementById('sidebarOverlay'),
-            menuToggle: document.getElementById('menuToggle'),
-            searchContainer: document.getElementById('searchContainer'),
-            searchToggle: document.getElementById('searchToggle'),
-            musicToggle: document.getElementById('musicToggle'),
-            statsToggle: document.getElementById('statsToggle'),
-            engineBtn: document.getElementById('engineBtn'),
-            voiceSearch: document.getElementById('voiceSearch'),
+            sidebar: getEl('sidebar'),
+            sidebarOverlay: getEl('sidebarOverlay'),
+            menuToggle: getEl('menuToggle'),
+            searchContainer: getEl('searchContainer'),
+            searchToggle: getEl('searchToggle'),
+            musicToggle: getEl('musicToggle'),
+            statsToggle: getEl('statsToggle'),
             
             // 访客统计
-            visitorStatsBtn: document.getElementById('visitor-stats-btn'),
-            visitorStatsPanel: document.getElementById('visitorStatsPanel'),
-            totalVisits: document.getElementById('totalVisits'),
-            todayVisits: document.getElementById('todayVisits'),
-            onlineUsers: document.getElementById('onlineUsers'),
-            uniqueVisitors: document.getElementById('uniqueVisitors'),
-            visitorLocations: document.getElementById('visitorLocations'),
-            statsUpdateTime: document.getElementById('statsUpdateTime'),
+            visitorStatsBtn: getEl('visitor-stats-btn'),
+            visitorStatsPanel: getEl('visitorStatsPanel'),
+            totalVisits: getEl('totalVisits'),
+            todayVisits: getEl('todayVisits'),
+            onlineUsers: getEl('onlineUsers'),
+            uniqueVisitors: getEl('uniqueVisitors'),
+            visitorLocations: getEl('visitorLocations'),
+            statsUpdateTime: getEl('statsUpdateTime'),
             
             // 音乐播放器
-            musicPlayer: document.getElementById('musicPlayer'),
-            musicAlbumCover: document.getElementById('musicAlbumCover'),
-            musicTitleMini: document.getElementById('musicTitleMini'),
-            musicArtistMini: document.getElementById('musicArtistMini'),
-            playPauseMusicBtn: document.getElementById('playPauseMusicBtn'),
-            prevMusicBtn: document.getElementById('prevMusicBtn'),
-            nextMusicBtn: document.getElementById('nextMusicBtn'),
-            musicProgress: document.getElementById('musicProgress'),
+            musicPlayer: getEl('musicPlayer'),
+            musicAlbumCover: getEl('musicAlbumCover'),
+            musicTitleMini: getEl('musicTitleMini'),
+            musicArtistMini: getEl('musicArtistMini'),
+            playPauseMusicBtn: getEl('playPauseMusicBtn'),
+            prevMusicBtn: getEl('prevMusicBtn'),
+            nextMusicBtn: getEl('nextMusicBtn'),
+            musicProgress: getEl('musicProgress'),
             
             // 其他表单
-            closeAdminModal: document.getElementById('closeAdminModal'),
-            siteTitleInput: document.getElementById('siteTitleInput'),
-            siteDescriptionInput: document.getElementById('siteDescriptionInput'),
-            avatarUrlInput: document.getElementById('avatarUrlInput'),
-            backgroundUrlInput: document.getElementById('backgroundUrlInput'),
-            welcomeTitleInput: document.getElementById('welcomeTitleInput'),
-            welcomeTextInput: document.getElementById('welcomeTextInput'),
-            autoPlayMusicCheckbox: document.getElementById('autoPlayMusicCheckbox'),
-            showVisitorStatsCheckbox: document.getElementById('showVisitorStatsCheckbox'),
-            addMusicForm: document.getElementById('addMusicForm'),
-            musicTitleInput: document.getElementById('musicTitleInput'),
-            musicArtistInput: document.getElementById('musicArtistInput'),
-            musicUrlInput: document.getElementById('musicUrlInput'),
-            musicCoverInput: document.getElementById('musicCoverInput'),
-            customMusicList: document.getElementById('customMusicList'),
+            closeAdminModal: getEl('closeAdminModal'),
+            siteTitleInput: getEl('siteTitleInput'),
+            siteDescriptionInput: getEl('siteDescriptionInput'),
+            avatarUrlInput: getEl('avatarUrlInput'),
+            backgroundUrlInput: getEl('backgroundUrlInput'),
+            welcomeTitleInput: getEl('welcomeTitleInput'),
+            welcomeTextInput: getEl('welcomeTextInput'),
+            autoPlayMusicCheckbox: getEl('autoPlayMusicCheckbox'),
+            showVisitorStatsCheckbox: getEl('showVisitorStatsCheckbox'),
+            addMusicForm: getEl('addMusicForm'),
+            musicTitleInput: getEl('musicTitleInput'),
+            musicArtistInput: getEl('musicArtistInput'),
+            musicUrlInput: getEl('musicUrlInput'),
+            musicCoverInput: getEl('musicCoverInput'),
+            customMusicList: getEl('customMusicList'),
             
             // 管理员统计
-            adminTotalVisits: document.getElementById('adminTotalVisits'),
-            adminTodayVisits: document.getElementById('adminTodayVisits'),
-            adminOnlineUsers: document.getElementById('adminOnlineUsers'),
-            adminUniqueVisitors: document.getElementById('adminUniqueVisitors'),
-            recentVisitsTable: document.getElementById('recentVisitsTable'),
+            adminTotalVisits: getEl('adminTotalVisits'),
+            adminTodayVisits: getEl('adminTodayVisits'),
+            adminOnlineUsers: getEl('adminOnlineUsers'),
+            adminUniqueVisitors: getEl('adminUniqueVisitors'),
+            recentVisitsTable: getEl('recentVisitsTable'),
             
             // 消息模态框
-            messageModal: document.getElementById('messageModal'),
-            messageTitle: document.getElementById('messageTitle'),
-            messageText: document.getElementById('messageText'),
+            messageModal: getEl('messageModal'),
+            messageTitle: getEl('messageTitle'),
+            messageText: getEl('messageText'),
             
             // 页面显示元素
-            siteAvatar: document.getElementById('siteAvatar'),
-            siteTitle: document.getElementById('siteTitle'),
-            siteDescription: document.getElementById('siteDescription'),
-            welcomeTitle: document.getElementById('welcomeTitle'),
-            welcomeText: document.getElementById('welcomeText'),
-            sidebarSiteTitle: document.getElementById('sidebarSiteTitle'),
-            headerSiteTitle: document.getElementById('headerSiteTitle')
+            siteAvatar: getEl('siteAvatar'),
+            siteTitle: getEl('siteTitle'),
+            siteDescription: getEl('siteDescription'),
+            welcomeTitle: getEl('welcomeTitle'),
+            welcomeText: getEl('welcomeText'),
+            sidebarSiteTitle: getEl('sidebarSiteTitle'),
+            headerSiteTitle: getEl('headerSiteTitle')
         };
 
         // --- API Client ---
