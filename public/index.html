@@ -1,2029 +1,655 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal - Modern Navigation Hub</title>
+    <title>Portal - 现代化导航站</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.19.2/dist/index.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4f46e5;
             --primary-light: #6366f1;
-            --primary-dark: #3730a3;
             --surface-dark: #0f172a;
-            --surface-light: #1e293b;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --accent-green: #10b981;
-            --accent-purple: #8b5cf6;
-            --accent-orange: #f59e0b;
             --gradient-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             --card-gradient: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
             --glass-effect: rgba(255, 255, 255, 0.05);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* --- 亮色模式样式 (修复切换无反应) --- */
+        body.light-mode {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+        body.light-mode .site-card,
+        body.light-mode .search-box,
+        body.light-mode .header,
+        body.light-mode .sidebar,
+        body.light-mode .visitor-stats-panel,
+        body.light-mode .music-player-mini,
+        body.light-mode .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(0,0,0,0.1);
+            color: #1f2937;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        body.light-mode .site-name,
+        body.light-mode .category-title, 
+        body.light-mode .nav-item,
+        body.light-mode .search-input,
+        body.light-mode .music-title-mini,
+        body.light-mode .music-control-btn,
+        body.light-mode .modal-title,
+        body.light-mode .form-label,
+        body.light-mode .stat-value,
+        body.light-mode .stat-label {
+            color: #1f2937;
+        }
+        body.light-mode .nav-item:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        body.light-mode .site-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
 
+        /* 基础样式 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--gradient-bg);
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
-            transition: background-image 0.5s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            z-index: -1;
-        }
-
-        /* 新头部样式 */
-        .header {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .control-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--glass-effect);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-            transform: translateY(-2px);
-        }
-
-        /* 新搜索栏样式 */
-        .search-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .search-box {
-            background: var(--card-gradient);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
-        .search-icon {
-            color: var(--text-secondary);
-            padding: 0 1rem;
-        }
-
-        .search-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-size: 1rem;
-            padding: 1rem 0;
-            outline: none;
-        }
-
-        .search-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .search-engine-selector {
-            position: relative;
-            min-width: 140px;
-        }
-
-        .engine-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(79, 70, 229, 0.2);
-            border: 1px solid rgba(79, 70, 229, 0.3);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .engine-btn:hover {
-            background: rgba(79, 70, 229, 0.3);
-        }
-
-        .engine-icon {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            object-fit: contain;
-        }
-
-        /* 新网站卡片样式 */
-        .sites-grid {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .category-header {
-            margin: 2rem 0 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .category-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .category-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .site-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 3rem;
-        }
-
-        .site-card {
-            background: var(--card-gradient);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .site-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-
-        .site-card:hover::before {
-            transform: translateX(100%);
-        }
-
-        .site-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(79, 70, 229, 0.5);
-            box-shadow: 0 12px 40px rgba(79, 70, 229, 0.2);
-        }
-
-        .site-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            object-fit: cover;
-            background: var(--surface-light);
-            padding: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .site-name {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            text-align: center;
-            line-height: 1.4;
-        }
-
-        .site-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-            margin-top: 0.5rem;
-            justify-content: center;
-        }
-
-        .tag {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            background: rgba(79, 70, 229, 0.2);
-            color: var(--primary-light);
-            border-radius: 20px;
-        }
-
-        /* 新侧边栏样式 */
+        /* 布局组件 */
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            width: 280px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem 1rem;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 999;
-            overflow-y: auto;
+            position: fixed; left: 0; top: 0; height: 100vh; width: 260px;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255,255,255,0.1); padding: 2rem 1rem;
+            transform: translateX(-100%); transition: transform 0.3s ease; z-index: 1000;
         }
-
-        .sidebar.open {
-            transform: translateX(0);
-        }
-
+        .sidebar.open { transform: translateX(0); }
+        
         .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 998;
-            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 999; display: none;
         }
+        .sidebar-overlay.show { display: block; }
 
-        .sidebar-overlay.show {
-            display: block;
-        }
-
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            padding-left: 1rem;
+        .header {
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px);
         }
 
         .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            margin-bottom: 0.5rem;
+            display: flex; align-items: center; gap: 10px; padding: 12px;
+            color: var(--text-secondary); text-decoration: none; border-radius: 8px;
+            transition: all 0.2s; cursor: pointer;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1); color: var(--text-primary);
         }
 
-        .nav-item:hover {
-            background: var(--glass-effect);
-            color: var(--text-primary);
+        /* 搜索框 (简化版) */
+        .search-container { max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+        .search-box {
+            background: var(--card-gradient); border-radius: 12px; padding: 0.8rem 1.2rem;
+            display: flex; align-items: center; gap: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .search-input {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: white; font-size: 1rem;
         }
 
-        .nav-item.active {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            color: white;
-            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+        /* 网站卡片 */
+        .sites-grid { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        .site-cards {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.2rem;
         }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
+        .site-card {
+            background: var(--card-gradient); padding: 1.5rem; border-radius: 16px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            cursor: pointer; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.05);
         }
+        .site-card:hover { transform: translateY(-5px); border-color: var(--primary-color); }
+        .site-icon { width: 48px; height: 48px; border-radius: 12px; object-fit: contain; }
+        .site-name { font-size: 0.95rem; font-weight: 500; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
 
-        /* 新增样式：访客统计面板 */
-        .visitor-stats-panel {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            z-index: 999;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .visitor-stats-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .visitor-stats-header h3 {
-            margin: 0;
-            font-size: 16px;
-            color: var(--primary-light);
-        }
-
-        .close-stats-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .visitor-stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .stat-value {
-            color: var(--text-primary);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .online-users {
-            color: #10b981;
-        }
-
-        .visitor-location {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 6px;
-            margin-bottom: 4px;
-            font-size: 13px;
-        }
-
-        .flag-icon {
-            width: 16px;
-            height: 12px;
-            border-radius: 2px;
-        }
-
-        /* 新增样式：音乐管理界面 */
-        .music-management-section {
-            background: var(--surface-light);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .music-list-container {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-        }
-
-        .music-item-admin {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-
-        .music-cover-admin {
-            width: 40px;
-            height: 40px;
-            border-radius: 6px;
-            object-fit: cover;
-        }
-
-        .music-info-admin {
-            flex: 1;
-        }
-
-        .music-title-admin {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .music-artist-admin {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .music-url-admin {
-            font-size: 11px;
-            color: var(--primary-light);
-            word-break: break-all;
-        }
-
-        /* 新增样式：欢迎语显示 */
-        .welcome-message {
-            text-align: center;
-            margin: 20px 0 30px;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(139, 92, 246, 0.2));
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .welcome-message h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .welcome-message p {
-            color: var(--text-secondary);
-            font-size: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* 新增样式：网站头像 */
-        .site-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary-light);
-            margin: 0 auto 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .site-header-with-avatar {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-        }
-
-        /* 新浮动操作按钮 */
-        .fab-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 100;
-        }
-
-        .fab {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 40px rgba(79, 70, 229, 0.6);
-        }
-
-        /* 新模态框样式 */
+        /* 模态框 */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 1rem;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 2000; display: none;
+            justify-content: center; align-items: center; padding: 1rem;
         }
-
         .modal-content {
-            background: var(--card-gradient);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            max-width: 800px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease;
+            background: #1e293b; width: 100%; max-width: 900px; max-height: 90vh;
+            border-radius: 16px; overflow-y: auto; color: white;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: var(--glass-effect);
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        /* 新表单样式 */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 0.875rem 1rem;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-        }
-
-        .form-select {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 0.875rem 1rem;
-            color: var(--text-primary);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-        }
-
-        .btn {
-            padding: 0.875rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--glass-effect);
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* 新常用网站样式 */
-        .frequent-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .frequent-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem;
-            background: var(--glass-effect);
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .frequent-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-3px);
-        }
-
-        .frequent-count {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: var(--accent-green);
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .header {
-                padding: 1rem;
-            }
-            
-            .site-cards {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
-            }
-            
-            .search-container {
-                margin: 1rem auto;
-            }
-            
-            .fab-container {
-                bottom: 1rem;
-                right: 1rem;
-            }
-            
-            .sidebar {
-                width: 100%;
-                max-width: 320px;
-            }
-            
-            .visitor-stats-panel {
-                right: 10px;
-                bottom: 10px;
-                width: calc(100vw - 20px);
-                max-width: 300px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .site-cards {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 0.75rem;
-            }
-            
-            .site-card {
-                padding: 1rem;
-            }
-            
-            .site-icon {
-                width: 48px;
-                height: 48px;
-                padding: 10px;
-            }
-            
-            .welcome-message h1 {
-                font-size: 22px;
-            }
-            
-            .welcome-message p {
-                font-size: 14px;
-            }
-        }
-
-        /* 自定义滚动条 */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-light);
-        }
-
-        /* 动画效果 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        .delay-1 { animation-delay: 0.1s; opacity: 0; }
-        .delay-2 { animation-delay: 0.2s; opacity: 0; }
-        .delay-3 { animation-delay: 0.3s; opacity: 0; }
-
-        /* 音乐播放器样式 */
+        /* 音乐播放器 */
         .music-player-mini {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 999;
-            width: 300px;
-            transition: all 0.3s ease;
+            position: fixed; bottom: 20px; left: 20px; width: 300px;
+            background: rgba(15, 23, 42, 0.95); border-radius: 12px; padding: 12px;
+            display: flex; align-items: center; gap: 12px; z-index: 100;
+            border: 1px solid rgba(255,255,255,0.1); transition: width 0.3s;
         }
+        .music-player-mini.collapsed { width: 60px; overflow: hidden; }
+        .music-player-mini.collapsed .music-info-mini, 
+        .music-player-mini.collapsed .music-controls-mini { display: none; }
+        
+        .control-btn {
+            width: 40px; height: 40px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s;
+        }
+        .control-btn:hover { background: rgba(255,255,255,0.1); }
 
-        .music-player-mini.collapsed {
-            width: 56px;
-            padding: 12px;
-        }
-
-        .music-album-cover {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        .music-info-mini {
-            flex: 1;
-            min-width: 0;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-
-        .music-player-mini.collapsed .music-info-mini {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .music-title-mini {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .music-artist-mini {
-            font-size: 12px;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .music-controls-mini {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .music-control-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .music-control-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-
-        .music-progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-            border-radius: 0 0 12px 12px;
-        }
-
-        .music-progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-
-        .music-player-mini.playing .music-album-cover {
-            animation: rotate 10s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* 数据统计卡片 */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--card-gradient);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .stat-value-large {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label-large {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* 表格样式 */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .data-table th {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-align: left;
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .data-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.875rem;
-        }
-
-        .data-table tr:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        /* 开关样式 */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary-color);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
+        /* 滚动条美化 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
     </style>
 </head>
-<body class="bg-gray-900 text-white">
-    <!-- 侧边栏 -->
+<body class="text-white">
+
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header" style="margin-bottom: 2rem;">
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-compass"></i>
-                </div>
-                <span id="sidebarSiteTitle">Portal</span>
+        <div class="flex items-center gap-3 mb-8 px-2">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <i class="fas fa-compass text-white"></i>
             </div>
+            <span class="text-xl font-bold" id="sidebarSiteTitle">Portal</span>
         </div>
         
-        <div class="nav-section">
-            <div class="nav-title">Navigation</div>
-            <nav id="sidebar-nav">
-                <!-- 分类将通过JavaScript动态生成 -->
-            </nav>
+        <div class="mb-6">
+            <div class="text-xs text-gray-500 uppercase px-2 mb-2">导航</div>
+            <nav id="sidebar-nav"></nav>
         </div>
         
-        <div class="nav-section">
-            <div class="nav-title">Tools</div>
-            <a href="#" class="nav-item" id="toggle-theme-btn">
-                <i class="fas fa-moon nav-icon"></i>
-                <span>Theme</span>
-            </a>
-            <a href="#" class="nav-item" id="toggle-language-btn">
-                <i class="fas fa-globe nav-icon"></i>
-                <span>Language</span>
-            </a>
-            <a href="#" class="nav-item" id="admin-login-btn">
-                <i class="fas fa-cog nav-icon"></i>
-                <span>Admin</span>
-            </a>
-            <a href="#" class="nav-item" id="visitor-stats-btn">
-                <i class="fas fa-chart-line nav-icon"></i>
-                <span>Visitor Stats</span>
-            </a>
+        <div class="border-t border-gray-700 pt-4">
+            <div class="text-xs text-gray-500 uppercase px-2 mb-2">工具</div>
+            <div class="nav-item" id="toggle-theme-btn"><i class="fas fa-moon"></i> <span>切换主题</span></div>
+            <div class="nav-item" id="admin-login-btn"><i class="fas fa-cog"></i> <span>管理后台</span></div>
+            <div class="nav-item" id="visitor-stats-btn"><i class="fas fa-chart-line"></i> <span>访问统计</span></div>
         </div>
     </div>
-
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- 主内容区 -->
-    <div class="main-content">
-        <!-- 头部 -->
+    <div class="min-h-screen">
         <header class="header">
-            <button class="control-btn" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-compass"></i>
-                </div>
-                <span id="headerSiteTitle">Portal</span>
-            </div>
-            
-            <div class="nav-controls">
-                <button class="control-btn" id="searchToggle">
-                    <i class="fas fa-search"></i>
-                </button>
-                <button class="control-btn" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button class="control-btn" id="musicToggle">
-                    <i class="fas fa-music"></i>
-                </button>
-                <button class="control-btn" id="statsToggle">
-                    <i class="fas fa-chart-bar"></i>
-                </button>
+            <button class="control-btn" id="menuToggle"><i class="fas fa-bars"></i></button>
+            <div class="flex gap-3">
+                <button class="control-btn" id="searchToggle"><i class="fas fa-search"></i></button>
+                <button class="control-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
+                <button class="control-btn" id="musicToggle"><i class="fas fa-music"></i></button>
             </div>
         </header>
 
-        <!-- 搜索栏 -->
         <div class="search-container" id="searchContainer">
             <div class="search-box">
-                <i class="fas fa-search search-icon"></i>
-                
-                <input type="text" 
-                       class="search-input" 
-                       id="searchInput"
-                       placeholder="搜索网站..." 
-                       autocomplete="off">
+                <i class="fas fa-search text-gray-400"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索网站..." autocomplete="off">
             </div>
         </div>
-        <!-- 网站欢迎语和头像 -->
-        <div id="siteHeader" class="site-header-with-avatar">
-            <img id="siteAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop&crop=faces" alt="网站头像" class="site-avatar">
-            <h1 id="siteTitle">我的导航站</h1>
-            <p id="siteDescription">一个简洁高效的导航网站</p>
+
+        <div class="text-center py-10 px-4">
+            <img id="siteAvatar" src="" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-indigo-500/30 object-cover" onerror="this.style.display='none'">
+            <h1 id="welcomeTitle" class="text-3xl font-bold mb-2">欢迎</h1>
+            <p id="welcomeText" class="text-gray-400">探索网络世界</p>
         </div>
 
-        <div id="welcomeMessage" class="welcome-message">
-            <h1 id="welcomeTitle">欢迎使用导航站！</h1>
-            <p id="welcomeText">您可以在这里快速访问常用网站和工具</p>
-        </div>
-
-        <!-- 常用网站 -->
-        <div class="sites-grid">
-            <div id="frequentSites" style="margin-bottom: 3rem;">
-                <div class="category-header fade-in">
-                    <div class="category-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h2 class="category-title" data-i18n-key="frequentSites">Frequently Visited</h2>
-                </div>
-                <div id="frequentGrid" class="frequent-grid"></div>
-            </div>
-
-            <!-- 主要网站内容 -->
-            <div id="contentGrid"></div>
-        </div>
-
-        <!-- 浮动操作按钮 -->
-        <div class="fab-container">
-            <div class="fab" id="mainFab">
-                <i class="fas fa-plus"></i>
-            </div>
+        <div class="sites-grid" id="contentGrid"></div>
+        
+        <div id="frequentSites" class="hidden sites-grid mt-8">
+            <h2 class="text-xl font-bold mb-4 px-4">常用网站</h2>
+            <div id="frequentGrid" class="site-cards"></div>
         </div>
     </div>
 
-    <!-- 访客统计面板 -->
-    <div id="visitorStatsPanel" class="visitor-stats-panel" style="display: none;">
-        <div class="visitor-stats-header">
-            <h3><i class="fas fa-chart-line"></i> 访问统计</h3>
-            <button class="close-stats-btn" onclick="hideVisitorStats()">×</button>
-        </div>
-        
-        <div class="visitor-stat-item">
-            <span class="stat-label">总访问量</span>
-            <span id="totalVisits" class="stat-value">0</span>
-        </div>
-        
-        <div class="visitor-stat-item">
-            <span class="stat-label">今日访问</span>
-            <span id="todayVisits" class="stat-value">0</span>
-        </div>
-        
-        <div class="visitor-stat-item">
-            <span class="stat-label">在线用户</span>
-            <span id="onlineUsers" class="stat-value online-users">0</span>
-        </div>
-        
-        <div class="visitor-stat-item">
-            <span class="stat-label">独立访客</span>
-            <span id="uniqueVisitors" class="stat-value">0</span>
-        </div>
-        
-        <div style="margin-top: 15px; margin-bottom: 8px; font-size: 13px; color: var(--text-secondary);">
-            <i class="fas fa-globe"></i> 访客分布
-        </div>
-        
-        <div id="visitorLocations">
-            <!-- 访客位置将通过JavaScript动态生成 -->
-        </div>
-        
-        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-            <div style="font-size: 12px; color: var(--text-secondary); text-align: center;">
-                数据更新时间: <span id="statsUpdateTime">--:--:--</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- 音乐播放器 -->
     <div class="music-player-mini" id="musicPlayer">
-        <img id="musicAlbumCover" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop" alt="Album Cover" class="music-album-cover">
-        <div class="music-info-mini">
-            <div class="music-title-mini" id="musicTitleMini">歌曲加载中</div>
-            <div class="music-artist-mini" id="musicArtistMini">--</div>
+        <img id="musicAlbumCover" src="https://placehold.co/40" class="w-10 h-10 rounded bg-gray-700">
+        <div class="flex-1 min-w-0 music-info-mini">
+            <div class="text-sm font-bold truncate" id="musicTitleMini">未播放</div>
+            <div class="text-xs text-gray-400 truncate" id="musicArtistMini">--</div>
         </div>
-        <div class="music-controls-mini">
-            <button class="music-control-btn" id="prevMusicBtn">
-                <i class="fas fa-step-backward"></i>
-            </button>
-            <button class="music-control-btn" id="playPauseMusicBtn">
-                <i class="fas fa-play"></i>
-            </button>
-            <button class="music-control-btn" id="nextMusicBtn">
-                <i class="fas fa-step-forward"></i>
-            </button>
-        </div>
-        <div class="music-progress-bar">
-            <div class="music-progress" id="musicProgress"></div>
+        <div class="flex gap-2 music-controls-mini">
+            <button id="prevMusicBtn" class="text-gray-400 hover:text-white"><i class="fas fa-step-backward"></i></button>
+            <button id="playPauseMusicBtn" class="text-white w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center"><i class="fas fa-play"></i></button>
+            <button id="nextMusicBtn" class="text-gray-400 hover:text-white"><i class="fas fa-step-forward"></i></button>
         </div>
     </div>
 
-        <!-- 管理面板模态框 -->
-    <div class="modal-overlay" id="adminModal" style="display: none;">
+    <div class="modal-overlay" id="adminModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" data-i18n-key="adminPanel">Admin Panel</h2>
-                <button class="modal-close" id="closeAdminModal">
-                    <i class="fas fa-times"></i>
-                </button>
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center sticky top-0 bg-inherit z-10">
+                <h2 class="text-xl font-bold">管理面板</h2>
+                <button id="closeAdminModal" class="p-2 hover:bg-gray-700 rounded"><i class="fas fa-times"></i></button>
             </div>
-            <div class="modal-body">
-                <!-- 管理员登录视图 -->
+            
+            <div class="p-6">
                 <div id="adminLoginView">
-                    <h3 class="text-xl font-semibold mb-6 text-center" data-i18n-key="adminLogin">管理员登录</h3>
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <input type="password" id="adminPasswordInput" placeholder="请输入管理密码" class="form-input" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-full" data-i18n-key="login">登录</button>
+                    <form id="loginForm" class="max-w-sm mx-auto space-y-4">
+                        <input type="password" id="adminPasswordInput" placeholder="输入管理密码" class="w-full bg-gray-800 border border-gray-700 p-3 rounded text-white">
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded font-bold">登录</button>
                     </form>
-                    <p id="loginError" class="text-red-500 text-center mt-4" style="display: none;"></p>
                 </div>
 
-                <!-- 管理面板视图（登录后显示） -->
-                <div id="adminPanelView" style="display: none;">
-                    <!-- 站点个性化设置 -->
-                    <div class="music-management-section">
-                        <h3 class="text-xl font-semibold mb-4" data-i18n-key="siteCustomization">站点个性化设置</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div>
-                                <label class="form-label">网站标题</label>
-                                <input type="text" id="siteTitleInput" class="form-input" placeholder="输入网站标题">
-                            </div>
-                            <div>
-                                <label class="form-label">网站描述</label>
-                                <input type="text" id="siteDescriptionInput" class="form-input" placeholder="输入网站描述">
-                            </div>
-                            <div>
-                                <label class="form-label">网站头像URL</label>
-                                <input type="text" id="avatarUrlInput" class="form-input" placeholder="输入头像图片URL">
-                            </div>
-                            <div>
-                                <label class="form-label">背景图片URL</label>
-                                <input type="text" id="backgroundUrlInput" class="form-input" placeholder="输入背景图片URL">
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="form-label">欢迎语标题</label>
-                                <input type="text" id="welcomeTitleInput" class="form-input" placeholder="输入欢迎语标题">
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="form-label">欢迎语正文</label>
-                                <textarea id="welcomeTextInput" class="form-input" placeholder="输入欢迎语正文" rows="2"></textarea>
-                            </div>
-                            <div class="md:col-span-2 flex items-center gap-4">
-                                <label class="flex items-center gap-2">
-                                    <input type="checkbox" id="autoPlayMusicCheckbox" class="rounded">
-                                    <span>自动播放音乐</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="checkbox" id="showVisitorStatsCheckbox" class="rounded" checked>
-                                    <span>显示访问统计</span>
-                                </label>
-                            </div>
+                <div id="adminPanelView" style="display:none;" class="space-y-8">
+                    
+                    <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fas fa-sliders-h text-indigo-400"></i> 站点设置</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input id="siteTitleInput" placeholder="网站标题" class="bg-gray-700 p-2 rounded">
+                            <input id="siteDescriptionInput" placeholder="网站描述" class="bg-gray-700 p-2 rounded">
+                            <input id="avatarUrlInput" placeholder="头像 URL" class="bg-gray-700 p-2 rounded">
+                            <input id="backgroundUrlInput" placeholder="背景图片 URL" class="bg-gray-700 p-2 rounded">
+                            <input id="welcomeTitleInput" placeholder="欢迎语标题" class="bg-gray-700 p-2 rounded">
+                            <input id="welcomeTextInput" placeholder="欢迎语正文" class="bg-gray-700 p-2 rounded">
                         </div>
-                        
-                        <button id="save-settings-btn" class="btn btn-primary">
-    保存设置
-</button>
+                        <div class="flex gap-4 mt-4 text-sm">
+                            <label><input type="checkbox" id="autoPlayMusicCheckbox"> 自动播放音乐</label>
+                            <label><input type="checkbox" id="showVisitorStatsCheckbox"> 显示访客统计</label>
+                        </div>
+                        <button id="save-settings-btn" class="mt-4 bg-indigo-600 hover:bg-indigo-700 px-6 py-2 rounded font-bold w-full md:w-auto">
+                            保存设置
+                        </button>
                     </div>
 
-                    <!-- 自定义音乐管理 -->
-                    <div class="music-management-section">
-                        <h3 class="text-xl font-semibold mb-4" data-i18n-key="musicManagement">自定义音乐管理</h3>
+                    <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fas fa-link text-green-400"></i> 网站管理</h3>
                         
-                        <form id="addMusicForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div>
-                                <input type="text" id="musicTitleInput" placeholder="音乐标题" class="form-input" required>
+                        <form id="site-form" class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-4">
+                            <div class="md:col-span-3">
+                                <select id="site-category-select" class="w-full bg-gray-700 p-2 rounded" required></select>
                             </div>
-                            <div>
-                                <input type="text" id="musicArtistInput" placeholder="艺术家" class="form-input">
+                            <div class="md:col-span-3">
+                                <input id="site-name-input" placeholder="名称" class="w-full bg-gray-700 p-2 rounded" required>
                             </div>
-                            <div class="md:col-span-2">
-                                <input type="url" id="musicUrlInput" placeholder="音乐文件URL" class="form-input" required>
+                            <div class="md:col-span-6 relative">
+                                <input id="site-url-input" type="url" placeholder="URL (自动获取图标)" class="w-full bg-gray-700 p-2 rounded" required>
                             </div>
-                            <div class="md:col-span-2">
-                                <input type="url" id="musicCoverInput" placeholder="封面图片URL" class="form-input">
+                            <div class="md:col-span-5 flex gap-2">
+                                <input id="site-icon-input" placeholder="图标 URL" class="w-full bg-gray-700 p-2 rounded">
+                                <img id="icon-preview" src="" class="w-10 h-10 bg-gray-600 rounded object-contain">
                             </div>
-                            <div class="md:col-span-2">
-                                <button type="submit" class="btn btn-primary">添加音乐</button>
+                            <div class="md:col-span-7">
+                                <input id="site-desc-input" placeholder="简介" class="w-full bg-gray-700 p-2 rounded">
+                                <input id="site-tags-input" type="hidden">
+                                <select id="site-group-select" class="hidden"></select>
+                            </div>
+                            <div class="md:col-span-12 flex gap-2">
+                                <button type="button" id="cancel-edit-btn" class="hidden bg-gray-600 px-4 rounded">取消</button>
+                                <button type="submit" id="site-submit-btn" class="bg-green-600 hover:bg-green-700 p-2 rounded w-full font-bold">添加网站</button>
                             </div>
                         </form>
                         
-                        <div class="music-list-container">
-                            <div id="customMusicList">
-                                <!-- 音乐列表将通过JavaScript动态生成 -->
-                            </div>
-                        </div>
+                        <div id="sitesListAdmin" class="max-h-64 overflow-y-auto space-y-2 pr-2"></div>
                     </div>
 
-                    <!-- 访问统计数据 -->
-                    <div class="music-management-section">
-                        <h3 class="text-xl font-semibold mb-4">访问统计数据</h3>
-                        
-                        <div class="stats-grid mb-6">
-                            <div class="stat-card">
-                                <div class="stat-value-large" id="adminTotalVisits">0</div>
-                                <div class="stat-label-large">总访问量</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value-large" id="adminTodayVisits">0</div>
-                                <div class="stat-label-large">今日访问</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value-large" id="adminOnlineUsers">0</div>
-                                <div class="stat-label-large">在线用户</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value-large" id="adminUniqueVisitors">0</div>
-                                <div class="stat-label-large">独立访客</div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <h4 class="text-lg font-medium mb-2">最近访问记录</h4>
-                            <div class="overflow-x-auto">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>IP地址</th>
-                                            <th>位置</th>
-                                            <th>访问时间</th>
-                                            <th>浏览器</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recentVisitsTable">
-                                        <!-- 最近访问记录将通过JavaScript动态生成 -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 原有管理功能（分类、网站管理等） -->
-                    <div class="music-management-section">
-                        <h3 class="text-xl font-semibold mb-4" data-i18n-key="categoryManagement">分类管理</h3>
-                        <form id="addCategoryForm" class="flex flex-col sm:flex-row gap-2 mb-4">
-                            <input type="text" id="categoryNameInput" data-i18n-key="newCategoryPlaceholder" placeholder="新分类名称" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-md p-2" required>
-                            <select id="categoryTypeSelect" class="w-full sm:w-auto bg-gray-700 border border-gray-600 rounded-md p-2">
-                                <option value="sidebar" data-i18n-key="sidebar">侧边栏</option>
-                                <option value="topbar" data-i18n-key="topbar">顶部栏</option>
+                    <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                        <h3 class="text-lg font-bold mb-4">分类管理</h3>
+                        <form id="addCategoryForm" class="flex gap-2 mb-4">
+                            <input id="categoryNameInput" placeholder="新分类名称" class="bg-gray-700 p-2 rounded flex-1" required>
+                            <select id="categoryTypeSelect" class="bg-gray-700 p-2 rounded">
+                                <option value="sidebar">侧边栏</option>
+                                <option value="topbar">顶部栏</option>
                             </select>
-                            <button type="submit" class="w-full sm:w-auto flex-shrink-0 bg-blue-600 hover:bg-blue-700 p-2 rounded-md"><i data-lucide="plus"></i></button>
+                            <button type="submit" class="bg-blue-600 px-4 rounded"><i class="fas fa-plus"></i></button>
                         </form>
                         <div id="categoriesList" class="space-y-2"></div>
                     </div>
 
-                    <div class="music-management-section">
-            <h3 id="site-form-title" class="text-xl font-semibold mb-4" data-i18n-key="siteManagement">网站管理</h3>
-            
-            <form id="site-form" class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-gray-800 rounded-lg p-5">
-                <div class="md:col-span-3">
-                    <select id="site-category-select" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required></select>
-                </div>
-                <div class="md:col-span-3">
-                    <input type="text" id="site-name-input" data-i18n-key="siteNamePlaceholder" placeholder="网站名称" class="w-full bg-gray-700 rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
-                </div>
-                <div class="md:col-span-6 relative">
-                    <input type="url" id="site-url-input" data-i18n-key="siteUrlPlaceholder" placeholder="网站链接 (输入后自动抓取图标)" class="w-full bg-gray-700 rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
-                    <div class="absolute right-3 top-2.5 text-gray-400 text-xs pointer-events-none">
-                        <i class="fas fa-magic"></i> 自动获取
+                    <div class="text-center pt-4">
+                        <button id="admin-logout-btn" class="text-red-400 hover:text-red-300">退出登录</button>
                     </div>
-                </div>
-
-                <div class="md:col-span-5 flex gap-2">
-                    <input type="text" id="site-icon-input" data-i18n-key="iconUrlPlaceholder" placeholder="图标 URL" class="w-full bg-gray-700 rounded-md p-2.5 text-sm text-gray-400">
-                    <div class="w-10 h-10 flex-shrink-0 bg-gray-700 rounded-md flex items-center justify-center border border-gray-600">
-                        <img id="icon-preview" src="https://placehold.co/32" class="w-6 h-6 object-contain">
-                    </div>
-                </div>
-                <div class="md:col-span-4">
-                    <input type="text" id="site-tags-input" data-i18n-key="tagsPlaceholder" placeholder="标签 (逗号分隔)" class="w-full bg-gray-700 rounded-md p-2.5 text-sm">
-                </div>
-                <div class="md:col-span-3 hidden"> <select id="site-group-select" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2.5 text-sm">
-                        <option value="">默认分组</option>
-                    </select>
-                </div>
-
-                <div class="md:col-span-9">
-                    <input type="text" id="site-desc-input" data-i18n-key="siteDescPlaceholder" placeholder="网站简介 (可选)" class="w-full bg-gray-700 rounded-md p-2.5 text-sm">
-                </div>
-                <div class="md:col-span-3 flex gap-2">
-                    <button type="button" id="cancel-edit-btn" class="hidden w-1/3 bg-gray-600 hover:bg-gray-500 rounded-md text-sm transition-colors" data-i18n-key="cancel">取消</button>
-                    <button type="submit" id="site-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 rounded-md p-2.5 font-semibold text-sm shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2" data-i18n-key="addSite">
-                        <i class="fas fa-plus"></i> 添加网站
-                    </button>
-                </div>
-            </form>
-
-            <div id="sitesListAdmin" class="space-y-2 mt-4 max-h-[400px] overflow-y-auto custom-scrollbar"></div>
-        </div>
-
-                    <div class="music-management-section">
-                        <h3 class="text-xl font-semibold mb-4" data-i18n-key="importExport">导入导出</h3>
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <button id="export-data-btn" class="flex-1 bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="exportData">导出数据</button>
-                            <input type="file" id="import-file-input" accept=".json" class="hidden">
-                            <button id="import-data-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="importData">导入数据</button>
-                        </div>
-                    </div>
-
-                    <div class="text-center mt-6">
-                        <button id="admin-logout-btn" class="btn btn-secondary">
-                            <i class="fas fa-sign-out-alt mr-2"></i>退出登录
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 通用消息模态框 -->
-    <div class="modal-overlay" id="messageModal" style="display: none;">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">
-                <h3 class="modal-title" id="messageTitle">消息</h3>
-                <button class="modal-close" onclick="closeMessageModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p id="messageText"></p>
-                <div class="mt-6 flex justify-end">
-                    <button onclick="closeMessageModal()" class="btn btn-primary">确定</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script type="module">
-    // --- 1. 配置与状态 ---
-    const ADMIN_PASSWORD = "Qq110110."; 
-    const translations = {
-        en: { siteManagement: "Site Management", saveSettings: "Save Settings", dataLoadFailed: "Data Load Failed" },
-        zh: { siteManagement: "网站管理", saveSettings: "保存设置", dataLoadFailed: "数据加载失败" }
-    };
-    
-    const state = {
-        categories: [],
-        sites: [],
-        selectedCategory: 'all',
-        isLoggedIn: false,
-        currentLanguage: 'zh',
-        currentTheme: 'dark',
-        editingSiteId: null,
-        frequentSites: [],
-        customMusic: [],
-        settings: {},
-        backgroundAudio: null,
-        isMusicPlaying: false,
-        currentMusicIndex: 0
-    };
-
-    // --- 2. 安全 DOM 获取 (防止页面瘫痪的核心) ---
-    // 这个函数确保即使找不到元素，也不会报错卡死
-    const getEl = (id) => document.getElementById(id) || document.createElement('div');
-
-    const DOMElements = {
-        // 基础结构
-        sidebar: getEl('sidebar'), sidebarNav: getEl('sidebar-nav'), sidebarOverlay: getEl('sidebarOverlay'),
-        menuToggle: getEl('menuToggle'), 
-        
-        // 头部按钮
-        themeToggle: getEl('themeToggle'), musicToggle: getEl('musicToggle'), 
-        searchToggle: getEl('searchToggle'), statsToggle: getEl('statsToggle'),
-
-        // 搜索与内容
-        searchContainer: getEl('searchContainer'), searchInput: getEl('searchInput'), 
-        contentGrid: getEl('contentGrid'), frequentSitesSection: getEl('frequentSites'), frequentGrid: getEl('frequentGrid'),
-
-        // 音乐播放器
-        musicPlayer: getEl('musicPlayer'), musicCover: getEl('musicAlbumCover'), 
-        musicTitle: getEl('musicTitleMini'), musicArtist: getEl('musicArtistMini'),
-        playPauseBtn: getEl('playPauseMusicBtn'), prevBtn: getEl('prevMusicBtn'), nextBtn: getEl('nextMusicBtn'),
-        musicProgress: getEl('musicProgress'),
-
-        // 管理员相关
-        adminLoginBtn: getEl('admin-login-btn'), adminLogoutBtn: getEl('admin-logout-btn'),
-        adminModal: getEl('adminModal'), closeAdminModal: getEl('closeAdminModal'),
-        loginForm: getEl('loginForm'), passwordInput: getEl('adminPasswordInput'),
-        adminLoginView: getEl('adminLoginView'), adminPanelView: getEl('adminPanelView'),
-        
-        // 设置表单
-        saveSettingsBtn: getEl('save-settings-btn'), // 修复的保存按钮
-        siteTitleInput: getEl('siteTitleInput'), siteDescInput: getEl('siteDescriptionInput'),
-        avatarInput: getEl('avatarUrlInput'), bgInput: getEl('backgroundUrlInput'),
-        welcomeTitleInput: getEl('welcomeTitleInput'), welcomeTextInput: getEl('welcomeTextInput'),
-        autoPlayCheck: getEl('autoPlayMusicCheckbox'), showStatsCheck: getEl('showVisitorStatsCheckbox'),
-
-        // 网站管理表单
-        siteForm: getEl('site-form'), siteCategorySelect: getEl('site-category-select'),
-        siteNameInput: getEl('site-name-input'), siteUrlInput: getEl('site-url-input'),
-        siteIconInput: getEl('site-icon-input'), iconPreview: getEl('icon-preview'),
-        siteDescInput: getEl('site-desc-input'), siteTagsInput: getEl('site-tags-input'),
-        siteSubmitBtn: getEl('site-submit-btn'), cancelEditBtn: getEl('cancel-edit-btn'),
-        sitesListAdmin: getEl('sitesListAdmin'),
-
-        // 分类与音乐表单
-        addCategoryForm: getEl('addCategoryForm'), categoryNameInput: getEl('categoryNameInput'), 
-        categoryTypeSelect: getEl('categoryTypeSelect'), categoriesList: getEl('categoriesList'),
-        addMusicForm: getEl('addMusicForm'), musicTitleInput: getEl('musicTitleInput'), 
-        musicUrlInput: getEl('musicUrlInput'), customMusicList: getEl('customMusicList'),
-
-        // 其他
-        themeBtnSide: getEl('toggle-theme-btn'), langBtnSide: getEl('toggle-language-btn'),
-        visitorStatsPanel: getEl('visitorStatsPanel'), closeStatsBtn: getEl('close-stats-btn'),
-        exportBtn: getEl('export-data-btn'), importBtn: getEl('import-data-btn'), importInput: getEl('import-file-input')
-    };
-
-    // --- 3. API 客户端 ---
-    const api = {
-        req: async (method, ep, data) => {
-            try {
-                const opts = { method, headers: {'Content-Type': 'application/json'} };
-                if(data) opts.body = JSON.stringify(data);
-                const res = await fetch(`/api/${ep}`, opts);
-                if(!res.ok) throw new Error(`API Error: ${res.status}`);
-                return await res.json();
-            } catch (e) { console.error(e); return null; }
-        },
-        get: (ep) => api.req('GET', ep),
-        post: (ep, d) => api.req('POST', ep, d),
-        put: (ep, d) => api.req('PUT', ep, d),
-        delete: (ep) => api.req('DELETE', ep)
-    };
-
-    // --- 4. 核心功能函数 ---
-
-    function setTheme(theme) {
-        state.currentTheme = theme;
-        localStorage.setItem('theme', theme);
-        
-        // 切换 body 类
-        if (theme === 'light') document.body.classList.add('light-mode');
-        else document.body.classList.remove('light-mode');
-        
-        // 更新图标
-        const iconClass = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
-        if(DOMElements.themeToggle.querySelector('i')) DOMElements.themeToggle.querySelector('i').className = iconClass;
-        if(DOMElements.themeBtnSide.querySelector('i')) DOMElements.themeBtnSide.querySelector('i').className = iconClass + ' nav-icon';
-    }
-
-    // --- 5. 事件监听 (修复点击无效) ---
-    function setupEventListeners() {
-        const bind = (el, evt, fn) => { if(el && el.tagName !== 'DIV') el.addEventListener(evt, fn); };
-
-        // 界面交互
-        bind(DOMElements.menuToggle, 'click', () => { 
-            DOMElements.sidebar.classList.add('open'); 
-            DOMElements.sidebarOverlay.classList.add('show'); 
-        });
-        bind(DOMElements.sidebarOverlay, 'click', () => { 
-            DOMElements.sidebar.classList.remove('open'); 
-            DOMElements.sidebarOverlay.classList.remove('show'); 
-        });
-        bind(DOMElements.searchToggle, 'click', () => {
-            const isHidden = DOMElements.searchContainer.style.display === 'none';
-            DOMElements.searchContainer.style.display = isHidden ? 'block' : 'none';
-        });
-
-        // 主题切换
-        const toggleTheme = (e) => {
-            if(e) e.preventDefault();
-            setTheme(state.currentTheme === 'light' ? 'dark' : 'light');
+        const ADMIN_PASSWORD = "Qq110110."; 
+        const state = {
+            isLoggedIn: false,
+            currentTheme: localStorage.getItem('theme') || 'dark',
+            categories: [], sites: [], customMusic: [],
+            editingSiteId: null,
+            backgroundAudio: null, isMusicPlaying: false
         };
-        bind(DOMElements.themeToggle, 'click', toggleTheme);
-        bind(DOMElements.themeBtnSide, 'click', toggleTheme);
 
-        // 音乐播放器
-        bind(DOMElements.musicToggle, 'click', () => DOMElements.musicPlayer.classList.toggle('collapsed'));
-        bind(DOMElements.playPauseBtn, 'click', toggleMusicPlayback);
-        bind(DOMElements.prevBtn, 'click', playPrevMusic);
-        bind(DOMElements.nextBtn, 'click', playNextMusic);
-
-        // 管理员登录
-        bind(DOMElements.adminLoginBtn, 'click', () => DOMElements.adminModal.style.display = 'flex');
-        bind(DOMElements.closeAdminModal, 'click', () => DOMElements.adminModal.style.display = 'none');
-        bind(DOMElements.loginForm, 'submit', (e) => {
-            e.preventDefault();
-            if(DOMElements.passwordInput.value === ADMIN_PASSWORD) {
-                state.isLoggedIn = true;
-                DOMElements.adminLoginView.style.display = 'none';
-                DOMElements.adminPanelView.style.display = 'block';
-                loadAdminData();
-            } else alert('密码错误');
-        });
-        bind(DOMElements.adminLogoutBtn, 'click', () => location.reload());
-
-        // --- 修复：保存设置 ---
-        bind(DOMElements.saveSettingsBtn, 'click', async () => {
-            const btn = DOMElements.saveSettingsBtn;
-            const originalText = btn.innerText;
-            btn.innerText = '保存中...';
+        // --- DOM 获取 ---
+        const getEl = (id) => document.getElementById(id) || document.createElement('div');
+        const els = {
+            sidebar: getEl('sidebar'), sidebarNav: getEl('sidebar-nav'), overlay: getEl('sidebarOverlay'),
+            menuBtn: getEl('menuToggle'), themeBtn: getEl('themeToggle'), searchBtn: getEl('searchToggle'),
+            searchContainer: getEl('searchContainer'), searchInput: getEl('searchInput'),
+            contentGrid: getEl('contentGrid'),
             
-            const data = {
-                siteTitle: DOMElements.siteTitleInput.value,
-                siteDescription: DOMElements.siteDescInput.value,
-                avatarUrl: DOMElements.avatarInput.value,
-                backgroundUrl: DOMElements.bgInput.value,
-                welcomeTitle: DOMElements.welcomeTitleInput.value,
-                welcomeText: DOMElements.welcomeTextInput.value,
-                autoPlayMusic: DOMElements.autoPlayCheck.checked ? 'true' : 'false',
-                showVisitorStats: DOMElements.showStatsCheck.checked ? 'true' : 'false'
-            };
-
-            const res = await api.post('settings', data);
-            btn.innerText = originalText;
+            // 音乐
+            musicPlayer: getEl('musicPlayer'), playBtn: getEl('playPauseMusicBtn'), 
+            titleMini: getEl('musicTitleMini'), artistMini: getEl('musicArtistMini'), coverMini: getEl('musicAlbumCover'),
             
-            if(res && res.ok) {
-                alert('设置已保存！');
-                location.reload();
-            } else {
-                alert('保存失败，请检查网络');
-            }
-        });
+            // 管理
+            modal: getEl('adminModal'), closeModal: getEl('closeAdminModal'), 
+            loginForm: getEl('loginForm'), pwdInput: getEl('adminPasswordInput'),
+            loginView: getEl('adminLoginView'), panelView: getEl('adminPanelView'),
+            logoutBtn: getEl('admin-logout-btn'), loginBtn: getEl('admin-login-btn'),
+            
+            // 表单
+            saveSettingsBtn: getEl('save-settings-btn'),
+            siteForm: getEl('site-form'), catSelect: getEl('site-category-select'),
+            siteUrl: getEl('site-url-input'), siteIcon: getEl('site-icon-input'), iconPreview: getEl('icon-preview'),
+            
+            // 列表
+            catList: getEl('categoriesList'), siteList: getEl('sitesListAdmin')
+        };
 
-        // --- 修复：自动获取图标 ---
-        bind(DOMElements.siteUrlInput, 'blur', function() {
-            const url = this.value.trim();
-            if (url && !DOMElements.siteIconInput.value) {
+        // --- API ---
+        const api = {
+            req: async (m, ep, d) => {
                 try {
-                    const domain = new URL(url).hostname;
-                    const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-                    DOMElements.siteIconInput.value = iconUrl;
-                    DOMElements.iconPreview.src = iconUrl;
-                } catch(e) {}
-            }
-        });
+                    const res = await fetch(`/api/${ep}`, {
+                        method: m, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(d)
+                    });
+                    return res.ok ? await res.json() : null;
+                } catch(e) { console.error(e); return null; }
+            },
+            get: (ep) => api.req('GET', ep),
+            post: (ep, d) => api.req('POST', ep, d),
+            put: (ep, d) => api.req('PUT', ep, d),
+            delete: (ep) => api.req('DELETE', ep)
+        };
 
-        // 分类管理
-        bind(DOMElements.addCategoryForm, 'submit', async (e) => {
-            e.preventDefault();
-            if(await api.post('categories', {
-                name: DOMElements.categoryNameInput.value, 
-                type: DOMElements.categoryTypeSelect.value
-            })) {
-                DOMElements.categoryNameInput.value = '';
-                loadAdminData(); loadInitialData();
-            }
-        });
+        // --- 功能函数 ---
+        function setTheme(theme) {
+            state.currentTheme = theme;
+            localStorage.setItem('theme', theme);
+            if(theme === 'light') document.body.classList.add('light-mode');
+            else document.body.classList.remove('light-mode');
+            
+            // 更新图标
+            const icon = theme === 'light' ? 'fa-sun' : 'fa-moon';
+            if(els.themeBtn.querySelector('i')) els.themeBtn.querySelector('i').className = `fas ${icon}`;
+            if(getEl('toggle-theme-btn').querySelector('i')) getEl('toggle-theme-btn').querySelector('i').className = `fas ${icon}`;
+        }
 
-        // 网站管理 (添加/编辑)
-        bind(DOMElements.siteForm, 'submit', async (e) => {
-            e.preventDefault();
-            const site = {
-                categoryId: DOMElements.siteCategorySelect.value,
-                name: DOMElements.siteNameInput.value,
-                url: DOMElements.siteUrlInput.value,
-                icon: DOMElements.siteIconInput.value,
-                description: DOMElements.siteDescInput.value,
-                tags: DOMElements.siteTagsInput.value
+        // 初始化绑定
+        function setupEventListeners() {
+            // 侧边栏
+            els.menuBtn.onclick = () => { els.sidebar.classList.add('open'); els.overlay.classList.add('show'); };
+            els.overlay.onclick = () => { els.sidebar.classList.remove('open'); els.overlay.classList.remove('show'); };
+            
+            // 搜索框
+            els.searchBtn.onclick = () => {
+                els.searchContainer.style.display = els.searchContainer.style.display==='none'?'block':'none';
             };
             
-            const id = state.editingSiteId;
-            const res = id ? await api.put(`sites/${id}`, site) : await api.post('sites', site);
+            // 主题切换
+            els.themeBtn.onclick = () => setTheme(state.currentTheme==='light'?'dark':'light');
+            getEl('toggle-theme-btn').onclick = () => setTheme(state.currentTheme==='light'?'dark':'light');
+
+            // 登录
+            els.loginBtn.onclick = () => els.modal.style.display = 'flex';
+            els.closeModal.onclick = () => els.modal.style.display = 'none';
+            els.loginForm.onsubmit = (e) => {
+                e.preventDefault();
+                if(els.pwdInput.value === ADMIN_PASSWORD) {
+                    state.isLoggedIn = true;
+                    els.loginView.style.display = 'none';
+                    els.panelView.style.display = 'block';
+                    loadAdminData();
+                } else alert('密码错误');
+            };
+            els.logoutBtn.onclick = () => location.reload();
+
+            // 保存设置 (修复)
+            els.saveSettingsBtn.onclick = async () => {
+                els.saveSettingsBtn.innerText = '保存中...';
+                const data = {
+                    siteTitle: getEl('siteTitleInput').value,
+                    siteDescription: getEl('siteDescriptionInput').value,
+                    avatarUrl: getEl('avatarUrlInput').value,
+                    backgroundUrl: getEl('backgroundUrlInput').value,
+                    welcomeTitle: getEl('welcomeTitleInput').value,
+                    welcomeText: getEl('welcomeTextInput').value,
+                    autoPlayMusic: getEl('autoPlayMusicCheckbox').checked ? 'true':'false',
+                    showVisitorStats: getEl('showVisitorStatsCheckbox').checked ? 'true':'false'
+                };
+                if(await api.post('settings', data)) {
+                    alert('保存成功'); location.reload();
+                } else {
+                    alert('保存失败'); els.saveSettingsBtn.innerText = '保存设置';
+                }
+            };
+
+            // 自动图标
+            els.siteUrl.onblur = () => {
+                const url = els.siteUrl.value;
+                if(url && !els.siteIcon.value) {
+                    try {
+                        const domain = new URL(url).hostname;
+                        const icon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+                        els.siteIcon.value = icon;
+                        els.iconPreview.src = icon;
+                    } catch(e){}
+                }
+            };
+
+            // 网站添加/编辑
+            els.siteForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const site = {
+                    categoryId: els.catSelect.value,
+                    name: getEl('site-name-input').value,
+                    url: els.siteUrl.value,
+                    icon: els.siteIcon.value,
+                    description: getEl('site-desc-input').value,
+                    tags: getEl('site-tags-input').value
+                };
+                const id = state.editingSiteId;
+                const res = id ? await api.put(`sites/${id}`, site) : await api.post('sites', site);
+                if(res) {
+                    state.editingSiteId = null;
+                    els.siteForm.reset();
+                    getEl('site-submit-btn').innerText = '添加网站';
+                    getEl('cancel-edit-btn').classList.add('hidden');
+                    loadAdminData(); loadInitialData();
+                }
+            };
             
-            if(res && res.ok) {
-                resetSiteForm();
-                loadAdminData(); loadInitialData();
-            } else {
-                alert('操作失败');
+            getEl('cancel-edit-btn').onclick = () => {
+                state.editingSiteId = null;
+                els.siteForm.reset();
+                getEl('site-submit-btn').innerText = '添加网站';
+                getEl('cancel-edit-btn').classList.add('hidden');
             }
-        });
 
-        bind(DOMElements.cancelEditBtn, 'click', resetSiteForm);
-
-        // 全局搜索
-        bind(DOMElements.searchInput, 'input', () => {
-            const term = DOMElements.searchInput.value.toLowerCase();
-            const filtered = state.sites.filter(s => 
-                s.name.toLowerCase().includes(term) || (s.url && s.url.includes(term))
-            );
-            renderSites(filtered);
-        });
-        
-        // 列表点击代理 (处理删除/编辑)
-        const handleListClick = async (e, type) => {
-            const btn = e.target.closest('button');
-            if(!btn) return;
-            
-            const id = btn.dataset.id;
-            // 删除
-            if(btn.classList.contains('delete-btn') || btn.classList.contains('delete-site-btn') || btn.classList.contains('delete-category-btn')) {
-                if(confirm('确定删除吗？')) {
-                    const endpoint = (type === 'cat' || btn.classList.contains('delete-category-btn')) ? 'categories' : 'sites';
-                    if(await api.delete(`${endpoint}/${id}`)) {
-                        loadAdminData(); loadInitialData();
-                    }
+            // 分类添加
+            getEl('addCategoryForm').onsubmit = async (e) => {
+                e.preventDefault();
+                if(await api.post('categories', {
+                    name: getEl('categoryNameInput').value,
+                    type: getEl('categoryTypeSelect').value
+                })) {
+                    getEl('categoryNameInput').value='';
+                    loadAdminData(); loadInitialData();
                 }
             }
-            // 编辑 (仅网站)
-            if(btn.classList.contains('edit-site-btn') || btn.classList.contains('edit-btn')) {
-                const site = state.sites.find(s => s.id == id);
-                if(site) {
-                    state.editingSiteId = id;
-                    DOMElements.siteCategorySelect.value = site.categoryId;
-                    DOMElements.siteNameInput.value = site.name;
-                    DOMElements.siteUrlInput.value = site.url;
-                    DOMElements.siteIconInput.value = site.icon;
-                    DOMElements.iconPreview.src = site.icon;
-                    DOMElements.siteDescInput.value = site.description;
-                    DOMElements.siteTagsInput.value = site.tags;
-                    
-                    DOMElements.siteSubmitBtn.innerHTML = '<i class="fas fa-save"></i> 保存修改';
-                    DOMElements.cancelEditBtn.classList.remove('hidden');
-                    DOMElements.siteForm.scrollIntoView({behavior:'smooth'});
+            
+            // 搜索
+            els.searchInput.oninput = () => {
+                const term = els.searchInput.value.toLowerCase();
+                const filtered = state.sites.filter(s => s.name.toLowerCase().includes(term) || s.url.includes(term));
+                renderSites(filtered);
+            }
+        }
+
+        // --- 数据渲染 ---
+        async function loadInitialData() {
+            const [settings, cats, sites] = await Promise.all([
+                api.get('settings'), api.get('categories'), api.get('sites')
+            ]);
+            
+            if(settings) {
+                if(settings.siteTitle) {
+                    document.title = settings.siteTitle;
+                    getEl('sidebarSiteTitle').textContent = settings.siteTitle;
+                }
+                if(settings.backgroundUrl) document.body.style.backgroundImage = `url(${settings.backgroundUrl})`;
+                if(settings.welcomeTitle) getEl('welcomeTitle').textContent = settings.welcomeTitle;
+                if(settings.welcomeText) getEl('welcomeText').textContent = settings.welcomeText;
+                if(settings.avatarUrl) getEl('siteAvatar').src = settings.avatarUrl;
+                
+                // 填表
+                getEl('siteTitleInput').value = settings.siteTitle || '';
+                getEl('siteDescriptionInput').value = settings.siteDescription || '';
+                getEl('avatarUrlInput').value = settings.avatarUrl || '';
+                getEl('backgroundUrlInput').value = settings.backgroundUrl || '';
+                getEl('welcomeTitleInput').value = settings.welcomeTitle || '';
+                getEl('welcomeTextInput').value = settings.welcomeText || '';
+                getEl('autoPlayMusicCheckbox').checked = settings.autoPlayMusic === 'true';
+                getEl('showVisitorStatsCheckbox').checked = settings.showVisitorStats === 'true';
+            }
+
+            state.categories = cats || [];
+            state.sites = sites || [];
+            
+            renderSidebar();
+            renderSites(state.sites);
+        }
+
+        async function loadAdminData() {
+            // 渲染分类列表
+            els.catList.innerHTML = state.categories.map(c => `
+                <div class="flex justify-between bg-gray-700 p-2 rounded items-center">
+                    <span>${c.name} <small class="text-gray-400">(${c.type})</small></span>
+                    <button onclick="deleteItem('categories', ${c.id})" class="text-red-400 p-1"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+            
+            // 渲染站点列表
+            els.siteList.innerHTML = state.sites.map(s => `
+                <div class="flex justify-between bg-gray-700 p-2 rounded items-center">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <img src="${s.icon}" class="w-5 h-5 rounded" onerror="this.style.display='none'">
+                        <span class="truncate">${s.name}</span>
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <button onclick="editSite(${s.id})" class="text-yellow-400"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteItem('sites', ${s.id})" class="text-red-400"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 更新下拉框
+            els.catSelect.innerHTML = state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        // 全局暴露给HTML onclick使用 (修复删除按钮)
+        window.deleteItem = async (type, id) => {
+            if(confirm('确定删除吗？')) {
+                if(await api.delete(`${type}/${id}`)) {
+                    loadAdminData(); loadInitialData();
                 }
             }
         };
         
-        if(DOMElements.categoriesList) DOMElements.categoriesList.onclick = (e) => handleListClick(e, 'cat');
-        if(DOMElements.sitesListAdmin) DOMElements.sitesListAdmin.onclick = (e) => handleListClick(e, 'site');
-    }
+        window.editSite = (id) => {
+            const s = state.sites.find(site => site.id == id);
+            if(!s) return;
+            state.editingSiteId = id;
+            els.catSelect.value = s.categoryId;
+            getEl('site-name-input').value = s.name;
+            els.siteUrl.value = s.url;
+            els.siteIcon.value = s.icon;
+            els.iconPreview.src = s.icon;
+            getEl('site-desc-input').value = s.description;
+            getEl('site-submit-btn').innerText = '保存修改';
+            getEl('cancel-edit-btn').classList.remove('hidden');
+        };
 
-    // --- 6. 辅助逻辑 ---
-    function resetSiteForm() {
-        state.editingSiteId = null;
-        DOMElements.siteForm.reset();
-        DOMElements.siteSubmitBtn.innerHTML = '<i class="fas fa-plus"></i> 添加网站';
-        DOMElements.cancelEditBtn.classList.add('hidden');
-        DOMElements.iconPreview.src = 'https://placehold.co/32';
-    }
-
-    // 音乐控制逻辑
-    function initializeCustomMusicPlayer() {
-        if (!state.customMusic.length) return;
-        if (!state.backgroundAudio) {
-            state.backgroundAudio = new Audio();
-            state.backgroundAudio.onended = playNextMusic;
-            state.backgroundAudio.onerror = playNextMusic;
-        }
-        playMusic(state.currentMusicIndex);
-    }
-
-    function playMusic(index) {
-        if(!state.customMusic[index]) return;
-        const music = state.customMusic[index];
-        state.currentMusicIndex = index;
-        
-        DOMElements.musicTitle.textContent = music.title;
-        DOMElements.musicArtist.textContent = music.artist || 'Unknown';
-        DOMElements.musicCover.src = music.cover || 'https://placehold.co/40';
-        
-        if(state.backgroundAudio) {
-            state.backgroundAudio.src = music.url;
-            if(state.settings.autoPlayMusic === 'true' || state.isMusicPlaying) {
-                state.backgroundAudio.play().catch(e=>console.log(e));
-                state.isMusicPlaying = true;
-                updateMusicUI(true);
-            }
-        }
-    }
-
-    function toggleMusicPlayback() {
-        if(!state.backgroundAudio) { initializeCustomMusicPlayer(); return; }
-        if(state.backgroundAudio.paused) {
-            state.backgroundAudio.play();
-            state.isMusicPlaying = true;
-        } else {
-            state.backgroundAudio.pause();
-            state.isMusicPlaying = false;
-        }
-        updateMusicUI(state.isMusicPlaying);
-    }
-
-    function playNextMusic() {
-        let next = state.currentMusicIndex + 1;
-        if(next >= state.customMusic.length) next = 0;
-        playMusic(next);
-    }
-    
-    function playPrevMusic() {
-        let prev = state.currentMusicIndex - 1;
-        if(prev < 0) prev = state.customMusic.length - 1;
-        playMusic(prev);
-    }
-
-    function updateMusicUI(isPlaying) {
-        const icon = DOMElements.playPauseBtn.querySelector('i');
-        if(icon) icon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
-        if(isPlaying) DOMElements.musicPlayer.classList.add('playing');
-        else DOMElements.musicPlayer.classList.remove('playing');
-    }
-
-    // --- 7. 数据加载与渲染 ---
-    async function loadInitialData() {
-        const [settings, cats, sites, music] = await Promise.all([
-            api.get('settings'), 
-            api.get('categories'), 
-            api.get('sites'),
-            api.get('custom-music')
-        ]);
-
-        if(settings) {
-            state.settings = settings;
-            if(settings.siteTitle) {
-                document.title = settings.siteTitle;
-                if(getEl('siteTitle')) getEl('siteTitle').textContent = settings.siteTitle;
-                if(getEl('headerSiteTitle')) getEl('headerSiteTitle').textContent = settings.siteTitle;
-                if(getEl('sidebarSiteTitle')) getEl('sidebarSiteTitle').textContent = settings.siteTitle;
-            }
-            if(settings.backgroundUrl) document.body.style.backgroundImage = `url(${settings.backgroundUrl})`;
-            if(settings.welcomeTitle && getEl('welcomeTitle')) getEl('welcomeTitle').textContent = settings.welcomeTitle;
-            if(settings.welcomeText && getEl('welcomeText')) getEl('welcomeText').textContent = settings.welcomeText;
-            
-            // 填充表单
-            if(DOMElements.siteTitleInput) DOMElements.siteTitleInput.value = settings.siteTitle || '';
-            if(DOMElements.siteDescInput) DOMElements.siteDescInput.value = settings.siteDescription || '';
-            if(DOMElements.avatarInput) DOMElements.avatarInput.value = settings.avatarUrl || '';
-            if(DOMElements.bgInput) DOMElements.bgInput.value = settings.backgroundUrl || '';
-            if(DOMElements.welcomeTitleInput) DOMElements.welcomeTitleInput.value = settings.welcomeTitle || '';
-            if(DOMElements.welcomeTextInput) DOMElements.welcomeTextInput.value = settings.welcomeText || '';
-            if(DOMElements.autoPlayCheck) DOMElements.autoPlayCheck.checked = settings.autoPlayMusic === 'true';
-            if(DOMElements.showStatsCheck) DOMElements.showStatsCheck.checked = settings.showVisitorStats === 'true';
-        }
-
-        state.categories = cats || [];
-        state.sites = sites || [];
-        state.customMusic = music || [];
-
-        renderSites(state.sites);
-        renderSidebar();
-        
-        // 音乐初始化
-        if(state.customMusic.length > 0) {
-            // 延迟一点以确保交互
-            setTimeout(() => {
-                if(!state.backgroundAudio) initializeCustomMusicPlayer();
-            }, 2000);
-        }
-    }
-
-    async function loadAdminData() {
-        const [cats, sites] = await Promise.all([api.get('categories'), api.get('sites')]);
-        state.categories = cats || [];
-        state.sites = sites || [];
-        
-        // 渲染分类管理列表
-        DOMElements.categoriesList.innerHTML = state.categories.map(c => `
-            <div class="flex items-center justify-between bg-gray-700 p-3 rounded mb-2">
-                <span>${c.name} <small class="bg-blue-600 px-2 rounded text-xs">${c.type}</small></span>
-                <button class="delete-category-btn text-red-500 p-2" data-id="${c.id}"><i class="fas fa-trash"></i></button>
-            </div>
-        `).join('');
-
-        // 渲染网站管理列表
-        DOMElements.sitesListAdmin.innerHTML = state.sites.map(s => `
-            <div class="flex items-center justify-between bg-gray-700 p-3 rounded mb-2">
-                <div class="flex items-center gap-3">
-                    <img src="${s.icon}" class="w-6 h-6 rounded" onerror="this.src='https://placehold.co/24'">
-                    <span class="truncate w-32">${s.name}</span>
-                </div>
-                <div class="flex gap-2">
-                    <button class="edit-btn text-yellow-500 p-2" data-id="${s.id}"><i class="fas fa-edit"></i></button>
-                    <button class="delete-btn text-red-500 p-2" data-id="${s.id}"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-        `).join('');
-
-        // 更新下拉框
-        DOMElements.siteCategorySelect.innerHTML = state.categories.map(c => 
-            `<option value="${c.id}">${c.name}</option>`
-        ).join('');
-    }
-
-    function renderSidebar() {
-        DOMElements.sidebarNav.innerHTML = '';
-        state.categories.filter(c => c.type === 'sidebar').forEach(cat => {
-            const a = document.createElement('a');
-            a.className = 'nav-item';
-            a.innerHTML = `<span>${cat.name}</span>`;
-            a.href = '#';
-            a.onclick = (e) => {
-                e.preventDefault();
-                state.selectedCategory = cat.id;
-                renderSites(state.sites.filter(s => s.categoryId == cat.id));
-                // 移动端关闭侧边栏
-                DOMElements.sidebar.classList.remove('open');
-                DOMElements.sidebarOverlay.classList.remove('show');
+        function renderSidebar() {
+            const nav = els.sidebarNav;
+            nav.innerHTML = '';
+            // 全部
+            const all = document.createElement('div');
+            all.className = 'nav-item active';
+            all.innerHTML = `<i class="fas fa-th-large"></i> <span>全部</span>`;
+            all.onclick = () => {
+                document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+                all.classList.add('active');
+                renderSites(state.sites);
+                if(window.innerWidth<768) els.overlay.click();
             };
-            DOMElements.sidebarNav.appendChild(a);
-        });
-        
-        // "全部" 选项
-        const allBtn = document.createElement('a');
-        allBtn.className = 'nav-item';
-        allBtn.innerHTML = `<span>全部网站</span>`;
-        allBtn.onclick = () => { renderSites(state.sites); };
-        DOMElements.sidebarNav.insertBefore(allBtn, DOMElements.sidebarNav.firstChild);
-    }
+            nav.appendChild(all);
 
-    function renderSites(sites) {
-        DOMElements.contentGrid.innerHTML = '';
-        
-        // 按分类分组
-        const grouped = {};
-        sites.forEach(s => {
-            if(!grouped[s.categoryId]) grouped[s.categoryId] = [];
-            grouped[s.categoryId].push(s);
-        });
-
-        // 获取分类顺序
-        const cats = state.categories.length ? state.categories : [{id: sites[0]?.categoryId, name: '默认分类'}];
-
-        cats.forEach(cat => {
-            const catSites = grouped[cat.id];
-            if(!catSites || !catSites.length) return;
-
-            const section = document.createElement('div');
-            section.className = 'mb-10 fade-in';
-            section.innerHTML = `
-                <div class="category-header mb-4 flex items-center gap-2">
-                    <div class="w-1 h-6 bg-blue-500 rounded"></div>
-                    <h2 class="text-xl font-bold text-white">${cat.name}</h2>
-                </div>
-                <div class="site-cards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem;">
-                    ${catSites.map(s => `
-                        <div class="site-card p-4 rounded-xl bg-gray-800 hover:bg-gray-700 transition cursor-pointer flex flex-col items-center gap-3 border border-gray-700"
-                             onclick="window.open('${s.url}', '_blank')">
-                            <img src="${s.icon}" class="w-12 h-12 rounded-lg bg-gray-600" onerror="this.src='https://placehold.co/48'">
-                            <span class="text-sm font-medium text-center truncate w-full">${s.name}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            DOMElements.contentGrid.appendChild(section);
-        });
-    }
-
-    // --- 8. 启动应用 ---
-    async function init() {
-        console.log("Starting App...");
-        if (window.lucide) lucide.createIcons();
-        
-        // 1. 绑定事件 (确保按钮可点)
-        setupEventListeners();
-        
-        // 2. 恢复主题
-        const theme = localStorage.getItem('theme') || 'dark';
-        setTheme(theme);
-
-        // 3. 加载数据
-        try {
-            await loadInitialData();
-        } catch(e) {
-            console.error("Init Error:", e);
+            // 分类
+            state.categories.filter(c => c.type === 'sidebar').forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'nav-item';
+                item.innerHTML = `<i class="fas fa-folder"></i> <span>${c.name}</span>`;
+                item.onclick = () => {
+                    document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+                    item.classList.add('active');
+                    const filtered = state.sites.filter(s => s.categoryId == c.id);
+                    renderSites(filtered);
+                    if(window.innerWidth<768) els.overlay.click();
+                };
+                nav.appendChild(item);
+            });
         }
-    }
 
-    init();
-</script>
-    <script type="module" src="/worker.js"></script>
+        function renderSites(sites) {
+            const grid = els.contentGrid;
+            grid.innerHTML = '';
+            
+            // 按分类分组显示
+            const cats = state.categories.length ? state.categories : [{id:0, name:'默认'}];
+            
+            cats.forEach(c => {
+                const subSites = sites.filter(s => s.categoryId == c.id);
+                if(!subSites.length) return;
+                
+                const section = document.createElement('div');
+                section.className = 'mb-8';
+                section.innerHTML = `<h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-indigo-400"><i class="fas fa-hashtag"></i> ${c.name}</h3>`;
+                
+                const cardGrid = document.createElement('div');
+                cardGrid.className = 'site-cards';
+                
+                subSites.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = 'site-card';
+                    card.onclick = () => window.open(s.url, '_blank');
+                    card.innerHTML = `
+                        <img src="${s.icon}" class="site-icon" onerror="this.src='https://placehold.co/48'">
+                        <div class="site-name">${s.name}</div>
+                    `;
+                    cardGrid.appendChild(card);
+                });
+                
+                section.appendChild(cardGrid);
+                grid.appendChild(section);
+            });
+        }
+
+        // --- 启动 ---
+        (async function init() {
+            setTheme(state.currentTheme);
+            setupEventListeners();
+            try { await loadInitialData(); } catch(e) { console.log(e); }
+            if(window.lucide) lucide.createIcons();
+        })();
+    </script>
 </body>
 </html>
