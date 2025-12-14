@@ -1699,33 +1699,31 @@
             html: document.documentElement,
             body: document.body,
             
-            // 侧边栏与导航
+            // 核心布局 (映射新旧ID)
             sidebar: document.getElementById('sidebar'),
             sidebarNav: document.getElementById('sidebar-nav'),
             sidebarOverlay: document.getElementById('sidebarOverlay'),
-            menuToggle: document.getElementById('menuToggle'),
             
-            // 侧边栏底部按钮 (修复 ID 匹配)
-            toggleThemeBtn: document.getElementById('toggle-theme-btn'),
-            toggleLanguageBtn: document.getElementById('toggle-language-btn'),
-            adminLoginBtn: document.getElementById('admin-login-btn'),
-            visitorStatsBtn: document.getElementById('visitor-stats-btn'),
-
-            // 头部控制区
-            headerSiteTitle: document.getElementById('headerSiteTitle'),
+            // ⚠️ 关键修复：旧代码用 mobileMenuToggle，新 HTML 是 menuToggle
+            mobileMenuToggle: document.getElementById('menuToggle'), 
+            
+            // 头部按钮
             searchToggle: document.getElementById('searchToggle'),
-            themeToggle: document.getElementById('themeToggle'),
+            // ⚠️ 关键修复：旧代码用 themeSwitcher，新 HTML 是 themeToggle
+            themeSwitcher: document.getElementById('themeToggle'), 
+            themeToggle: document.getElementById('themeToggle'), // 兼容新代码
             musicToggle: document.getElementById('musicToggle'),
             statsToggle: document.getElementById('statsToggle'),
 
-            // 搜索区域 (修复 ID 匹配)
+            // 搜索区域
             searchContainer: document.getElementById('searchContainer'),
             engineBtn: document.getElementById('engineBtn'),
-            searchInput: document.getElementById('searchInput'), // 修正: search-input -> searchInput
+            // ⚠️ 关键修复：旧代码用 search-input (短横线)，新 HTML 是 searchInput (驼峰)
+            searchInput: document.getElementById('searchInput'), 
             voiceSearch: document.getElementById('voiceSearch'),
-            // webSearchForm 在 HTML 中可能不存在，使用可选链访问防止报错
+            webSearchInput: document.getElementById('web-search-input'), // 保持兼容
 
-            // 主内容区 (修复 ID 匹配)
+            // 主内容区
             siteHeader: document.getElementById('siteHeader'),
             siteAvatar: document.getElementById('siteAvatar'),
             siteTitle: document.getElementById('siteTitle'),
@@ -1734,10 +1732,13 @@
             welcomeTitle: document.getElementById('welcomeTitle'),
             welcomeText: document.getElementById('welcomeText'),
             
-            // 网站网格 (修复 ID 匹配)
-            frequentSitesSection: document.getElementById('frequentSites'), // 修正: frequent-sites -> frequentSites
-            frequentGrid: document.getElementById('frequentGrid'),          // 修正: frequent-sites-grid -> frequentGrid
-            contentGrid: document.getElementById('contentGrid'),            // 修正: content-grid -> contentGrid
+            // 网站网格
+            // ⚠️ 关键修复：旧代码用 frequent-sites，新 HTML 是 frequentSites
+            frequentSitesSection: document.getElementById('frequentSites'), 
+            // ⚠️ 关键修复：旧代码用 frequent-sites-grid，新 HTML 是 frequentGrid
+            frequentSitesGrid: document.getElementById('frequentGrid'),          
+            // ⚠️ 关键修复：旧代码用 content-grid，新 HTML 是 contentGrid
+            contentGrid: document.getElementById('contentGrid'),            
             mainFab: document.getElementById('mainFab'),
 
             // 音乐播放器
@@ -1752,6 +1753,7 @@
 
             // 访客统计面板
             visitorStatsPanel: document.getElementById('visitorStatsPanel'),
+            visitorStatsBtn: document.getElementById('visitor-stats-btn'),
             totalVisits: document.getElementById('totalVisits'),
             todayVisits: document.getElementById('todayVisits'),
             onlineUsers: document.getElementById('onlineUsers'),
@@ -1759,9 +1761,10 @@
             visitorLocations: document.getElementById('visitorLocations'),
             statsUpdateTime: document.getElementById('statsUpdateTime'),
 
-            // 管理员模态框
+            // 管理员相关
             adminModal: document.getElementById('adminModal'),
             closeAdminModal: document.getElementById('closeAdminModal'),
+            adminLoginBtn: document.getElementById('admin-login-btn'),
             adminLoginView: document.getElementById('adminLoginView'),
             loginForm: document.getElementById('loginForm'),
             adminPasswordInput: document.getElementById('adminPasswordInput'),
@@ -1769,7 +1772,7 @@
             adminPanelView: document.getElementById('adminPanelView'),
             adminLogoutBtn: document.getElementById('admin-logout-btn'),
 
-            // 管理后台 - 个性化设置表单
+            // 管理后台 - 设置与表单
             siteTitleInput: document.getElementById('siteTitleInput'),
             siteDescriptionInput: document.getElementById('siteDescriptionInput'),
             avatarUrlInput: document.getElementById('avatarUrlInput'),
@@ -1778,8 +1781,8 @@
             welcomeTextInput: document.getElementById('welcomeTextInput'),
             autoPlayMusicCheckbox: document.getElementById('autoPlayMusicCheckbox'),
             showVisitorStatsCheckbox: document.getElementById('showVisitorStatsCheckbox'),
-
-            // 管理后台 - 音乐管理
+            
+            // 音乐管理表单
             addMusicForm: document.getElementById('addMusicForm'),
             musicTitleInput: document.getElementById('musicTitleInput'),
             musicArtistInput: document.getElementById('musicArtistInput'),
@@ -1787,14 +1790,13 @@
             musicCoverInput: document.getElementById('musicCoverInput'),
             customMusicList: document.getElementById('customMusicList'),
 
-            // 管理后台 - 分类管理
+            // 分类与网站管理表单
             addCategoryForm: document.getElementById('addCategoryForm'),
             categoryNameInput: document.getElementById('categoryNameInput'),
             categoryTypeSelect: document.getElementById('categoryTypeSelect'),
             categoriesList: document.getElementById('categoriesList'),
             saveOrderBtn: document.getElementById('save-order-btn'),
 
-            // 管理后台 - 网站管理 (注意这些ID在HTML里是短横线)
             siteForm: document.getElementById('site-form'),
             siteFormTitle: document.getElementById('site-form-title'),
             siteCategorySelect: document.getElementById('site-category-select'),
@@ -1814,7 +1816,7 @@
             importDataBtn: document.getElementById('import-data-btn'),
             importFileInput: document.getElementById('import-file-input'),
 
-            // 管理后台统计
+            // 统计图表
             adminTotalVisits: document.getElementById('adminTotalVisits'),
             adminTodayVisits: document.getElementById('adminTodayVisits'),
             adminOnlineUsers: document.getElementById('adminOnlineUsers'),
