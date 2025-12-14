@@ -1695,109 +1695,39 @@
             }
         };
 
-        // --- DOM Elements Cache (修复版) ---
+        // --- DOM Elements Cache (ID修正版) ---
         const DOMElements = {
             html: document.documentElement,
             body: document.body,
             
-            // 核心布局 (映射新旧ID)
-            sidebar: document.getElementById('sidebar'),
+            // 侧边栏与导航
             sidebarNav: document.getElementById('sidebar-nav'),
-            sidebarOverlay: document.getElementById('sidebarOverlay'),
+            contentGrid: document.getElementById('contentGrid'), // 修正: content-grid -> contentGrid
+            searchInput: document.getElementById('searchInput'), // 修正: search-input -> searchInput
             
-            // ⚠️ 关键修复：旧代码用 mobileMenuToggle，新 HTML 是 menuToggle
-            mobileMenuToggle: document.getElementById('menuToggle'), 
-            
-            // 头部按钮
-            searchToggle: document.getElementById('searchToggle'),
-            // ⚠️ 关键修复：旧代码用 themeSwitcher，新 HTML 是 themeToggle
-            themeSwitcher: document.getElementById('themeToggle'), 
-            themeToggle: document.getElementById('themeToggle'), // 兼容新代码
-            musicToggle: document.getElementById('musicToggle'),
-            statsToggle: document.getElementById('statsToggle'),
-
-            // 搜索区域
-            searchContainer: document.getElementById('searchContainer'),
-            engineBtn: document.getElementById('engineBtn'),
-            // ⚠️ 关键修复：旧代码用 search-input (短横线)，新 HTML 是 searchInput (驼峰)
-            searchInput: document.getElementById('searchInput'), 
-            voiceSearch: document.getElementById('voiceSearch'),
-            webSearchInput: document.getElementById('web-search-input'), // 保持兼容
-
-            // 主内容区
-            siteHeader: document.getElementById('siteHeader'),
-            siteAvatar: document.getElementById('siteAvatar'),
-            siteTitle: document.getElementById('siteTitle'),
-            siteDescription: document.getElementById('siteDescription'),
-            welcomeMessage: document.getElementById('welcomeMessage'),
-            welcomeTitle: document.getElementById('welcomeTitle'),
-            welcomeText: document.getElementById('welcomeText'),
-            
-            // 网站网格
-            // ⚠️ 关键修复：旧代码用 frequent-sites，新 HTML 是 frequentSites
-            frequentSitesSection: document.getElementById('frequentSites'), 
-            // ⚠️ 关键修复：旧代码用 frequent-sites-grid，新 HTML 是 frequentGrid
-            frequentSitesGrid: document.getElementById('frequentGrid'),          
-            // ⚠️ 关键修复：旧代码用 content-grid，新 HTML 是 contentGrid
-            contentGrid: document.getElementById('contentGrid'),            
-            mainFab: document.getElementById('mainFab'),
-
-            // 音乐播放器
-            musicPlayer: document.getElementById('musicPlayer'),
-            musicAlbumCover: document.getElementById('musicAlbumCover'),
-            musicTitleMini: document.getElementById('musicTitleMini'),
-            musicArtistMini: document.getElementById('musicArtistMini'),
-            prevMusicBtn: document.getElementById('prevMusicBtn'),
-            playPauseMusicBtn: document.getElementById('playPauseMusicBtn'),
-            nextMusicBtn: document.getElementById('nextMusicBtn'),
-            musicProgress: document.getElementById('musicProgress'),
-
-            // 访客统计面板
-            visitorStatsPanel: document.getElementById('visitorStatsPanel'),
-            visitorStatsBtn: document.getElementById('visitor-stats-btn'),
-            totalVisits: document.getElementById('totalVisits'),
-            todayVisits: document.getElementById('todayVisits'),
-            onlineUsers: document.getElementById('onlineUsers'),
-            uniqueVisitors: document.getElementById('uniqueVisitors'),
-            visitorLocations: document.getElementById('visitorLocations'),
-            statsUpdateTime: document.getElementById('statsUpdateTime'),
-
-            // 管理员相关
-            adminModal: document.getElementById('adminModal'),
-            closeAdminModal: document.getElementById('closeAdminModal'),
+            // 按钮与开关
             adminLoginBtn: document.getElementById('admin-login-btn'),
-            adminLoginView: document.getElementById('adminLoginView'),
-            loginForm: document.getElementById('loginForm'),
-            adminPasswordInput: document.getElementById('adminPasswordInput'),
-            loginError: document.getElementById('loginError'),
-            adminPanelView: document.getElementById('adminPanelView'),
-            adminLogoutBtn: document.getElementById('admin-logout-btn'),
-
-            // 管理后台 - 设置与表单
-            siteTitleInput: document.getElementById('siteTitleInput'),
-            siteDescriptionInput: document.getElementById('siteDescriptionInput'),
-            avatarUrlInput: document.getElementById('avatarUrlInput'),
-            backgroundUrlInput: document.getElementById('backgroundUrlInput'),
-            welcomeTitleInput: document.getElementById('welcomeTitleInput'),
-            welcomeTextInput: document.getElementById('welcomeTextInput'),
-            autoPlayMusicCheckbox: document.getElementById('autoPlayMusicCheckbox'),
-            showVisitorStatsCheckbox: document.getElementById('showVisitorStatsCheckbox'),
+            toggleLanguageBtn: document.getElementById('toggle-language-btn'), // 修正: lang-switcher -> toggle-language-btn
+            toggleThemeBtn: document.getElementById('toggle-theme-btn'), // 修正
+            themeToggle: document.getElementById('themeToggle'), // 修正
+            themeSwitcher: document.getElementById('themeToggle'), // 兼容旧代码变量名
             
-            // 音乐管理表单
-            addMusicForm: document.getElementById('addMusicForm'),
-            musicTitleInput: document.getElementById('musicTitleInput'),
-            musicArtistInput: document.getElementById('musicArtistInput'),
-            musicUrlInput: document.getElementById('musicUrlInput'),
-            musicCoverInput: document.getElementById('musicCoverInput'),
-            customMusicList: document.getElementById('customMusicList'),
-
-            // 分类与网站管理表单
-            addCategoryForm: document.getElementById('addCategoryForm'),
-            categoryNameInput: document.getElementById('categoryNameInput'),
-            categoryTypeSelect: document.getElementById('categoryTypeSelect'),
-            categoriesList: document.getElementById('categoriesList'),
+            // 模态框与视图
+            adminModal: document.getElementById('adminModal'), // 修正: admin-modal -> adminModal
+            adminLoginView: document.getElementById('adminLoginView'), // 修正
+            adminPanelView: document.getElementById('adminPanelView'), // 修正
+            loginForm: document.getElementById('loginForm'), // 修正
+            adminPasswordInput: document.getElementById('adminPasswordInput'), // 修正
+            loginError: document.getElementById('loginError'), // 修正
+            adminLogoutBtn: document.getElementById('admin-logout-btn'),
+            
+            // 管理表单
+            addCategoryForm: document.getElementById('addCategoryForm'), // 修正
+            categoryNameInput: document.getElementById('categoryNameInput'), // 修正
+            categoryTypeSelect: document.getElementById('categoryTypeSelect'), // 修正
+            categoriesList: document.getElementById('categoriesList'), // 修正
             saveOrderBtn: document.getElementById('save-order-btn'),
-
+            
             siteForm: document.getElementById('site-form'),
             siteFormTitle: document.getElementById('site-form-title'),
             siteCategorySelect: document.getElementById('site-category-select'),
@@ -1809,25 +1739,104 @@
             siteGroupSelect: document.getElementById('site-group-select'),
             siteSubmitBtn: document.getElementById('site-submit-btn'),
             cancelEditBtn: document.getElementById('cancel-edit-btn'),
-            sitesListAdmin: document.getElementById('sitesListAdmin'), 
+            sitesListAdmin: document.getElementById('sitesListAdmin'), // 修正: sites-list-admin -> sitesListAdmin
             iconPreview: document.getElementById('icon-preview'),
-
+            
             // 导入导出
             exportDataBtn: document.getElementById('export-data-btn'),
             importDataBtn: document.getElementById('import-data-btn'),
             importFileInput: document.getElementById('import-file-input'),
-
-            // 统计图表
+            
+            // 常用网站
+            frequentSitesSection: document.getElementById('frequentSites'), // 修正
+            frequentGrid: document.getElementById('frequentGrid'), // 修正
+            frequentSitesCountSelect: document.getElementById('frequent-sites-count-select'),
+            savePreferencesBtn: document.getElementById('save-preferences-btn'),
+            
+            // 移动端菜单
+            mobileMenuToggle: document.getElementById('menuToggle'), // 修正
+            desktopSidebarToggle: document.getElementById('desktop-sidebar-toggle'),
+            desktopSidebarIcon: document.getElementById('desktop-sidebar-icon'),
+            mobileSidebar: document.getElementById('sidebar'), // 修正指向
+            mobileSidebarClose: document.getElementById('mobile-sidebar-close'),
+            mobileSidebarContainer: document.getElementById('sidebarOverlay'), // 修正
+            
+            // 搜索相关
+            webSearchForm: document.getElementById('web-search-form'),
+            webSearchInput: document.getElementById('web-search-input'),
+            searchEngineToggle: document.getElementById('search-engine-toggle'),
+            searchEngineMenu: document.getElementById('search-engine-menu'),
+            currentEngineIcon: document.getElementById('current-engine-icon'),
+            currentEngineName: document.getElementById('current-engine-name'),
+            
+            // 新版UI元素
+            sidebar: document.getElementById('sidebar'),
+            sidebarOverlay: document.getElementById('sidebarOverlay'),
+            menuToggle: document.getElementById('menuToggle'),
+            searchContainer: document.getElementById('searchContainer'),
+            searchToggle: document.getElementById('searchToggle'),
+            musicToggle: document.getElementById('musicToggle'),
+            statsToggle: document.getElementById('statsToggle'),
+            engineBtn: document.getElementById('engineBtn'),
+            voiceSearch: document.getElementById('voiceSearch'),
+            
+            // 访客统计
+            visitorStatsBtn: document.getElementById('visitor-stats-btn'),
+            visitorStatsPanel: document.getElementById('visitorStatsPanel'),
+            totalVisits: document.getElementById('totalVisits'),
+            todayVisits: document.getElementById('todayVisits'),
+            onlineUsers: document.getElementById('onlineUsers'),
+            uniqueVisitors: document.getElementById('uniqueVisitors'),
+            visitorLocations: document.getElementById('visitorLocations'),
+            statsUpdateTime: document.getElementById('statsUpdateTime'),
+            
+            // 音乐播放器
+            musicPlayer: document.getElementById('musicPlayer'),
+            musicAlbumCover: document.getElementById('musicAlbumCover'),
+            musicTitleMini: document.getElementById('musicTitleMini'),
+            musicArtistMini: document.getElementById('musicArtistMini'),
+            playPauseMusicBtn: document.getElementById('playPauseMusicBtn'),
+            prevMusicBtn: document.getElementById('prevMusicBtn'),
+            nextMusicBtn: document.getElementById('nextMusicBtn'),
+            musicProgress: document.getElementById('musicProgress'),
+            
+            // 其他表单
+            closeAdminModal: document.getElementById('closeAdminModal'),
+            siteTitleInput: document.getElementById('siteTitleInput'),
+            siteDescriptionInput: document.getElementById('siteDescriptionInput'),
+            avatarUrlInput: document.getElementById('avatarUrlInput'),
+            backgroundUrlInput: document.getElementById('backgroundUrlInput'),
+            welcomeTitleInput: document.getElementById('welcomeTitleInput'),
+            welcomeTextInput: document.getElementById('welcomeTextInput'),
+            autoPlayMusicCheckbox: document.getElementById('autoPlayMusicCheckbox'),
+            showVisitorStatsCheckbox: document.getElementById('showVisitorStatsCheckbox'),
+            addMusicForm: document.getElementById('addMusicForm'),
+            musicTitleInput: document.getElementById('musicTitleInput'),
+            musicArtistInput: document.getElementById('musicArtistInput'),
+            musicUrlInput: document.getElementById('musicUrlInput'),
+            musicCoverInput: document.getElementById('musicCoverInput'),
+            customMusicList: document.getElementById('customMusicList'),
+            
+            // 管理员统计
             adminTotalVisits: document.getElementById('adminTotalVisits'),
             adminTodayVisits: document.getElementById('adminTodayVisits'),
             adminOnlineUsers: document.getElementById('adminOnlineUsers'),
             adminUniqueVisitors: document.getElementById('adminUniqueVisitors'),
             recentVisitsTable: document.getElementById('recentVisitsTable'),
-
+            
             // 消息模态框
             messageModal: document.getElementById('messageModal'),
             messageTitle: document.getElementById('messageTitle'),
-            messageText: document.getElementById('messageText')
+            messageText: document.getElementById('messageText'),
+            
+            // 页面显示元素
+            siteAvatar: document.getElementById('siteAvatar'),
+            siteTitle: document.getElementById('siteTitle'),
+            siteDescription: document.getElementById('siteDescription'),
+            welcomeTitle: document.getElementById('welcomeTitle'),
+            welcomeText: document.getElementById('welcomeText'),
+            sidebarSiteTitle: document.getElementById('sidebarSiteTitle'),
+            headerSiteTitle: document.getElementById('headerSiteTitle')
         };
 
         // --- API Client ---
