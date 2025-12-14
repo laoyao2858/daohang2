@@ -1,46 +1,78 @@
-// src/worker.js
-
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // 1. 拦截 API 请求
-    // 如果请求路径以 /api/ 开头，在这里处理逻辑
+    // 1. 处理 API 请求
     if (url.pathname.startsWith('/api/')) {
-      return handleApiRequest(request, env);
+      return handleApi(request, env);
     }
 
-    // 2. 处理静态资源 (前端页面)
-    // 对于非 API 请求，直接返回 public 目录下的静态文件
-    // env.ASSETS 是你在 wrangler.jsonc 中配置的 binding
-    return env.ASSETS.fetch(request);
-  },
+    // 2. 处理静态资源 (HTML, CSS, JS)
+    // 如果 ASSETS 绑定不存在，说明本地开发环境可能未正确配置
+    if (env.ASSETS) {
+      return env.ASSETS.fetch(request);
+    }
+    
+    return new Response("Frontend not found", { status: 404 });
+  }
 };
 
-// 这里需要你把原本 functions/api/[[catchall]].js 里的逻辑搬过来
-// 这是一个简化的示例处理函数
-async function handleApiRequest(request, env) {
+async function handleApi(request, env) {
   const url = new URL(request.url);
-  
-  // 示例：获取设置 (对应 GET /api/settings)
-  if (url.pathname === '/api/settings' && request.method === 'GET') {
-    try {
-      const { results } = await env.DB.prepare('SELECT * FROM settings').all();
-      // 将数据库结果转换为前端需要的键值对格式
+  const method = request.method;
+
+  // 辅助函数：统一返回 JSON
+  const jsonResponse = (data) => new Response(JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+  });
+
+  try {
+    // --- 接口 1: 获取全局设置 ---
+    if (url.pathname === '/api/settings' && method === 'GET') {
+      const { results } = await env.DB.prepare('SELECT key, value FROM settings').all();
+      // 转换成前端需要的 { key: value } 格式
       const settings = {};
-      results.forEach(row => settings[row.key] = row.value);
-      return Response.json(settings);
-    } catch (e) {
-      return Response.json({ error: e.message }, { status: 500 });
+      if (results) results.forEach(row => settings[row.key] = row.value);
+      return jsonResponse(settings);
     }
-  }
 
-  // 示例：获取音乐 (对应 GET /api/custom-music)
-  if (url.pathname === '/api/custom-music' && request.method === 'GET') {
-     const { results } = await env.DB.prepare('SELECT * FROM custom_music WHERE enabled = 1 ORDER BY display_order').all();
-     return Response.json(results);
-  }
+    // --- 接口 2: 获取所有数据 (Categories + Sites) ---
+    // 很多导航站前端会请求这个聚合接口，或者分别请求
+    if (url.pathname === '/api/data' || url.pathname === '/api/sites') {
+       // 获取分类
+       const categories = await env.DB.prepare('SELECT * FROM categories ORDER BY displayOrder').all();
+       // 获取站点
+       const sites = await env.DB.prepare('SELECT * FROM sites ORDER BY display_order').all();
+       
+       return jsonResponse({
+         categories: categories.results,
+         sites: sites.results
+       });
+    }
 
-  // 如果没有匹配的 API
-  return new Response('API Not Found', { status: 404 });
+    // --- 接口 3: 获取音乐列表 ---
+    if (url.pathname === '/api/custom-music' && method === 'GET') {
+      const { results } = await env.DB.prepare('SELECT * FROM custom_music WHERE enabled = 1 ORDER BY display_order DESC').all();
+      return jsonResponse(results || []);
+    }
+
+    // --- 接口 4: 访客统计 (简单版) ---
+    if (url.pathname === '/api/visitor' && method === 'POST') {
+      // 简单插入，不阻塞返回
+      const stmt = env.DB.prepare('INSERT INTO visitor_stats (user_agent, visit_time) VALUES (?, CURRENT_TIMESTAMP)');
+      await stmt.bind(request.headers.get('User-Agent')).run();
+      return jsonResponse({ success: true });
+    }
+    
+    // --- 接口 5: 获取访客数据 ---
+    if (url.pathname === '/api/visitor' && method === 'GET') {
+       const total = await env.DB.prepare('SELECT COUNT(*) as count FROM visitor_stats').first();
+       return jsonResponse({ total_visits: total.count });
+    }
+
+    return new Response('API Endpoint Not Found', { status: 404 });
+
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json'} });
+  }
 }
