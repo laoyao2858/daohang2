@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS categories (
   displayOrder INTEGER
 );
 
--- 3. 创建网站分组表（需要先创建，因为 sites 表会引用它）
+-- 3. 创建网站分组表
 CREATE TABLE IF NOT EXISTS site_groups (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -57,16 +57,53 @@ CREATE TABLE IF NOT EXISTS user_preferences (
   value TEXT NOT NULL
 );
 
--- 7. 插入默认设置
-INSERT OR IGNORE INTO settings (key, value) VALUES 
-  ('backgroundUrl', 'https://iili.io/FSa7FDB.gif');
+-- 7. 创建自定义音乐播放列表表
+CREATE TABLE IF NOT EXISTS custom_music (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  artist TEXT,
+  url TEXT NOT NULL,
+  cover TEXT,
+  enabled BOOLEAN DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  display_order INTEGER DEFAULT 0
+);
 
--- 8. 插入默认用户偏好
+-- 8. 创建访客统计表
+CREATE TABLE IF NOT EXISTS visitor_stats (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ip_address TEXT,
+  user_agent TEXT,
+  referrer TEXT,
+  country TEXT,
+  city TEXT,
+  visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  session_id TEXT,
+  page_views INTEGER DEFAULT 1,
+  last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 9. 插入默认设置
+INSERT OR IGNORE INTO settings (key, value) VALUES 
+  ('backgroundUrl', 'https://iili.io/FSa7FDB.gif'),
+  ('avatarUrl', 'https://iili.io/FSa7FDB.gif'),
+  ('welcomeMessage', '欢迎使用导航站！'),
+  ('autoPlayMusic', 'true'),
+  ('showVisitorStats', 'true'),
+  ('siteTitle', '我的导航站'),
+  ('siteDescription', '一个简洁高效的导航网站');
+
+-- 10. 插入默认用户偏好
 INSERT OR IGNORE INTO user_preferences (key, value) VALUES 
   ('show_frequent_sites', 'true'),
   ('frequent_sites_count', '8'),
   ('enable_shortcuts', 'true'),
   ('enable_pinyin_search', 'true');
 
--- 9. 更新现有数据（如果是升级的话）
+-- 11. 插入示例音乐（可选）
+INSERT OR IGNORE INTO custom_music (title, artist, url, cover) VALUES 
+  ('示例音乐1', '未知艺术家', 'https://example.com/music1.mp3', 'https://iili.io/FSa7FDB.gif'),
+  ('示例音乐2', '未知艺术家', 'https://example.com/music2.mp3', 'https://iili.io/FSa7FDB.gif');
+
+-- 12. 更新现有数据
 UPDATE sites SET display_order = id WHERE display_order = 0 OR display_order IS NULL;
