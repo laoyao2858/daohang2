@@ -2394,18 +2394,37 @@
         }
 
         function setTheme(theme) {
+            // --- 修复：设置主题函数 (防崩溃版) ---
+        function setTheme(theme) {
+            // 1. 保存状态
             state.currentTheme = theme;
             localStorage.setItem('theme', theme);
-            const sunIcon = DOMElements.themeSwitcher.querySelector('.theme-icon-sun');
-            const moonIcon = DOMElements.themeSwitcher.querySelector('.theme-icon-moon');
+
+            // 2. 切换 CSS 类 (让背景变白/变黑)
             if (theme === 'light') {
-                DOMElements.body.classList.add('light-mode');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
+                document.body.classList.add('light-mode');
             } else {
-                DOMElements.body.classList.remove('light-mode');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
+                document.body.classList.remove('light-mode');
+            }
+
+            // 3. 更新顶部按钮图标 (安全更新)
+            const topBtn = document.getElementById('themeToggle');
+            if (topBtn) {
+                // 尝试找内部的 i 标签，找不到就直接改按钮文字，确保不报错
+                const icon = topBtn.querySelector('i');
+                if (icon) {
+                    // 亮色模式显示太阳，深色模式显示月亮
+                    icon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+                }
+            }
+
+            // 4. 更新侧边栏按钮图标 (如果有的话)
+            const sideBtn = document.getElementById('toggle-theme-btn');
+            if (sideBtn) {
+                const icon = sideBtn.querySelector('i');
+                if (icon) {
+                    icon.className = (theme === 'light' ? 'fas fa-sun' : 'fas fa-moon') + ' nav-icon';
+                }
             }
         }
 
